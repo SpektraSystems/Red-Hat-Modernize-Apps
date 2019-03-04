@@ -2,7 +2,7 @@ id: mono2micro
 name: OpenShift Application Modernization Workshop
 
 content:
-  url: https://raw.githubusercontent.com/clerixmaxime/modernize-apps-guides.git/master
+  url: https://raw.githubusercontent.com/clerixmaxime/modernize-apps-guides
 
 vars:
   OPENSHIFT_DOCS_BASE: "https://docs.openshift.com/container-platform/3.11"
