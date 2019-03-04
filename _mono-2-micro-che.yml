@@ -10,8 +10,8 @@ vars:
   DOWNLOAD_CLIENT_WINDOWS: https://mirror.openshift.com/pub/openshift-v3/clients/3.11.82/windows/oc.zip
   DOWNLOAD_CLIENT_MAC: https://mirror.openshift.com/pub/openshift-v3/clients/3.11.82/macosx/oc.tar.gz
   DOWNLOAD_CLIENT_LIN64: https://mirror.openshift.com/pub/openshift-v3/clients/3.11.82/linux/oc.tar.gz
-  LABS_GIT_REPO: https://github.com/mclerix/modernize-apps-labs.git#ocp-3.11
-  LABS_DOWNLOAD_URL: https://github.com/mclerix/modernize-apps-labs/archive/ocp-3.11.zip
+  LABS_GIT_REPO: https://github.com/clerixmaxime/modernize-apps-labs.git#master
+  LABS_DOWNLOAD_URL: https://github.com/clerixmaxime/modernize-apps-labs/archive/master.zip
   REMOTE_DEBUGGER_JDB: true
   REMOTE_DEBUGGER_JBDS: true
   REMOTE_DEBUGGER_IDEA: true
