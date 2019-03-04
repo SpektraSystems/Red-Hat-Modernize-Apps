@@ -2,7 +2,7 @@ id: "mono2micro"
 name: "OpenShift Application Modernization Workshop"
 
 content:
-  url: https://raw.githubusercontent.com/mclerix/modernize-apps-guides/ocp-3.11
+  url: https://raw.githubusercontent.com/mclerix/modernize-apps-guides/master
 
 vars:
   OPENSHIFT_DOCS_BASE: "https://docs.openshift.com/container-platform/3.11"
