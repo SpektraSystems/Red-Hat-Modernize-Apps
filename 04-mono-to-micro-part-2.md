@@ -5,103 +5,48 @@
 * Time: `60-70 minutes`
 
 ## Intro
-In the previous scenarios, you learned how to take an existing monolithic app and refactor a single _inventory_ service using
-WildFly Swarm. Since WildFly Swarm is using Java EE much of the technology from the monolith can be reused directly,
-like JPA and JAX-RS. The previous scenario resulted in you creating an inventory service, but so far we haven't started
-_strangling_ the monolith. That is because the inventory service is never called directly by the UI. It's a backend service
-that is only used only by other backend services. In this scenario, you will create the catalog service and the catalog
-service will call the inventory service. When you are ready, you will change the route to tie the UI calls to new service.
+In the previous scenarios, you learned how to take an existing monolithic app and refactor a single _inventory_ service using WildFly Swarm. Since WildFly Swarm is using Java EE much of the technology from the monolith can be reused directly, like JPA and JAX-RS. The previous scenario resulted in you creating an inventory service, but so far we haven't started _strangling_ the monolith. That is because the inventory service is never called directly by the UI. It's a backend service that is only used only by other backend services. In this scenario, you will create the catalog service and the catalog service will call the inventory service. When you are ready, you will change the route to tie the UI calls to new service.
 
-To implement this, we are going to use the Spring Framework. The reason for using Spring for this service is to introduce you
-to Spring Development, and how [Red Hat OpenShift Application Runtimes](https://developers.redhat.com/products/rhoar) helps to
-make Spring development on Kubernetes easy. In real life, the reason for choosing Spring vs. WF Swarm mostly depends on
-personal preferences, like existing knowledge, etc. At the core Spring and Java EE are very similar.
+To implement this, we are going to use the Spring Framework. The reason for using Spring for this service is to introduce you to Spring Development, and how [Red Hat OpenShift Application Runtimes](https://developers.redhat.com/products/rhoar) helps to make Spring development on Kubernetes easy. In real life, the reason for choosing Spring vs. WF Swarm mostly depends on personal preferences, like existing knowledge, etc. At the core Spring and Java EE are very similar.
 
 The goal is to produce something like:
 
-![Greeting](../../../assets/mono-to-micro-part-2/goal.png)
+![Greeting](./images/mono-to-micro-part-2/goal.png)
 
 ## What is Spring Framework?
 
-Spring is one of the most popular Java Frameworks and offers an alternative to the Java EE programming model. Spring
-is also very popular for building applications based on microservices architectures. Spring Boot is a popular tool in
-the Spring ecosystem that helps with organizing and using 3rd-party libraries together with Spring and also provides a
-mechanism for boot strapping embeddable runtimes, like Apache Tomcat. Bootable applications (sometimes also called _fat jars_)
-fits the container model very well since in a container platform like OpenShift responsibilities like starting, stopping and
-monitoring applications are then handled by the container platform instead of an Application Server.
+Spring is one of the most popular Java Frameworks and offers an alternative to the Java EE programming model. Spring is also very popular for building applications based on microservices architectures. Spring Boot is a popular tool in the Spring ecosystem that helps with organizing and using 3rd-party libraries together with Spring and also provides a mechanism for boot strapping embeddable runtimes, like Apache Tomcat. Bootable applications (sometimes also called _fat jars_) fits the container model very well since in a container platform like OpenShift responsibilities like starting, stopping and monitoring applications are then handled by the container platform instead of an Application Server.
 
 ## Aggregate microservices calls
-Another thing you will learn in this scenario is one of the techniques to aggregate services using service-to-service calls.
-Other possible solutions would be to use a microservices gateway or combine services using client-side logic.
+Another thing you will learn in this scenario is one of the techniques to aggregate services using service-to-service calls. Other possible solutions would be to use a microservices gateway or combine services using client-side logic.
 
 ## Setup for Exercise
 
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
 ```sh
-cd ${HOME}/projects/catalog
-git pull --quiet
-
+cd /projects/modernize-apps/catalog
 ```
 
 ## Examine the sample project
 
 For your convenience, this scenario has been created with a base project using the Java programming language and the Apache Maven build tool.
 
-Initially, the project is almost empty and doesn't do anything. Start by reviewing the content by executing a
-``tree`` in your terminal.
+Initially, the project is almost empty and doesn't do anything. Start by reviewing the content in the file explorer.
 
 The output should look something like this
 
-```sh
-.
-+-- pom.xml
-+-- README.md
-\-- src
-    +-- main
-    |   +-- fabric8
-    |   |   +-- catalog-deployment.yml
-    |   |   +-- catalog-route.yml
-    |   |   \-- credential-secret.yml
-    |   +-- java
-    |   |   \-- com
-    |   |       \-- redhat
-    |   |           \-- coolstore
-    |   |               +-- client
-    |   |               +-- model
-    |   |               |   +-- Inventory.java
-    |   |               |   \-- Product.java
-    |   |               +-- RestApplication.java
-    |   |               \-- service
-    |   \-- resources
-    |       +-- application-default.properties
-    |       +-- schema.sql
-    |       \-- static
-    |           \-- index.html
-    \-- test
-        \-- java
-            \-- com
-                \-- redhat
-                    \-- coolstore
-                        \-- service
-```
+![File explorer](./images/mono-to-micro-part-2/files.png)
 
+As you can see, there are some files that we have prepared for you in the project. Under `src/main/resources/static/index.html` we have for example prepared a simple html-based UI file for you. Except for the `fabric8/` folder and `index.html`, this matches very well what you would get if you generated an empty project from the [Spring Initializr](https://start.spring.io) web page. For the moment you can ignore the content of the `fabric8/` folder (we will discuss this later).
 
-As you can see, there are some files that we have prepared for you in the project. Under `src/main/resources/static/index.html`
-we have for example prepared a simple html-based UI file for you. Except for the `fabric8/` folder and `index.html`, this
-matches very well what you would get if you generated an empty project from the [Spring Initializr](https://start.spring.io) web
-page. For the moment you can ignore the content of the `fabric8/` folder (we will discuss this later).
-
-One this that differs slightly is the `pom.xml`. Please open the and examine it a bit closer (but do not change anything
-at this time)
+One this that differs slightly is the `pom.xml`. Please open the and examine it a bit closer (but do not change anything at this time)
 
 ``pom.xml``
 
-As you review the content, you will notice that there are a lot of **TODO** comments. **Do not remove them!** These comments
-are used as a marker and without them, you will not be able to finish this scenario.
+As you review the content, you will notice that there are a lot of **TODO** comments. **Do not remove them!** These comments are used as a marker and without them, you will not be able to finish this scenario.
 
-Notice that we are not using the default BOM (Bill of material) that Spring Boot projects typically use. Instead, we are using
-a BOM provided by Red Hat as part of the [Snowdrop](http://snowdrop.me/) project.
+Notice that we are not using the default BOM (Bill of material) that Spring Boot projects typically use. Instead, we are using a BOM provided by Red Hat.
 
 ```xml
 <dependencyManagement>
@@ -121,11 +66,9 @@ We use this bill of material to make sure that we are using the version of for e
 
 **Adding web (Apache Tomcat) to the application**
 
-Since our applications (like most) will be a web application, we need to use a servlet container like Apache Tomcat or
-Undertow. Since Red Hat offers support for Apache Tomcat (e.g., security patches, bug fixes, etc.), we will use it.
+Since our applications (like most) will be a web application, we need to use a servlet container like Apache Tomcat or Undertow. Since Red Hat offers support for Apache Tomcat (e.g., security patches, bug fixes, etc.), we will use it.
 
->**NOTE:** Undertow is another an open source project that is maintained by Red Hat and therefore Red Hat plans to
-add support for Undertow shortly.
+>**NOTE:** Undertow is another an open source project that is maintained by Red Hat and therefore Red Hat plans to add support for Undertow shortly.
 
 To add Apache Tomcat to our project all we have to do is to add the following lines in ``pom.xml``. Open the file to automatically add these lines at the `<!-- TODO: Add web (tomcat) dependency here -->` marker:
 
@@ -167,24 +110,19 @@ We will go ahead and add a bunch of other dependencies while we have the pom.xml
 
 **Test the application locally**
 
-As we develop the application, we might want to test and verify our change at different stages. We can do that
-locally, by using the `spring-boot` maven plugin.
+As we develop the application, we might want to test and verify our change at different stages. We can do that locally, by using the `spring-boot` maven plugin.
 
 Run the application by executing the below command:
 
-``mvn spring-boot:run``
+Use the command palette to execute the ``run-spring-boot`` command
 
->**NOTE:** The Katacoda terminal window is like your local terminal. Everything that you run here you should
-be able to execute on your local computer as long as you have a `Java SDK 1.8` and `Maven`. In later steps, we
-will also use the `oc` command line tool.
-
-Wait for it to complete startup and report `Started RestApplication in ***** seconds (JVM running for ******)`
+>Wait for it to complete startup and report `Started RestApplication in ***** seconds (JVM running for ******)`
 
 **3. Verify the application**
 
-To begin with, click on the **Local Web Browser** tab in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8081 on your client.
+To begin with, click on the **preview URL** link in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8081 on your client.
 
-![Local Web Browser Tab](../../../assets/mono-to-micro-part-2/web-browser-tab.png)
+![Local Web Browser Tab](./images/mono-to-micro-part-2/preview-spring.png)
 
 or use this at 
 
@@ -192,13 +130,13 @@ or use this at
 
 You should now see an HTML page that looks like this:
 
-![Local Web Browser Tab](../../../assets/mono-to-micro-part-2/web-page.png)
+![Local Web Browser Tab](./images/mono-to-micro-part-2/web-page.png)
 
 > **NOTE:** The service calls to get products from the catalog doesn't work yet. Be patient! We will work on it in the next steps.
 
 **4. Stop the application**
 
-Before moving on, click here: `clear` to stop the running application.
+Before moving on, close the `run spring-boot` tab to stop the running application.
 
 ## Congratulations
 
@@ -208,18 +146,13 @@ Now you've seen how to get started with Spring Boot development on Red Hat OpenS
 
 In next step of this scenario, we will add the logic to be able to read a list of fruits from the database.
 
-
-
 ## Create Domain Objects
-
-
 
 ## Creating a test.
 
 Before we create the database repository class to access the data it's good practice to create test cases for the different methods that we will use.
 
-Click to open ``src/test/java/com/redhat/coolstore/service/ProductRepositoryTest.java`` to create the empty file and
-then **Copy to Editor** to copy the below code into the file:
+Create the file ``src/test/java/com/redhat/coolstore/service/ProductRepositoryTest.java`` and then copy the below code into the file:
 
 ```java
 package com.redhat.coolstore.service;
@@ -251,9 +184,7 @@ public class ProductRepositoryTest {
 
 ```
 
-Next, inject a handle to the future repository class which will provide access to the underlying data repository. It is
-injected with Spring's `@Autowired` annotation which locates, instantiates, and injects runtime instances of classes automatically,
-and manages their lifecycle (much like Java EE and it's CDI feature). Click to create this code:
+Next, inject a handle to the future repository class which will provide access to the underlying data repository. It is injected with Spring's `@Autowired` annotation which locates, instantiates, and injects runtime instances of classes automatically, and manages their lifecycle (much like Java EE and it's CDI feature). Click to create this code:
 
 ```java
 @Autowired
@@ -371,7 +302,7 @@ spring.datasource.driver-class-name=org.h2.Driver
 
 The Spring Data framework will automatically see if there is a schema.sql in the class path and run that when initializing.
 
-Now we are ready to run the test to verify that everything works. Because we created the `ProductRepositoryTest.java` all we have todo is to run: ``mvn verify``
+Now we are ready to run the test to verify that everything works. Because we created the `ProductRepositoryTest.java` all we have todo is to run: ``mvn verify`` or to use the command ``test-spring-boot`` in the command palette.
 
 The test should be successful and you should see **BUILD SUCCESS**, which means that we can read that our repository class works as as expected.
 
@@ -383,13 +314,11 @@ Now you've seen how to use Spring Data to collect data from the database and how
 
 In next step of this scenario, we will add the logic to expose the database content from REST endpoints using JSON format.
 
-
 ## Create Catalog Service
-
 
 Now you are going to create a service class. Later on the service class will be the one that controls the interaction with the inventory service, but for now it's basically just a wrapper of the repository class. 
 
-Create a new class `CatalogService` by clicking: ``src/main/java/com/redhat/coolstore/service/CatalogService.java``
+Create a new class `CatalogService` with the following path ``src/main/java/com/redhat/coolstore/service/CatalogService.java``
 
 And then Open the file to implement the new service:
 
@@ -568,12 +497,12 @@ The Spring MVC Framework default uses Jackson to serialize or map Java objects t
 
 Now you can run the `CatalogEndpointTest` and verify that it works.
 
-``mvn verify -Dtest=CatalogEndpointTest``
+``mvn verify -Dtest=CatalogEndpointTest`` or use ``test-spring-boot`` command in the command palette.
 
 Since we now have endpoints that returns the catalog we can also start the service and load the default page again, which should now return the products.
 
 Start the application by running the following command
-``mvn spring-boot:run``
+``mvn spring-boot:run`` or use ``run-spring-boot``command in the command palette.
 
 Wait for the application to start. Then we can verify the endpoint by running the following command in a new terminal (Note the link below will execute in a second terminal)
 
@@ -586,19 +515,11 @@ You should get a full JSON array consisting of all the products:
 ...
 ```
 
-Also click on the **Local Web Browser** tab in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8081 on your client.
-
-> If you are using CDK, simply browse to http://localhost:8081
-
-![Local Web Browser Tab](../../../assets/mono-to-micro-part-2/web-browser-tab.png)
-
-or use this at 
-
-`http://localhost:8081` link.
+Also click on the **preview URL**, which will open another tab or window of your browser pointing to the catalog app.
 
 You should now see an HTML page that looks like this:
 
-![Local Web Browser Tab](../../../assets/mono-to-micro-part-2/web-page-products.png)
+![Local Web Browser Tab](./images/mono-to-micro-part-2/web-page-products.png)
 
 ## Congratulations
 
@@ -610,20 +531,17 @@ In the next scenario we will also call another service to enrich the endpoint re
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C` (or
-click `clear` to do it for you).
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C` (or close the tab of the running command).
 
 ## Congratulations!
 
 Next, we'll add a call to the existing Inventory service to enrich the above data with Inventory information. On to the next challenge!
 
-
-
 ## Get inventory data
 
 So far our application has been kind of straight forward, but our monolith code for the catalog is also returning the inventory status. In the monolith since both the inventory data and catalog data is in the same database we used a OneToOne mapping in JPA like this:
 
-```
+```java
 @OneToOne(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 @PrimaryKeyJoinColumn
 private InventoryEntity inventory;
@@ -660,7 +578,7 @@ And add it to the second test as well at the remaining `//TODO: Add check for Qu
 
 Now if we run the test it **should fail**!
 
-``mvn verify``
+``mvn verify`` or use ``test-spring-boot`` command in the command palette.
 
 It failed:
 
@@ -672,11 +590,7 @@ Tests run: 4, Failures: 2, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 ```
 
-Again the test fails because we are trying to call the Inventory service which is not running. We will soon implement the code to call the inventory service, but first
-we need a away to test this service without having to really on the inventory services to be up an running. For that we are going to use an API Simulator
-called [HoverFly](http://hoverfly.io) and particular it's capability to simulate remote APIs. HoverFly is very convenient to use with Unit test and all we have to do is
-to add a `ClassRule` that will simulate all calls to inventory. Open the file to insert the
-code at the `//TODO: Add ClassRule for HoverFly Inventory simulation` marker:
+Again the test fails because we are trying to call the Inventory service which is not running. We will soon implement the code to call the inventory service, but first we need a away to test this service without having to really on the inventory services to be up an running. For that we are going to use an API Simulator called [HoverFly](http://hoverfly.io) and particular it's capability to simulate remote APIs. HoverFly is very convenient to use with Unit test and all we have to do is to add a `ClassRule` that will simulate all calls to inventory. Open the file to insert the code at the `//TODO: Add ClassRule for HoverFly Inventory simulation` marker:
 
 ```java
 @ClassRule
@@ -773,7 +687,7 @@ productList.parallelStream()
 
 We are now ready to test the service
 
-``mvn verify``
+``mvn verify`` or use ``test-spring-boot`` command in the command palette.
 
 So even if we don't have any inventory service running we can still run our test. However to actually run the service using `mvn spring-boot:run` we need to have an inventory service or the calls to `/services/products/` will fail. We will fix this in the next step
 
@@ -781,15 +695,11 @@ So even if we don't have any inventory service running we can still run our test
 You now have the framework for retrieving products from the product catalog and enriching the data with inventory data from
 an external service. But what if that external inventory service does not respond? That's the topic for the next step.
 
-
 ## Create a fallback for inventory
 
 In the previous step we added a client to call the Inventory service. Services calling services is a common practice in Microservices Architecture, but as we add more and more services the likelihood of a problem increases dramatically. Even if each service has 99.9% update, if we have 100 of services our estimated up time will only be ~90%. We therefor need to plan for failures to happen and our application logic has to consider that dependent services are not responding.
 
-In the previous step we used the Feign client from the Netflix cloud native libraries to avoid having to write
-boilerplate code for doing a REST call. However Feign also have another good property which is that we easily create
-fallback logic. In this case we will use static inner class since we want the logic for the fallback to be part of the
-Client and not in a separate class.
+In the previous step we used the Feign client from the Netflix cloud native libraries to avoid having to write boilerplate code for doing a REST call. However Feign also have another good property which is that we easily create fallback logic. In this case we will use static inner class since we want the logic for the fallback to be part of the Client and not in a separate class.
 
 Open: `src/main/java/com/redhat/coolstore/client/InventoryClient.java`
 
@@ -811,8 +721,7 @@ static class InventoryClientFallbackFactory implements FallbackFactory<Inventory
 
 ```
 
-After creating the fallback factory all we have todo is to tell Feign to use that fallback in case of an issue, by adding the fallbackFactory property to the `@FeignClient` annotation. Open the file to replace
-it for you at the `@FeignClient(name="inventory")` line:
+After creating the fallback factory all we have to do is to tell Feign to use that fallback in case of an issue, by adding the fallbackFactory property to the `@FeignClient` annotation. Open the file to replace it for you at the `@FeignClient(name="inventory")` line:
 
 ```java
 @FeignClient(name="inventory",fallbackFactory = InventoryClient.InventoryClientFallbackFactory.class)
@@ -853,7 +762,9 @@ Notice that the Hoverfly Rule will now return serverError for all request to inv
 
 Now if you run ``mvn verify -Dtest=CatalogEndpointTest`` the test will fail with the following error message:
 
-`Failed tests:   test_retriving_one_proudct(com.redhat.coolstore.service.CatalogEndpointTest): expected:<[9999]> but was:<[-1]>`
+```
+Failed tests:   test_retriving_one_proudct(com.redhat.coolstore.service.CatalogEndpointTest): expected:<[9999]> but was:<[-1]>
+```
 
 So since even if our inventory service fails we are still returning inventory quantity -1. The test fails because we are expecting the quantity to be 9999.
 
@@ -900,15 +811,13 @@ In this step you've learned how to add Fallback logic to your class and how to a
 
 In the next step we now test our service locally before we deploy it to OpenShift.
 
-
-
 ## Test Locally
 
 As you have seen in previous steps, using the Spring Boot maven plugin (predefined in `pom.xml`), you can conveniently run the application locally and test the endpoint.
 
 Execute the following command to run the new service locally:
 
-`mvn spring-boot:run`
+`mvn spring-boot:run` or use `run-spring-boot` command in the command palette.
 
 >**INFO:** As an uber-jar, it could also be run with `java -jar target/catalog-1.0-SNAPSHOT-swarm.jar` but you don't need to do this now
 
@@ -918,68 +827,55 @@ Once the application is done initializing you should see:
 INFO  [           main] com.redhat.coolstore.RestApplication     : Started RestApplication ...
 ```
 
-Running locally using `spring-boot:run` will use an in-memory database with default credentials. In a production application you
-will use an external source for credentials using an OpenShift _secret_ in later steps, but for now this will work for development and
-testing.
+Running locally using `spring-boot:run` will use an in-memory database with default credentials. In a production application you will use an external source for credentials using an OpenShift _secret_ in later steps, but for now this will work for development and testing.
 
 **3. Test the application**
 
-To test the running application, click on the **Local Web Browser** tab in the console frame of this browser window. This will open another tab or window of your browser pointing to port 8081 on your client.
-
-Users do not have a **Local Web Browser** link. Use the link below.
-
-![Local Web Browser Tab](../../../assets/mono-to-micro-part-2/web-browser-tab.png)
-
-> or use this at 
-
-`http://localhost:8081` link.
+To test the running application, click on the **preview URL**. This will open another tab or window of your browser pointing to port 8081 on your client.
 
 You should now see a html page that looks like this
 
-![App](../../../assets/mono-to-micro-part-2/app-new.png)
+![App](./images/mono-to-micro-part-2/app-new.png)
 
 This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
 
 You can also click the **Fetch Catalog** button to force it to refresh at any time.
 
-To see the raw JSON output using `curl`, you can open an new terminal window by clicking on the plus (+)
-icon on the terminal toolbar and then  choose **Open New Terminal**. You can also click on the following
-command to automatically open a new terminal and run the test:
+To see the raw JSON output using `curl`, you can open an new terminal window by clicking on the plus (+) icon on the terminal toolbar and then choose **Terminal**. Enter the following command to run the test:
 
 `curl http://localhost:8081/services/product/329299 ; echo`
 
 You would see a JSON response like this:
 
-```
+```json
 {"itemId":"329299","name":"Red Fedora","desc":"Official Red Hat Fedora","price":34.99,"quantity":-1}%
 ```
+
 >**NOTE:** Since we do not have an inventory service running locally the value for the quantity is -1, which matches the fallback value that we have configured. 
 
 The REST API returned a JSON object representing the inventory count for this product. Congratulations!
 
 **4. Stop the application**
 
-Before moving on, click in the first terminal window where the app is running and then press CTRL-C to stop the running application! Or click `clear` to do it for you.
+Before moving on, click in the first terminal window where the app is running and then press CTRL-C to stop the running application or close the command tab.
 
 ## Congratulations
 
-You have now successfully created your the Catalog service using Spring Boot and implemented basic REST
-API on top of the product catalog database. You have also learned how to deal with service failures. 
+You have now successfully created your the Catalog service using Spring Boot and implemented basic REST API on top of the product catalog database. You have also learned how to deal with service failures. 
 
-In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start
-adding additional features to take care of various aspects of cloud native microservice development.
-
+In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
 
 ## Create the OpenShift project
 
-We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application,
-so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
+We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
 
 **1. Create project**
 
-Create a new project for the *catalog* service:
+Make sure that you are on the right project
 
-```oc new-project catalog --display-name="CoolStore Catalog Microservice Application"```
+```sh
+oc project userXX-modern-coolstore
+```
 
 Next, we'll deploy your new microservice to OpenShift.
 
@@ -1016,11 +912,11 @@ spring.datasource.username=catalog
 spring.datasource.password=mysecretpassword
 spring.datasource.driver-class-name=org.postgresql.Driver
 
-inventory.ribbon.listOfServers=inventory.inventory.svc.cluster.local:8080
+inventory.ribbon.listOfServers=inventory:8080
 ```
+> /!\ Make sure to update the last line with your user number.
 
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
-
 
 **Build and Deploy**
 
@@ -1044,12 +940,12 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://catalog-catalog.$ROUTE_SUFFIX`
-to access the sample UI.
+`http://catalog-userXX-modern-coolstore.$ROUTE_SUFFIX` to access the sample UI. 
+> /!\ Don't forget to change the user number in your route.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-![Overview link](../../../assets/mono-to-micro-part-2/routelink.png)
+![Overview link](./images/mono-to-micro-part-2/routelink.png)
 
 The UI will refresh the catalog table every 2 seconds, as before.
 
@@ -1057,40 +953,32 @@ The UI will refresh the catalog table every 2 seconds, as before.
 
 ## Congratulations!
 
-You have deployed the Catalog service as a microservice which in turn calls into the Inventory service to retrieve inventory data.
-However, our monolih UI is still using its own built-in services. Wouldn't it be nice if we could re-wire the monolith to use the
-new services, **without changing any code**? That's next!
-
+You have deployed the Catalog service as a microservice which in turn calls into the Inventory service to retrieve inventory data. However, our monolih UI is still using its own built-in services. Wouldn't it be nice if we could re-wire the monolith to use the new services, **without changing any code**? That's next!
 
 ## Strangling the monolith
 
-So far we haven't started [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html). To do this
-we are going to make use of routing capabilities in OpenShift. Each external request coming into OpenShift (unless using
-ingress, which we are not) will pass through a route. In our monolith the web page uses client side REST calls to load
-different parts of pages.
+So far we haven't started [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html). To do this we are going to make use of routing capabilities in OpenShift. Each external request coming into OpenShift (unless using ingress, which we are not) will pass through a route. In our monolith the web page uses client side REST calls to load different parts of pages.
 
-For the home page the product list is loaded via a REST call to *http://<monolith-hostname>/services/products*. At the moment
-calls to that URL will still hit product catalog in the monolith. By using a
-[path based route](https://docs.openshift.com/container-platform/3.7/architecture/networking/routes.html#path-based-routes) in
-OpenShift we can route these calls to our newly created catalog services instead and end up with something like:
+For the home page the product list is loaded via a REST call to *http://<monolith-hostname>/services/products*. At the moment calls to that URL will still hit product catalog in the monolith. By using a [path based route](https://docs.openshift.com/container-platform/3.7/architecture/networking/routes.html#path-based-routes) in OpenShift we can route these calls to our newly created catalog services instead and end up with something like:
 
-![Greeting](../../../assets/mono-to-micro-part-2/goal.png)
-
+![Greeting](./images/mono-to-micro-part-2/goal.png)
 
 Flow the steps below to create a path based route.
 
 **1. Obtain hostname of monolith UI from our Dev environment**
 
-`oc get route/www -n coolstore-dev`
+`oc get route/www -n userXX-coolstore-dev`
+
+> /!\ Change the project name according to your user number
 
 The output of this command shows us the hostname:
 
 ```
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-coolstore-dev.apps.127.0.0.1.nip.io             coolstore   <all>                   None
+www       www-userXX-coolstore-dev.$ROUTE_SUFFIX             coolstore   <all>                   None
 ```
 
-My hostname is `www-coolstore-dev.apps.127.0.0.1.nip.io` but **yours will be different**.
+My hostname is `www-userXX-coolstore-dev.$ROUTE_SUFFIX` but **yours will be different**.
 
 **2. Open the openshift console for Catalog - Applications - Routes at 
 
@@ -1103,13 +991,13 @@ My hostname is `www-coolstore-dev.apps.127.0.0.1.nip.io` but **yours will be dif
 * **Path**: `/services/products`
 * **Service**: `catalog`
 
-![Greeting](../../../assets/mono-to-micro-part-2/route-vals.png)
+![Greeting](./images/mono-to-micro-part-2/route-vals.png)
 
 Leave other values set to their defaults, and click **Create**
 
 **4. Test the route**
 
-Test the route by running `curl http://www-coolstore-dev.[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/services/products`
+Test the route by running `curl http://www-userXX-coolstore-dev.$ROUTE_SUFFIX/services/products`
 
 You should get a complete set of products, along with their inventory.
 
@@ -1117,28 +1005,19 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI at 
 
-`http://www-coolstore-dev.$ROUTE_SUFFIX`
-and observe that the new catalog is being used along with the monolith:
+`http://www-userXX-coolstore-dev.$ROUTE_SUFFIX` and observe that the new catalog is being used along with the monolith:
 
-![Greeting](../../../assets/mono-to-micro-part-2/coolstore-web.png)
+![Greeting](./images/mono-to-micro-part-2/coolstore-web.png)
 
-The screen will look the same, but notice that the earlier product *Atari 2600 Joystick* is now gone,
-as it has been removed in our new catalog microservice.
+The screen will look the same, but notice that the earlier product *Atari 2600 Joystick* is now gone, as it has been removed in our new catalog microservice.
 
 ## Congratulations!
 
-You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory and Catalog) are
-now implemented as microservices, without touching the monolith. But there's a few more things left to do, which we'll do in the
-next steps.
+You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory and Catalog) are now implemented as microservices, without touching the monolith. But there's a few more things left to do, which we'll do in the next steps.
 
 
 ## Summary
 
-In this scenario you learned a bit more about what Spring Boot and how it can be used together with OpenShift and OpenShift
-Kubernetes.
+In this scenario you learned a bit more about what Spring Boot and how it can be used together with OpenShift and OpenShift Kubernetes.
 
-You created a new product catalog microservice representing functionality previously implemented in the monolithic
-CoolStore application. This new service also communicates with the inventory service to retrieve the inventory status
-for each product.
-
-
+You created a new product catalog microservice representing functionality previously implemented in the monolithic CoolStore application. This new service also communicates with the inventory service to retrieve the inventory status for each product.

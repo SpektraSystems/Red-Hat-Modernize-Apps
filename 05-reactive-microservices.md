@@ -9,7 +9,7 @@ In this scenario, you will learn more about Reactive Microservices using [Eclips
 
 In this scenario you will create three different services that interact using an _EventBus_ which also does a REST call to the CatalogService we built in the previous steps.
 
-![Architecture](../../../assets/reactive-microservices/reactive-ms-architecture.png)
+![Architecture](./images/reactive-microservices/reactive-ms-architecture.png)
 
 >**NOTE:** To simplify the deployment you will deploy all the services in a single Vert.x Server. However the code is 99% the same if we were to deploy these in separate services.
 
@@ -25,10 +25,9 @@ The asynchronous behavior or reactive systems will also save resources. In synch
 
 ## What is Eclipse Vert.x?
 
-![Local Web Browser Tab](../../../assets/reactive-microservices/vertx-logo.png)
+![Local Web Browser Tab](./images/reactive-microservices/vertx-logo.png)
 
-Eclipse Vert.x is a reactive toolkit for the Java Virtual Machine that is polyglot (e.g., supports multiple programming languages).
-In this session, we will focus on Java, but it is possible to build the same application in JavaScript, Groovy, Ruby, Ceylon, Scala, or Kotlin.
+Eclipse Vert.x is a reactive toolkit for the Java Virtual Machine that is polyglot (e.g., supports multiple programming languages). In this session, we will focus on Java, but it is possible to build the same application in JavaScript, Groovy, Ruby, Ceylon, Scala, or Kotlin.
 
 Eclipse Vert.x is event-driven and non-blocking, which means that applications in Vert.x can handle a lot of concurrent requests using a small number of kernel threads. 
 
@@ -52,22 +51,14 @@ Eclipse Vert.x is event-driven and non-blocking, which means that applications i
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
 ```sh
-cd ${HOME}/projects/cart
-git pull --quiet
-
-
+cd /projects/modernize-apps/cart
 ```
 
 ## Examine the sample project
 
-The sample project shows the components of a basic Vert.x project laid out in different
-subdirectories according to Maven best practices.
+The sample project shows the components of a basic Vert.x project laid out in different subdirectories according to Maven best practices. You can examine these files in the project explorer.
 
 **1. Examine the Maven project structure.**
-
-> Click on the `tree` command below to automatically copy it into the terminal and execute it
-
-``tree``
 
 ```sh
 .
@@ -101,9 +92,7 @@ If you have used Maven and Java before this should look familiar. This is how a 
 
 The domain model consists of a ShoppingCart which has many ShoppingCartItems which has a one-to-one dependency to Product. The domain also consists of Different Promotions that uses the ShoppingCart state to see if it matches the criteria of the promotion.
 
-![Shopping Cart - Domain Model](../../../assets/reactive-microservices/cart-model.png)
-
-
+![Shopping Cart - Domain Model](./images/reactive-microservices/cart-model.png)
 
 ## Create a web server and a simple rest service
 
@@ -251,7 +240,7 @@ public class CartServiceVerticle extends AbstractVerticle {
 
 Currently our verticle doesn't really do anything except logging some info. Let's try it out. Execute:
 
-``mvn compile vertx:run``
+``mvn compile vertx:run`` or use ``build-vertx`` command in the command palette.
 
 You should see output that looks like this:
 
@@ -289,17 +278,15 @@ vertx.createHttpServer().requestHandler(router::accept).listen(serverPort);
 
 Now let's restart the application. Execute:
 
-``mvn compile vertx:run``
+``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
 
 **3. Test the static router**
 
-Click on the this at 
-
-`http://localhost:10080` link, which will open another tab or window of your browser pointing to port 10080 on your client.
+Click on the **preview URL** link, which will open another tab or window of your browser pointing to cart application.
 
 You should now see an HTML page that looks like this:
 
-![Local Web Browser Tab](../../../assets/reactive-microservices/web-page.png)
+![Local Web Browser Tab](./images/reactive-microservices/web-page.png)
 
 > **NOTE:** The Fetch button doesn't work yet, but we will fix that later in this lab.
 
@@ -325,7 +312,7 @@ It's actually not necessary to set the status, since it will default to HTTP OK 
 
 Restart the application by running the following in the terminal or in clicking the execute button.
 
-``mvn compile vertx:run``
+``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
 
 After Vert.x is start execute a curl command in another terminal so like this. 
 
@@ -484,36 +471,21 @@ com.redhat.coolstore.MainVerticle
 
 Restart the application by running the following in the terminal or in clicking the execute button.
 
-``mvn compile vertx:run``
+``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
 
 In the output you should now see that the server is starting on port 8082 and not 10080 like before.
 
-Click on the **Local Web Browser** tab in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8082 on your client. 
-
-> CDK Users will not have a **Local Web Browser** tab. Just open the link below:
-
-![Local Web Browser Tab](../../../assets/reactive-microservices/web-browser-tab.png)
-
-Or use this at 
-
-`http://localhost:8082` link.
+Click on the **preview URL** which will open another tab or window of your browser pointing to port 8082 on your client. 
 
 Again you should now see an HTML page that looks like this:
 
-![Local Web Browser Tab](../../../assets/reactive-microservices/web-page.png)
-
+![Local Web Browser Tab](./images/reactive-microservices/web-page.png)
 
 ## Congratulations
 
 You have now successfully implemented environment specific configuration. Please note that future version of Eclipse Vert.x will probably include a better way to solve this, but this should have helped you understand a bit of how programming in a reactive world is different then for example Java EE or Spring (Spring 5 now includes some reactive extensions as well).
 
 In next step of this scenario, we will start implementing our rest endpoints.
-
-
-
-
-
-
 
 ## Create REST endpoints for retrieving carts
 
@@ -531,8 +503,7 @@ The `Router` in Vert.x is very flexible and makes it easy to deal with complex H
 In our example we will only use basic GET, POST and DELETE routing. Let's get started with the GET operations.
 
 **1. Creating a GET /services/cart endpoint**
-First we are going to create a very simple endpoint that returns a `ShopppingCart` object as a JSON String using some
-utility methods from the `src/main/java/com/redhat/coolstore/utils/Transformers.java` to get a `JsonObject` that we can then return as String.
+First we are going to create a very simple endpoint that returns a `ShopppingCart` object as a JSON String using some utility methods from the `src/main/java/com/redhat/coolstore/utils/Transformers.java` to get a `JsonObject` that we can then return as String.
 
 Add this code to the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` class at the `//TODO: Add handler for getting a shoppingCart by id` marker:
 
@@ -598,7 +569,7 @@ router.get("/services/carts").handler(rc -> {
 
 Restart the application by running the following in the terminal or in clicking the execute button.
 
-``mvn compile vertx:run``
+``mvn compile vertx:run``  or use ``run-vertx`` command in the command palette.
 
 Now test the route with a curl command in the terminal like this:
 
@@ -632,17 +603,11 @@ This should print the body of the response  that looks somewhat like this. Note 
 Also test getting a single cart curl like this:
 ```curl -X GET http://localhost:8082/services/cart/99999; echo```
 
-Click on the **Local Web Browser** tab in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8082 on your client. 
-
-![Local Web Browser Tab](../../../assets/reactive-microservices/web-browser-tab.png)
-
-Or use this at 
-
-`http://localhost:8082` link.
+Click on the **preview URL** which will open another tab or window of your browser pointing to port 8082 on your client. 
 
 Now the default page should have an entry in the table matching the values for your JSON file above.
 
-![Local Web Browser Tab](../../../assets/reactive-microservices/web-page-content.png)
+![Local Web Browser Tab](./images/reactive-microservices/web-page-content.png)
 
 ## Congratulations
 
@@ -654,11 +619,11 @@ In the next step we will implement another endpoint and this time it will also c
 
 In this step we will implement POST operation for adding a product. The UI in Coolstore Monolith uses a POST operation when a user clicks `Add to Cart`.
 
-![Add To Cart](../../../assets/reactive-microservices/add-product.png)
+![Add To Cart](./images/reactive-microservices/add-product.png)
 
 The UI will then issue a POST request to `/services/cart/<cartId>/<prodId>/<quantity>`. However when adding a product to the ShoppingCartItem we need an actual `Product` object.
 
-![Add To Cart](../../../assets/reactive-microservices/cart-model.png)
+![Add To Cart](./images/reactive-microservices/cart-model.png)
 
 So our implementation of this service needs to retrieve a Product object from the `CatalogService`. Let's get started with this implementation.
 
@@ -744,8 +709,6 @@ private void getProduct(String itemId, Handler<AsyncResult<Product>> resultHandl
             } else {
                 resultHandler.handle(Future.failedFuture(handler.cause()));
             }
-
-
         });
 }
 ```
@@ -770,13 +733,12 @@ To summarize our `addToCart` handler will now first check if the product already
 
 Phew! That wasn't easy... However, in real life thing are never as easy as they sometimes seem to appear. Rather than present you with a set of Hello World demos we believe that it's much more educational to use a more realistic example.
 
-
 **4. Test our changes**
 
 Let's first test to update the quantity for a product that is already in the shopping cart
 
 Start the cart service
-``mvn compile vertx:run``
+``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
 
 Then execute this to test retrieving a specific cart and the quantity of item `329299` in the cart:
 
@@ -805,7 +767,9 @@ First lets check if the catalog service is still running locally.
 
 If that prints `< HTTP/1.1 200` then our service is responding correctly otherwise we need to start the Catalog application in a separate terminal like this:
 
-```cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests```
+```cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests``` or use ``run-spring-boot`` command in the command palette.
+
+> /!\ When launching the ``run-spring-boot`` command you should have selected the catalog project in the project explorer
 
 Wait for it to complete. You should see `Started RestApplication in xxxxx seconds`.
 
@@ -839,7 +803,6 @@ This should print the follow:
 
 **5. Add endpoint for deleting items**
 Since we are now so skilled in writing endpoints lets go ahead and also create the endpoint for removing a product. The only tricky part about removing is that the request might not remove all products in once. E.g. If we have 10 Red Hat Fedoras and the request just decreases 3 we should not remove the Shopping Cart item, but instead lower the quantity to 7. 
-
 
 Again in the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file add the following at the `//TODO: Add handler for removing an item from the cart`
 
@@ -876,8 +839,7 @@ router.delete("/services/cart/:cartId/:itemId/:quantity").handler(this::removeSh
 
 Let's first test to decreasing the quantity for a product that is already in the shopping cart
 
-Start the cart service
-``mvn compile vertx:run``
+Start the cart service ``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
 
 The run this to get the quantity of item `329299` in the cart:
 
@@ -893,26 +855,15 @@ Now let's call our removeShoppingCartItem method.
 
 If this results in an empty cart (quantity =0 ) this command will not return any output.
 
-If you have more than one items remaining in the cart, this will return a shopping cart where one more instance of the product is removed,
-because of our grep commands you would see something like this.
+If you have more than one items remaining in the cart, this will return a shopping cart where one more instance of the product is removed, because of our grep commands you would see something like this.
 
 `"quantity" : 3`
-
 
 ## Congratulations
 
 Wow! You have now successfully created a Reactive microservices that are calling another REST service asynchronously. 
 
 However, looking at the output you can see that the discount and shippingFee is `0.0`, which also means that the orderValue (price after shipping and discount) and retailPrice (sum of all products prices) are equal. That is because we haven't implemented the Shipping and Promotional Services yet. That's what we are going to do in the next scenario.
-
-
-
-
-
-
-
-
-
 
 ## Using the Vert.x Event Bus for shipping services
 
@@ -962,8 +913,7 @@ Messages are published to an address. Publishing means delivering the message to
 
 This is the familiar publish/subscribe messaging pattern.
 
-Point to point and Request-Response messaging
-The event bus also supports point to point messaging.
+Point to point and Request-Response messaging. The event bus also supports point to point messaging.
 
 Messages are sent to an address. Vert.x will then route it to just one of the handlers registered at that address.
 
@@ -1013,7 +963,6 @@ The body of the message corresponds to the object that was sent or published. Th
 
 The headers of the message are available with headers.
 
-
 **1. Add a Shipping Verticle**
 Since RHOAR currently do not support using distributed event bus we will create the Verticle locally. For now our shipping service will only return a fixed ShippingFee of 37.0. RHOAR is planned to support distributes event bus early 2018. Since the Event Bus API is the same very little code changes (if any) will be required to move this to a separate service in OpenShift in the future.
 
@@ -1045,8 +994,7 @@ public class ShippingServiceVerticle extends AbstractVerticle {
 }
 ```
 
-We also need to start the Verticle by deploying it form the MainVerticle. So add this code
-to the `src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PromoServiceVerticle` marker:
+We also need to start the Verticle by deploying it form the MainVerticle. So add this code to the `src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PromoServiceVerticle` marker:
 
 ```java
 vertx.deployVerticle(
@@ -1097,8 +1045,7 @@ this.getShippingFee(cart, message -> {
 });
 ```
 
-Since we have the special case of product already exists we need to update it twice.  Replace the line with
-`sendCart(cart, rc)` that you just added with another duplicate block:
+Since we have the special case of product already exists we need to update it twice.  Replace the line with `sendCart(cart, rc)` that you just added with another duplicate block:
 
 ```java
 this.getShippingFee(cart, message -> {
@@ -1131,36 +1078,21 @@ This should now return a new shopping cart where one only instance of the produc
 
 `"quantity" : 1`
 
-The CartService depends on the CatalogService and just like in the Spring Boot example we could have created mocks for calling the Catalog Service, however since our example is already complex, we will simply test it with the CatalogService running. 
-
+> /!\ The CartService depends on the CatalogService and just like in the Spring Boot example we could have created mocks for calling the Catalog Service, however since our example is already complex, we will simply test it with the CatalogService running. 
 
 ## Create an OpenShift Project for the Cart microservice
 
-We have already deployed our coolstore monolith, inventory and catalog to OpenShift. In this step we will deploy our new Shopping Cart microservice for our CoolStore application,
-so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
+We have already deployed our coolstore monolith, inventory and catalog to OpenShift. In this step we will deploy our new Shopping Cart microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
 
 **1. Create project**
 
-Create a new project for the *cart* service:
+Make sure you are on the right OpenShift project :
 
-```oc new-project cart --display-name="CoolStore Shopping Cart Microservice Application"```
+```oc project userXX-modern-coolstore```
 
 **3. Open the OpenShift Web Console**
 
-You should be familiar with the OpenShift Web Console by now!
-Click on the "OpenShift Console" tab:
-
-![OpenShift Console Tab](../../../assets/mono-to-micro-part-2/openshift-console-tab.png)
-
-And navigate to the new _catalog_ project overview page (or use this quick link at 
-
-`https://$OPENSHIFT_MASTER/console/project/cart/`
-
-![Web Console Overview](../../../assets/mono-to-micro-part-2/overview.png)
-
-There's nothing there now, but that's about to change.
-
-
+You should be familiar with the OpenShift Web Console by now! Access the OpenShift Web Console and navigate to the _modern coolstore_ project overview page.
 
 ## Deploy Cart microservice to OpenShift
 
@@ -1176,27 +1108,23 @@ Copy the following content to the file:
 {
     "http.port" : 8080,
     "catalog.service.port" : 8080,
-    "catalog.service.hostname" : "catalog.catalog.svc.cluster.local"
+    "catalog.service.hostname" : "catalog"
 }
 ```
 
 >**NOTE:** The `config-openshift.json` does not have all values of `config-default.json`, that is because on the values that need to change has to be specified here. Our solution will fallback to the default configuration for values that aren't configured in the environment specific config.
 
-
 **Build and Deploy**
 
-Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can take an
-existing Eclipse Vert.x application and generate the necessary Kubernetes configuration.
+Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can take an existing Eclipse Vert.x application and generate the necessary Kubernetes configuration.
 
-You can also add additional config, like ``src/main/fabric8/deployment.yml`` which defines
-the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials
-stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
+You can also add additional config, like ``src/main/fabric8/deployment.yml`` which defines the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
 
 Let's add a deployment.yml that will set the system property to use our `config-openshift.json` config.
 
-Create the file by clicking on open ``src/main/fabric8/deployment.yml``
+Create the file ``src/main/fabric8/deployment.yml``
 
-Add the following content the the file (by clicking on *Copy to Editor* or copying it in directly):
+Add the following content to the file
 
 ```java
 apiVersion: v1
@@ -1210,14 +1138,13 @@ spec:
         - env:
             - name: JAVA_OPTIONS
               value: "-Dvertx.profiles.active=openshift -Dvertx.disableDnsResolver=true"
-
 ```
 
 We also need to add a route.yml like this:
 
 Create the file by clicking on open ``src/main/fabric8/route.yml``
 
-Add the following content by clicking on *Copy to Editor* or copying it in directly:
+Add the following content:
 
 ```java
 apiVersion: v1
@@ -1236,64 +1163,52 @@ Build and deploy the project using the following command, which will use the mav
 
 `mvn package fabric8:deploy -Popenshift`
 
-The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the
-end of the build output.
+The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
 
-After the maven build finishes it will take less than a minute for the application to become available.
-To verify that everything is started, run the following command and wait for it complete successfully:
+After the maven build finishes it will take less than a minute for the application to become available. To verify that everything is started, run the following command and wait for it complete successfully:
 
 `oc rollout status -w dc/cart`
 
 **3. Access the application running on OpenShift**
 
-This sample project includes a simple UI that allows you to access the Inventory API. This is the same
-UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
-route URL at 
+This sample project includes a simple UI that allows you to access the Inventory API. This is the same UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the route URL at 
 
-`http://cart-cart.$ROUTE_SUFFIX`
-to access the sample UI.
+`http://cart-userXX-modern-coolstore.$ROUTE_SUFFIX` to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-![Overview link](../../../assets/reactive-microservices/routelink.png)
-
+![Overview link](./images/reactive-microservices/routelink.png)
 
 ## Congratulations!
 
-You have deployed the Catalog service as a microservice which in turn calls into the Inventory service to retrieve inventory data.
-However, our monolih UI is still using its own built-in services. Wouldn't it be nice if we could re-wire the monolith to use the
-new services, **without changing any code**? That's next!
-
+You have deployed the Catalog service as a microservice which in turn calls into the Inventory service to retrieve inventory data. However, our monolih UI is still using its own built-in services. Wouldn't it be nice if we could re-wire the monolith to use the new services, **without changing any code**? That's next!
 
 ## Replace (Strangle) monolith Cart services
 
-In earlier scenarios we started [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html) by redirecting
-calls the product catalog microservice. We will now do the same with our new shopping cart microservice. To do this
-we are going to again make use of routing capabilities in OpenShift.
+In earlier scenarios we started [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html) by redirecting calls the product catalog microservice. We will now do the same with our new shopping cart microservice. To do this we are going to again make use of routing capabilities in OpenShift.
 
-Adding items to, or removing items from your cart in the monolith UI is accomplished via a REST call to `http://<monolith-hostname>/services/cart`. At the moment
-calls to that URL will still hit embedded cart service in the monolith. By using a
-[path based route](https://docs.openshift.com/container-platform/3.7/architecture/networking/routes.html#path-based-routes) in
-OpenShift we can route these calls to our newly created cart services instead, just like we did with the Catalog microservice!
+Adding items to, or removing items from your cart in the monolith UI is accomplished via a REST call to `http://<monolith-hostname>/services/cart`. At the moment calls to that URL will still hit embedded cart service in the monolith. By using a [path based route](https://docs.openshift.com/container-platform/3.7/architecture/networking/routes.html#path-based-routes) in OpenShift we can route these calls to our newly created cart services instead, just like we did with the Catalog microservice!
 
 Flow the steps below to create a path based route.
 
 **1. Obtain hostname of monolith UI from our Dev environment**
 
-`oc get route/www -n coolstore-dev`
+`oc get route/www -n userXX-coolstore-dev`
+> Make sure to replace the name of the project with your user number.
 
 The output of this command shows us the hostname:
 
 ```
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-coolstore-dev.apps.127.0.0.1.nip.io             coolstore   <all>                   None
+www       www-userXX-coolstore-dev.${ROUTING_SUFFIX}             coolstore   <all>                   None
 ```
 
-My hostname is `www-coolstore-dev.apps.127.0.0.1.nip.io` but **yours will be different**.
+My hostname is `www-userXX-coolstore-dev.${ROUTING_SUFFIX}` but **yours will be different**.
 
-**2. Open the openshift console for Cart - Applications - Routes at 
+**2. Open the openshift console for Cart - Applications - Routes at**
 
-`https://$OPENSHIFT_MASTER/console/project/cart/browse/routes`**
+`https://$OPENSHIFT_MASTER/console/project/userXX-modern-coolstore/browse/routes`
+> Make sure to replace the name of the project with your user number.
 
 **3. Click on Create Route, and set**
 
@@ -1302,13 +1217,13 @@ My hostname is `www-coolstore-dev.apps.127.0.0.1.nip.io` but **yours will be dif
 * **Path**: `/services/cart`
 * **Service**: `cart`
 
-![Greeting](../../../assets/reactive-microservices/route-vals.png)
+![Greeting](./images/reactive-microservices/route-vals.png)
 
 Leave other values set to their defaults, and click **Save**
 
 **4. Test the route**
 
-Test the route by running `curl http://www-coolstore-dev.[[HOST_SUBDOMAIN]]-80-[[KATACODA_HOST]].environments.katacoda.com/services/cart/99999`
+Test the route by running `curl http://www-userXX-coolstore-dev.${ROUTING_SUFFIX}/services/cart/99999`
 
 You should get a complete set of products, along with their inventory.
 
@@ -1316,19 +1231,17 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI and observe that the new catalog is being used along with the monolith:
 
-![Greeting](../../../assets/mono-to-micro-part-2/coolstore-web.png)
+![Greeting](./images/mono-to-micro-part-2/coolstore-web.png)
 
 Add some items to your cart, then visit the **Shopping Cart** tab to observe the new shipping fees we hard-coded earlier:
 
-![Greeting](../../../assets/reactive-microservices/fees.png)
+![Greeting](./images/reactive-microservices/fees.png)
 
-The **Checkout** functionality is yet to be implemented, so won't work, but it's not too far away and if you have time
-after this workshop feel free to contribute the changes and make this workshop even better!
+The **Checkout** functionality is yet to be implemented, so won't work, but it's not too far away and if you have time after this workshop feel free to contribute the changes and make this workshop even better!
 
 ## Congratulations!
 
-You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory, Catalog and Shopping Cart) are
-now implemented as microservices, without touching the monolith.
+You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory, Catalog and Shopping Cart) are now implemented as microservices, without touching the monolith.
 
 ## Summary
 
@@ -1338,7 +1251,6 @@ You created a new shopping cart microservice almost finalizing the migration fro
 
 Your final strangled monolith now looks like:
 
-![Greeting](../../../assets/reactive-microservices/goal.png)
+![Greeting](./images/reactive-microservices/goal.png)
 
 In the next chapter, we will talk more about how to make these microservices more resilient.
-
