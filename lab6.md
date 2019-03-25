@@ -9,7 +9,7 @@ In this scenario, you will learn more about Reactive Microservices using [Eclips
 
 In this scenario you will create three different services that interact using an _EventBus_ which also does a REST call to the CatalogService we built in the previous steps.
 
-![Architecture](./images/reactive-microservices/reactive-ms-architecture.png)
+![Architecture]({% image_path reactive-microservices/reactive-ms-architecture.png %}){:width="80%"}
 
 >**NOTE:** To simplify the deployment you will deploy all the services in a single Vert.x Server. However the code is 99% the same if we were to deploy these in separate services.
 
@@ -25,7 +25,7 @@ The asynchronous behavior or reactive systems will also save resources. In synch
 
 ## What is Eclipse Vert.x?
 
-![Local Web Browser Tab](./images/reactive-microservices/vertx-logo.png)
+![Local Web Browser Tab]({% image_path reactive-microservices/vertx-logo.png %}){:width="40%"}
 
 Eclipse Vert.x is a reactive toolkit for the Java Virtual Machine that is polyglot (e.g., supports multiple programming languages). In this session, we will focus on Java, but it is possible to build the same application in JavaScript, Groovy, Ruby, Ceylon, Scala, or Kotlin.
 
@@ -50,9 +50,9 @@ Eclipse Vert.x is event-driven and non-blocking, which means that applications i
 
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
-```sh
+~~~sh
 cd /projects/modernize-apps/cart
-```
+~~~
 
 ## Examine the sample project
 
@@ -60,7 +60,7 @@ The sample project shows the components of a basic Vert.x project laid out in di
 
 **1. Examine the Maven project structure.**
 
-```sh
+~~~sh
 .
 +-- pom.xml
 \-- src
@@ -84,7 +84,7 @@ The sample project shows the components of a basic Vert.x project laid out in di
         \-- resources
             \-- webroot
                 \-- index.html
-```
+~~~
 
 >**NOTE:** To generate a similar project skeleton you can visit the [Vert.x Starter](http://start.vertx.io/) webpage.
 
@@ -92,7 +92,7 @@ If you have used Maven and Java before this should look familiar. This is how a 
 
 The domain model consists of a ShoppingCart which has many ShoppingCartItems which has a one-to-one dependency to Product. The domain also consists of Different Promotions that uses the ShoppingCart state to see if it matches the criteria of the promotion.
 
-![Shopping Cart - Domain Model](./images/reactive-microservices/cart-model.png)
+![Shopping Cart - Domain Model]({% image_path reactive-microservices/cart-model.png %}){:width="60%"}
 
 ## Create a web server and a simple rest service
 
@@ -104,7 +104,7 @@ Vert.x gives you a lot of freedom in how you can shape your application and code
 
 In Java, a verticle is a class extending the Abstract Verticle class. For example:
 
-```java
+~~~java
 public class MyVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
@@ -116,7 +116,7 @@ public class MyVerticle extends AbstractVerticle {
         // Executed when the verticle is un-deployed
     }
 }
-```
+~~~
 
 ## Creating a simple web server that can serve static content
 
@@ -125,7 +125,7 @@ public class MyVerticle extends AbstractVerticle {
 We will start by creating the `CartServiceVerticle` like this. Create this file and add this code to the
 `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file:
 
-```java
+~~~java
 package com.redhat.coolstore;
 
 import com.redhat.coolstore.model.Product;
@@ -233,7 +233,7 @@ public class CartServiceVerticle extends AbstractVerticle {
 
     }
 }
-```
+~~~
 
 
 >**WARNING:** Don't remove the TODO markers. These will be used later to add new functionality. There are also some private method that we we will use later when we create our endpoints for the shopping cart.
@@ -244,7 +244,7 @@ Currently our verticle doesn't really do anything except logging some info. Let'
 
 You should see output that looks like this:
 
-```sh
+~~~sh
 [INFO] Launching Vert.x Application
 [INFO] jan 12, 2018 11:25:40 FM com.redhat.coolstore.CartServiceVerticle
 [INFO] INFO: Starting CartServiceVerticle
@@ -252,29 +252,29 @@ You should see output that looks like this:
 [INFO] INFO: Starting the HTTP Server on port 10080
 [INFO] jan 12, 2018 11:25:40 FM io.vertx.core.impl.launcher.commands.VertxIsolatedDeployer
 [INFO] INFO: Succeeded in deploying verticle
-```
+~~~
 
 **3. Add a router that can serve static content**
 Now let's add a Web server that can server static content, which only requires three lines of code at the `//TODO: Create Router` marker:
 
 Create the router object:
-```java
+~~~java
 Router router = Router.router(vertx);
-```
+~~~
 
 Add the route for static content at the `//TODO: Create static router` marker:
 
-```java
+~~~java
 router.get("/*").handler(StaticHandler.create());
-```
+~~~
 
 This configure the router to use the `StaticHandler` (provided by Vert.x) for all GET request.
 
 Create and start the web server listing to the port retrieved from the configuration by adding this to the `//TODO: Create HTTP Server` marker:
 
-```java
+~~~java
 vertx.createHttpServer().requestHandler(router::accept).listen(serverPort);
-```
+~~~
 
 Now let's restart the application. Execute:
 
@@ -286,7 +286,7 @@ Click on the **preview URL** link, which will open another tab or window of your
 
 You should now see an HTML page that looks like this:
 
-![Local Web Browser Tab](./images/reactive-microservices/web-page.png)
+![Local Web Browser Tab]({% image_path reactive-microservices/web-page.png %}){:width="80%"}
 
 > **NOTE:** The Fetch button doesn't work yet, but we will fix that later in this lab.
 
@@ -295,12 +295,12 @@ You should now see an HTML page that looks like this:
 Now let's add a simple rest service. Replace the `//TODO: Create hello router` marker with this code to
 create and start the web server listing to the port retrieved from the configuration:
 
-```java
+~~~java
 router.get("/hello").handler(rc-> rc.response()
             .setStatusCode(200)
             .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
             .end(new JsonObject().put("message","Hello").encode()));
-```
+~~~
 
 Notice that we add this handler above the static router. This is because the order we add routes does matter and if you added "/hello" after "/*" the hello router would never be used, since the static router is set to take care of all requests. However, since we add the hello router before the static router it will take priority over the static router.
 
@@ -316,7 +316,7 @@ Restart the application by running the following in the terminal or in clicking 
 
 After Vert.x is start execute a curl command in another terminal so like this. 
 
-```curl -X GET http://localhost:10080/hello; echo```
+~~~curl -X GET http://localhost:10080/hello; echo~~~
 
 The response body should be a JSON string `{"message":"Hello"}`.
 
@@ -350,7 +350,7 @@ One thing that can seem a bit strange is that the **Config Retriever** reads the
 
 Consider the following example.
 
-```java
+~~~java
 private void setupConfiguration(Vertx vertx) {
     ConfigStoreOptions defaultFileStore = new ConfigStoreOptions()
         .setType("file")
@@ -371,11 +371,11 @@ private void setupConfiguration(Vertx vertx) {
             result.fieldNames().forEach(s -> config().put(s, result.getValue(s)));
     });
 }
-```
+~~~
 
 Then in our start method of our Verticle we could run
 
-```java
+~~~java
 public void start() {
     setupConfiguration(vertx);
     Integer serverPort = config().getInteger("http.port", 10080);
@@ -383,7 +383,7 @@ public void start() {
     router.get("/*").handler(StaticHandler.create());
     vertx.createHttpServer().requestHandler(router::accept).listen(serverPort);
 }
-```
+~~~
 
 At a first glance this may look like a good way to implement an environment specific configuration. Basically it will use a default config call `config-default.json` and if we start he application with parameter `-Dvertx.profiles.active=[name]` it will overload the default config with values from `config-[name].json`.
 
@@ -398,7 +398,7 @@ One solution to this problem is to load our Verticle from another verticle and p
 Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Add a `src/main/java/com/redhat/coolstore/MainVerticle.java` file
 and add the following content:
 
-```java
+~~~java
 package com.redhat.coolstore;
 
 import io.vertx.config.ConfigRetriever;
@@ -441,7 +441,7 @@ public class MainVerticle extends AbstractVerticle {
         return ConfigRetriever.create(vertx, configStoreOptions);
     }
 }
-```
+~~~
 
 >**NOTE:** The MainVerticle deploys the `CartServiceVerticle` in a handler that will be called after the retriever has read the configuration. It then passes the new configuration as `DeploymentOptions` to the CartService. Later on we will use this to deploy other Verticles.
 
@@ -450,11 +450,11 @@ At the moment we only need one value in the configuration file, but we will add 
 
 Copy this into the configuration file `src/main/resources/config-default.json`:
 
-```java
+~~~java
 {
     "http.port" : 8082
 }
-```
+~~~
 
 Finally we need to tell the `vertx-maven-plugin` to use the MainVerticle instead of the CartServiceVerticle. In the `pom.xml` under `project->properties` there is a tag called `<vertx.verticle>` that currently specifies the full path to the `CartServiceVerticle`.
 
@@ -462,9 +462,9 @@ First open the `pom.xml`
 
 Then Change the `<vertx.verticle>com.redhat.coolstore.CartServiceVerticle</vertx.verticle>` to `<vertx.verticle>com.redhat.coolstore.MainVerticle</vertx.verticle>`
 
-```java
+~~~java
 com.redhat.coolstore.MainVerticle
-```
+~~~
 
 
 **3. Test the default configuration**
@@ -479,7 +479,7 @@ Click on the **preview URL** which will open another tab or window of your brows
 
 Again you should now see an HTML page that looks like this:
 
-![Local Web Browser Tab](./images/reactive-microservices/web-page.png)
+![Local Web Browser Tab]({% image_path reactive-microservices/web-page.png %}){:width="80%"}
 
 ## Congratulations
 
@@ -507,14 +507,14 @@ First we are going to create a very simple endpoint that returns a `ShopppingCar
 
 Add this code to the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` class at the `//TODO: Add handler for getting a shoppingCart by id` marker:
 
-```java
+~~~java
 private void getCart(RoutingContext rc) {
     logger.info("Retrieved " + rc.request().method().name() + " request to " + rc.request().absoluteURI());
     String cartId = rc.pathParam("cartId");
     ShoppingCart cart = getCart(cartId);
     sendCart(cart,rc);
 }
-```
+~~~
 
 
 **2. Creating a GET /services/carts endpoint that returns all carts**
@@ -524,7 +524,7 @@ Now let's create a bit more complex implementation that returns many `ShoppingCa
 Still in file `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` add this code at
 the `//TODO: Add handler for getting a list of shoppingCarts` marker:
 
-```java
+~~~java
 private void getCarts(RoutingContext rc) {
     logger.info("Retrieved " + rc.request().method().name() + " request to " + rc.request().absoluteURI());
     JsonArray cartList = new JsonArray();
@@ -534,12 +534,12 @@ private void getCarts(RoutingContext rc) {
         .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
         .end(cartList.encodePrettily());
 }
-```
+~~~
 
 The most important line in this method is this:
-```java
+~~~java
 carts.keySet().forEach(cartId ->; cartList.add(Transformers.shoppingCartToJson(carts.get(cartId))));
-``` 
+~~~ 
 
 In this lambda expression we are iterating through the list of shopping carts and transforming them to JsonObject using the `Transformers` utility class to get a `JsonObject` that we add to a `JsonArray`. We can then return a String encoding of that JsonArray to the response.
 
@@ -548,22 +548,22 @@ In this lambda expression we are iterating through the list of shopping carts an
 Open the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file.
 
 Add the first route by adding the following at `//TODO: Create cart router` marker
-```java
+~~~java
 router.get("/services/cart/:cartId").handler(this::getCart);
-```
+~~~
 
 Add the second route by adding the following at `//TODO: Create carts router` marker
-```java
+~~~java
 router.get("/services/carts").handler(this::getCarts);
-```
+~~~
 
 The `this::getCarts` is a lambda reference to the `getCarts(RoutingContext)`. Another way to write this would be like this
 
-```java
+~~~java
 router.get("/services/carts").handler(rc -> {
   this.getCarts(rc);
 });
-```
+~~~
 
 **4. Test the new Route**
 
@@ -575,10 +575,10 @@ Now test the route with a curl command in the terminal like this:
 
 `curl -X GET http://localhost:8082/services/carts; echo`
 
-This should print the body of the response  that looks somewhat like this. Note that the the content from this is generate from the ```src/main/java/com/redhat/coolstore/utils/Transformers.java``` and will return a random number of products, so you actual content may vary.
+This should print the body of the response  that looks somewhat like this. Note that the the content from this is generate from the ~~~src/main/java/com/redhat/coolstore/utils/Transformers.java~~~ and will return a random number of products, so you actual content may vary.
 
 
-```json
+~~~json
 [ {
   "cartId" : "99999",
   "cartTotal" : 632.36,
@@ -598,16 +598,16 @@ This should print the body of the response  that looks somewhat like this. Note 
     "quantity" : 1
   } ]
 } ]
-```
+~~~
 
 Also test getting a single cart curl like this:
-```curl -X GET http://localhost:8082/services/cart/99999; echo```
+~~~curl -X GET http://localhost:8082/services/cart/99999; echo~~~
 
 Click on the **preview URL** which will open another tab or window of your browser pointing to port 8082 on your client. 
 
 Now the default page should have an entry in the table matching the values for your JSON file above.
 
-![Local Web Browser Tab](./images/reactive-microservices/web-page-content.png)
+![Local Web Browser Tab]({% image_path reactive-microservices/web-page-content.png %}){:width="80%"}
 
 ## Congratulations
 
@@ -619,11 +619,11 @@ In the next step we will implement another endpoint and this time it will also c
 
 In this step we will implement POST operation for adding a product. The UI in Coolstore Monolith uses a POST operation when a user clicks `Add to Cart`.
 
-![Add To Cart](./images/reactive-microservices/add-product.png)
+![Add To Cart]({% image_path reactive-microservices/add-product.png %}){:width="50%"}
 
 The UI will then issue a POST request to `/services/cart/<cartId>/<prodId>/<quantity>`. However when adding a product to the ShoppingCartItem we need an actual `Product` object.
 
-![Add To Cart](./images/reactive-microservices/cart-model.png)
+![Add To Cart]({% image_path reactive-microservices/cart-model.png %}){:width="80%"}
 
 So our implementation of this service needs to retrieve a Product object from the `CatalogService`. Let's get started with this implementation.
 
@@ -633,9 +633,9 @@ Make sure `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` is open.
 
 Let's start by adding a router, by adding the following where at the `//TODO: Create add router` marker in class `CartServiceVerticle` 
 
-```java
+~~~java
 router.post("/services/cart/:cartId/:itemId/:quantity").handler(this::addToCart);
-```
+~~~
 
 **2. Create handler for our route**
 
@@ -643,7 +643,7 @@ Our newly create route needs a handler. This method should look like this `void 
 
 Adding the following at the `//TODO: Add handler for adding a Item to the cart` marker in class `CartServiceVerticle`
 
-```java
+~~~java
 private void addToCart(RoutingContext rc) {
     logger.info("Retrieved " + rc.request().method().name() + " request to " + rc.request().absoluteURI());
 
@@ -669,7 +669,7 @@ private void addToCart(RoutingContext rc) {
 //TODO: Get product from Catalog service and add it to the ShoppingCartItem
     }
 }
-```
+~~~
 
 We are not completely done with the addToCart method yet. We have a TODO for Getting a product from the `CatalogService`. Since we do not want to block the thread while waiting for the `CatalogService` to respond this should be a async operation. 
 
@@ -681,20 +681,20 @@ For making calls to external HTTP services Vert.x supplies a WebClient. The `Web
 
 Copy this into the configuration file `src/main/resources/config-default.json`:
 
-```java
+~~~java
 {
     "http.port" : 8082,
     "catalog.service.port" : 8081,
     "catalog.service.hostname" : "localhost",
     "catalog.service.timeout" : 3000
 }
-```
+~~~
 
 We are now ready to create our `getProduct` method
 
 Adding the following at the `//TODO: Add method for getting products` marker in class `CartServiceVerticle`
 
-```java
+~~~java
 private void getProduct(String itemId, Handler<AsyncResult<Product>> resultHandler) {
     WebClient client = WebClient.create(vertx);
     Integer port = config().getInteger("catalog.service.port", 8080);
@@ -711,13 +711,13 @@ private void getProduct(String itemId, Handler<AsyncResult<Product>> resultHandl
             }
         });
 }
-```
+~~~
 
 Now we can call this method from the `addToCart` method and pass a Lambda call back. 
 
 Adding the following at the `//TODO: Get product from Catalog service and add it to the ShoppingCartItem`
 
-```java
+~~~java
 this.getProduct(itemId, reply -> {
     if (reply.succeeded()) {
         newItem.setProduct(reply.result());
@@ -727,7 +727,7 @@ this.getProduct(itemId, reply -> {
         sendError(rc);
     }
 });
-```
+~~~
 
 To summarize our `addToCart` handler will now first check if the product already exists in the shopping cart. If it does exist we update the quantity and then send the response. If it doesn't exist we call the catalog service to retrieve the data about the product, create a new ShoppingCartItem, set the quantity, add the retrieved product, add it the `ShoppingCartItem`, add the item to the shopping cart and then finally send the response to the client. 
 
@@ -742,7 +742,9 @@ Start the cart service
 
 Then execute this to test retrieving a specific cart and the quantity of item `329299` in the cart:
 
-```curl -s http://localhost:8082/services/cart/99999 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity```
+~~~
+curl -s http://localhost:8082/services/cart/99999 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
+~~~
 
 This will return the quantity like below, but the actual number may be different.
 
@@ -750,7 +752,10 @@ This will return the quantity like below, but the actual number may be different
 
 Now let's call our addToCart method.
 
-```curl -s -X POST http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity```
+~~~
+curl -s -X POST http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
+~~~
+
 This should now return a shopping cart where one more instance of the product is added, because of our grep commands you would see something like this:
 
 `"quantity" : 4`
@@ -763,23 +768,27 @@ The CartService depends on the CatalogService and just like in the Spring Boot e
 
 First lets check if the catalog service is still running locally.
 
-```curl -v http://localhost:8081/services/products 2>&1 | grep "HTTP/1.1 200"```
+~~~
+curl -v http://localhost:8081/services/products 2>&1 | grep "HTTP/1.1 200"
+~~~
 
 If that prints `< HTTP/1.1 200` then our service is responding correctly otherwise we need to start the Catalog application in a separate terminal like this:
 
-```cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests``` or use ``run-spring-boot`` command in the command palette.
+`cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests` or use `run-spring-boot` command in the command palette.
 
-> /!\ When launching the ``run-spring-boot`` command you should have selected the catalog project in the project explorer
+> /!\ When launching the `run-spring-boot` command you should have selected the catalog project in the project explorer
 
 Wait for it to complete. You should see `Started RestApplication in xxxxx seconds`.
 
 To test to add a product we are going to use a new shopping cart id. Execute:
 
-```curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 ; echo```
+~~~
+curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 ; echo
+~~~
 
 This should print the follow:
 
-```
+~~~json
 {
   "cartId" : "88888",
   "cartTotal" : 34.99,
@@ -799,14 +808,14 @@ This should print the follow:
     "quantity" : 1
   } ]
 }
-```
+~~~
 
 **5. Add endpoint for deleting items**
 Since we are now so skilled in writing endpoints lets go ahead and also create the endpoint for removing a product. The only tricky part about removing is that the request might not remove all products in once. E.g. If we have 10 Red Hat Fedoras and the request just decreases 3 we should not remove the Shopping Cart item, but instead lower the quantity to 7. 
 
 Again in the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file add the following at the `//TODO: Add handler for removing an item from the cart`
 
-```java
+~~~java
 private void removeShoppingCartItem(RoutingContext rc) {
     logger.info("Retrieved " + rc.request().method().name() + " request to " + rc.request().absoluteURI());
     String cartId = rc.pathParam("cartId");
@@ -825,15 +834,15 @@ private void removeShoppingCartItem(RoutingContext rc) {
     );
     sendCart(cart,rc);
 }
-```
+~~~
 
 Now let's go ahead and create the route.
 
 Add the following at the `//TODO: Create remove router` marker in class `CartServiceVerticle.start`:
 
-```java
+~~~java
 router.delete("/services/cart/:cartId/:itemId/:quantity").handler(this::removeShoppingCartItem);
-```
+~~~
 
 **6. Test to remove a product**
 
@@ -843,7 +852,9 @@ Start the cart service ``mvn compile vertx:run`` or use ``run-vertx`` command in
 
 The run this to get the quantity of item `329299` in the cart:
 
-```curl -s http://localhost:8082/services/cart/99999 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity```
+~~~
+curl -s http://localhost:8082/services/cart/99999 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
+~~~
 
 This will return the quantity like below, but the actual number may be different.
 
@@ -851,7 +862,9 @@ This will return the quantity like below, but the actual number may be different
 
 Now let's call our removeShoppingCartItem method.
 
-```curl -s -X DELETE http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity```
+~~~
+curl -s -X DELETE http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
+~~~
 
 If this results in an empty cart (quantity =0 ) this command will not return any output.
 
@@ -878,83 +891,62 @@ The event bus allows different parts of your application to communicate with eac
 
 It can even be bridged to allow client side JavaScript running in a browser to communicate on the same event bus.
 
-The event bus forms a distributed peer-to-peer messaging system spanning multiple server nodes and multiple browsers.
-
-The event bus supports publish/subscribe, point to point, and request-response messaging.
-
-The event bus API is very simple. It basically involves registering handlers, unregistering handlers and sending and publishing messages.
+* The event bus forms a distributed peer-to-peer messaging system spanning multiple server nodes and multiple browsers.
+* The event bus supports publish/subscribe, point to point, and request-response messaging.
+* The event bus API is very simple. It basically involves registering handlers, unregistering handlers and sending and publishing messages.
 
 Internally the EventBus is an abstraction and Vert.x have several different implementations that can be used depending on demands. Default it uses a local java implementation that can't be shared between different java processes. However, for clustered solutions the event bus can use an distributed in-memory data store like Infinispan (also know as Red Hat JBoss Data Grid) or Hazelcast. There are also work in progress to be able to use a JMS implementation like Apache ActiveMQ (also known as Red Hat AMQ) 
 
->**NOTE:** In the near future RHOAR is planned to offer support for Red Hat JBoss Data Grid for clustering use-cases of Vert.x
+>**NOTE:** Red Hat OpenShift Application Runtimes offer support for Red Hat JBoss Data Grid for clustering use-cases of Vert.x
 
 ## The Event bus API
 
 Let's first discuss some Theory:
 
 **Addressing**
-Messages are sent on the event bus to an address.
 
-Vert.x doesn’t bother with any fancy addressing schemes. In Vert.x an address is simply a string. Any string is valid. However it is wise to use some kind of scheme, e.g. using periods to demarcate a namespace.
-
-Some examples of valid addresses are europe.news.feed1, acme.games.pacman, sausages, and X.
+* Messages are sent on the event bus to an address.
+* Vert.x doesn’t bother with any fancy addressing schemes. In Vert.x an address is simply a string. Any string is valid. However it is wise to use some kind of scheme, e.g. using periods to demarcate a namespace.
+* Some examples of valid addresses are europe.news.feed1, acme.games.pacman, sausages, and X.
 
 **Handlers**
-Messages are received in handlers. You register a handler at an address.
 
-Many different handlers can be registered at the same address.
-
-A single handler can be registered at many different addresses.
+* Messages are received in handlers. You register a handler at an address.
+* Many different handlers can be registered at the same address.
+* A single handler can be registered at many different addresses.
 
 **Publish / subscribe messaging**
-The event bus supports publishing messages.
 
-Messages are published to an address. Publishing means delivering the message to all handlers that are registered at that address.
-
-This is the familiar publish/subscribe messaging pattern.
-
-Point to point and Request-Response messaging. The event bus also supports point to point messaging.
-
-Messages are sent to an address. Vert.x will then route it to just one of the handlers registered at that address.
-
-If there is more than one handler registered at the address, one will be chosen using a non-strict round-robin algorithm.
-
-With point to point messaging, an optional reply handler can be specified when sending the message.
-
-When a message is received by a recipient, and has been handled, the recipient can optionally decide to reply to the message. If they do so the reply handler will be called.
-
-When the reply is received back at the sender, it too can be replied to. This can be repeated ad-infinitum, and allows a dialog to be set-up between two different verticles.
-
-This is a common messaging pattern called the request-response pattern. 
+* The event bus supports **publishing messages**. Messages are published to an address. Publishing means delivering the message to all handlers that are registered at that address. This is the familiar publish/subscribe messaging pattern.
+* **Point to point** and **Request-Response messaging**. The event bus also supports point to point messaging.Messages are sent to an address. Vert.x will then route it to just one of the handlers registered at that address. If there is more than one handler registered at the address, one will be chosen using a non-strict round-robin algorithm. With point to point messaging, an optional reply handler can be specified when sending the message. When a message is received by a recipient, and has been handled, the recipient can optionally decide to reply to the message. If they do so the reply handler will be called. When the reply is received back at the sender, it too can be replied to. This can be repeated ad-infinitum, and allows a dialog to be set-up between two different verticles. This is a common messaging pattern called the request-response pattern. 
 
 Let’s jump into the API
 
-Getting the event bus
-You get a reference to the event bus as follows:
+Getting the event bus... you get a reference to the event bus as follows:
 
-```java
+~~~java
 EventBus eb = vertx.eventBus();
-```
+~~~
 
 There is a single instance of the event bus per Vert.x instance.
 
 **Registering Handlers**
 This simplest way to register a handler is using consumer. Here’s an example:
 
-```java
+~~~java
 EventBus eb = vertx.eventBus();
 
 eb.consumer("news.uk.sport", message -> {
   System.out.println("I have received a message: " + message.body());
 });
-```
+~~~
 
 **Publishing messages**
 Publishing a message is simple. Just use publish specifying the address to publish it to.
 
-```java
+~~~java
 eventBus.publish("news.uk.sport", "Yay! Someone kicked a ball");
-```
+~~~
 
 **The Message object**
 The object you receive in a message handler is a `Message`.
@@ -968,7 +960,7 @@ Since RHOAR currently do not support using distributed event bus we will create 
 
 Add this code to the `src/main/java/com/redhat/coolstore/ShippingServiceVerticle.java` file:
 
-```java
+~~~java
 package com.redhat.coolstore;
 
 import io.vertx.core.AbstractVerticle;
@@ -992,18 +984,18 @@ public class ShippingServiceVerticle extends AbstractVerticle {
         });
     }
 }
-```
+~~~
 
 We also need to start the Verticle by deploying it form the MainVerticle. So add this code to the `src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PromoServiceVerticle` marker:
 
-```java
+~~~java
 vertx.deployVerticle(
                     ShippingServiceVerticle.class.getName(),
                     new DeploymentOptions().setConfig(config.result())
                 );
-```
+~~~
 
-Done! That was easy. :-) We still have to update the shopping cart to use the Shipping service. Let's do that next.
+**Done! That was easy. :-)** We still have to update the shopping cart to use the Shipping service. Let's do that next.
 
 **2. Update the Shopping cart to call the Shipping Service**
 In the future we might want to base the shipping service on the actual content of the Shopping cart so it stands to reason that we call the shipping service every time someone updates the cart. In the training however we will only call the Shopping cart when someone adds a product to it. 
@@ -1012,7 +1004,7 @@ We will implement the shipping fee similary to how we implemented the `getProduc
 
 In `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` we will add the following method at the marker: `//TODO: Add method for getting the shipping fee`. Copy the content below:
 
-```java
+~~~java
 private void getShippingFee(ShoppingCart cart, Handler<AsyncResult<Double>> resultHandler) {
     EventBus eb = vertx.eventBus();
 
@@ -1028,12 +1020,12 @@ private void getShippingFee(ShoppingCart cart, Handler<AsyncResult<Double>> resu
         }
     );
 }
-```
+~~~
 
 Now, lets update the `addProduct` request handler method. Click to add it at the `sendCart(cart,rc); //TODO: update the shipping fee` marker replacing
 the existing `sendCart(cart, rc);` with an updated code block:
 
-```java
+~~~java
 this.getShippingFee(cart, message -> {
     if(message.succeeded()) {
         cart.setShippingTotal(message.result());
@@ -1043,11 +1035,11 @@ this.getShippingFee(cart, message -> {
     }
 
 });
-```
+~~~
 
 Since we have the special case of product already exists we need to update it twice.  Replace the line with `sendCart(cart, rc)` that you just added with another duplicate block:
 
-```java
+~~~java
 this.getShippingFee(cart, message -> {
     if(message.succeeded()) {
         cart.setShippingTotal(message.result());
@@ -1057,7 +1049,7 @@ this.getShippingFee(cart, message -> {
     }
 
 });
-```
+~~~
 
 **3. Test our changes**
 
@@ -1068,11 +1060,15 @@ Firstly, build and start the cart service
 
 Now issue a curl command to add a product that exists
 
-```curl -s -X POST http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity```
+~~~
+curl -s -X POST http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
+~~~
 
 Let's also make sure that it works with a totally new shopping cart, which would test the second part of our changes:
 
-```curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity```
+~~~
+curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
+~~~
 
 This should now return a new shopping cart where one only instance of the product is added, because of our grep commands you would see something like this:
 
@@ -1088,7 +1084,7 @@ We have already deployed our coolstore monolith, inventory and catalog to OpenSh
 
 Make sure you are on the right OpenShift project :
 
-```oc project userXX-modern-coolstore```
+`oc project userXX-modern-coolstore`
 
 **3. Open the OpenShift Web Console**
 
@@ -1104,13 +1100,13 @@ Create the file: ``src/main/resources/config-openshift.json``
 
 Copy the following content to the file:
 
-```java
+~~~java
 {
     "http.port" : 8080,
     "catalog.service.port" : 8080,
     "catalog.service.hostname" : "catalog"
 }
-```
+~~~
 
 >**NOTE:** The `config-openshift.json` does not have all values of `config-default.json`, that is because on the values that need to change has to be specified here. Our solution will fallback to the default configuration for values that aren't configured in the environment specific config.
 
@@ -1126,7 +1122,7 @@ Create the file ``src/main/fabric8/deployment.yml``
 
 Add the following content to the file
 
-```java
+~~~java
 apiVersion: v1
 kind: Deployment
 metadata:
@@ -1138,7 +1134,7 @@ spec:
         - env:
             - name: JAVA_OPTIONS
               value: "-Dvertx.profiles.active=openshift -Dvertx.disableDnsResolver=true"
-```
+~~~
 
 We also need to add a route.yml like this:
 
@@ -1146,7 +1142,7 @@ Create the file by clicking on open ``src/main/fabric8/route.yml``
 
 Add the following content:
 
-```java
+~~~java
 apiVersion: v1
 kind: Route
 metadata:
@@ -1157,7 +1153,7 @@ spec:
   to:
     kind: Service
     name: ${project.artifactId}
-```
+~~~
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
@@ -1177,7 +1173,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-![Overview link](./images/reactive-microservices/routelink.png)
+![Overview link]({% image_path reactive-microservices/routelink.png %}){:width="80%"}
 
 ## Congratulations!
 
@@ -1198,10 +1194,10 @@ Flow the steps below to create a path based route.
 
 The output of this command shows us the hostname:
 
-```
+~~~
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
 www       www-userXX-coolstore-dev.${ROUTING_SUFFIX}             coolstore   <all>                   None
-```
+~~~
 
 My hostname is `www-userXX-coolstore-dev.${ROUTING_SUFFIX}` but **yours will be different**.
 
@@ -1217,7 +1213,7 @@ My hostname is `www-userXX-coolstore-dev.${ROUTING_SUFFIX}` but **yours will be 
 * **Path**: `/services/cart`
 * **Service**: `cart`
 
-![Greeting](./images/reactive-microservices/route-vals.png)
+![Greeting]({% image_path reactive-microservices/route-vals.png %}){:width="80%"}
 
 Leave other values set to their defaults, and click **Save**
 
@@ -1231,11 +1227,11 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI and observe that the new catalog is being used along with the monolith:
 
-![Greeting](./images/mono-to-micro-part-2/coolstore-web.png)
+![Greeting]({% image_path mono-to-micro-part-2/coolstore-web.png %}){:width="80%"}
 
 Add some items to your cart, then visit the **Shopping Cart** tab to observe the new shipping fees we hard-coded earlier:
 
-![Greeting](./images/reactive-microservices/fees.png)
+![Greeting]({% image_path reactive-microservices/fees.png %}){:width="60%"}
 
 The **Checkout** functionality is yet to be implemented, so won't work, but it's not too far away and if you have time after this workshop feel free to contribute the changes and make this workshop even better!
 
@@ -1251,6 +1247,6 @@ You created a new shopping cart microservice almost finalizing the migration fro
 
 Your final strangled monolith now looks like:
 
-![Greeting](./images/reactive-microservices/goal.png)
+![Greeting]({% image_path reactive-microservices/goal.png %}){:width="80%"}
 
 In the next chapter, we will talk more about how to make these microservices more resilient.

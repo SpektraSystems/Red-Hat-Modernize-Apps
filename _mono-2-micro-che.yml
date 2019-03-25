@@ -1,8 +1,8 @@
-id: monomicro
-name: OpenShift Application Modernization Workshop
+id: "monomicro"
+name: "OpenShift Application Modernization Workshop"
 
 content:
-  url: https://raw.githubusercontent.com/clerixmaxime/modernize-apps-guides
+  url: https://raw.githubusercontent.com/clerixmaxime/modernize-apps-guides/master
 
 vars:
   OPENSHIFT_DOCS_BASE: "https://docs.openshift.com/container-platform/3.11"
@@ -28,10 +28,10 @@ vars:
   
 modules:
   activate:
-  - getting-started
-  - 01-moving-existing-apps
-  - 02-developer-intro
-  - 03-mono-to-micro-part-1
-  - 04-mono-to-micro-part-2
-  - 05-reactive-microservices
-  - env-info
+  - lab1
+  - lab2
+  - lab3
+  - lab4
+  - lab5
+  - lab6
+  - lab7

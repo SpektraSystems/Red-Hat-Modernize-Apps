@@ -27,7 +27,7 @@ Go to the [CodeReady Workspaces url]({{ ECLIPSE_CHE_URL }}) in order to configur
 First, you need to register as a user. Register and choose the same username and password as 
 your OpenShift credentials.
 
-![CodeReady Workspaces - Register](./images/getting-started/codeready-register.png)
+![CodeReady Workspaces - Register]({% image_path getting-started/codeready-register.png %}){:width="100%"}
 
 Log into CodeReady Workspaces with your user. You can now create your workspace based on a stack. A 
 stack is a template of workspace configuration. For example, it includes the programming language and tools needed
@@ -36,14 +36,14 @@ on-demand.
 
 For this lab, click on the **Java Modernize-Apps** stack and then on the **Create** button. 
 
-![CodeReady Workspaces Workspace](./images/getting-started/codeready-create-workspace.png)
+![CodeReady Workspaces Workspace]({% image_path getting-started/codeready-create-workspace.png %}){:width="100%"}
 
 Click on **Open** to open the workspace and then on the **Start** button to start the workspace for use, if it hasn't started automatically.
 
 It takes a little while for the workspace to be ready. When it's ready, you will see a fully functional 
 CodeReady Workspaces IDE running in your browser.
 
-![CodeReady Workspaces Workspace](./images/getting-started/codeready-workspace.png)
+![CodeReady Workspaces Workspace]({% image_path getting-started/codeready-workspace.png %}){:width="100%"}
 
 Now you can import the project skeletons into your workspace.
 
@@ -54,7 +54,7 @@ In the project explorer pane, click on the **Import Projects...** and enter the 
   * Name: `modernize-apps`
   * Check **Skip the root folder of the archive**
 
-![Codeready Workspaces - Import Project](./images/getting-started/codeready-import-project.png)
+![Codeready Workspaces - Import Project]({% image_path getting-started/codeready-import-project.png %}){:width="100%"}
 
 Click on **Import**. Make sure you choose the **Blank** project configuration since the zip file contains multiple 
 project skeletons. Click on **Save**
@@ -66,18 +66,18 @@ enable these capabilities, let's convert the imported project skeletons to a Mav
 
 In the project explorer, right-click on **monolith** and then click on **Convert to Project**.
 
-![Codeready Workspaces - Convert to Project](./images/getting-started/codeready-convert.png)
+![Codeready Workspaces - Convert to Project]({% image_path getting-started/codeready-convert.png %}){:width="100%"}
 
 Choose **Maven** from the project configurations and then click on **Save**
 
-![Codeready Workspaces - Convert to Project](./images/getting-started/codeready-convert2.png)
+![Codeready Workspaces - Convert to Project]({% image_path getting-started/codeready-convert2.png %}){:width="100%"}
 
 Repeat the above for **cart**, **catalog**, **inventory** and **ratings** projects.
 
 Note the **Terminal** window in Codeready Workspaces. For the rest of these labs, anytime you need to run 
 a command in a terminal, you can use the Codeready Workspaces **Terminal** window.
 
-![Codeready Workspaces - Terminal](./images/getting-started/codeready-terminal.png)
+![Codeready Workspaces - Terminal]({% image_path getting-started/codeready-terminal.png %}){:width="100%"}
 
 ## Explore OpenShift with OpenShift CLI
 

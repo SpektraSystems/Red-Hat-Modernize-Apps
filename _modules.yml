@@ -2,17 +2,17 @@ config:
     renderer: markdown
 
 modules:
-  getting-started:
+  lab1:
     name: Getting Started
-  01-moving-existing-apps:
+  lab2:
     name: Moving Existing Apps
-  02-developer-intro:
+  lab3:
     name: Developer Introduction
-  03-mono-to-micro-part-1:
+  lab4:
     name: Mono To Micro - Thorntail (Part 1)
-  04-mono-to-micro-part-2:
+  lab5:
     name: Mono To Micro - Spring Boot (Part 2)
-  05-mono-to-micro-part-3:
+  lab6:
     name: Mono To Micro - Reactive Microservices with VertX (Part 3)
-  env-info:
+  lab7:
     name: "Appendix: Lab Env Info"

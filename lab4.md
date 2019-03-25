@@ -17,11 +17,11 @@ You will implement one component of the monolith as a Thorntail microservice and
 
 The goal is to deploy this new microservice alongside the existing monolith, and then later on we'll tie them together. But after this scenario, you should end up with something like:
 
-![Logo](./images/mono-to-micro-part-1/goal.png)
+![Logo]({% image_path mono-to-micro-part-1/goal.png %}){:width="80%"}
 
 ## What is Thorntail? 
 
-![Logo](./images/mono-to-micro-part-1/swarm-logo.png)
+![Logo]({% image_path mono-to-micro-part-1/swarm-logo.png %}){:width="50%"}
 
 Java EE applications are traditionally created as an **ear** or **war** archive including all  dependencies and deployed in an application server. Multiple Java EE applications can and  were typically deployed in the same application server. This model is well understood in the development teams and has been used over the past several years.
 
@@ -60,7 +60,7 @@ The listed jar archive, **inventory-1.0.0-SNAPSHOT-swarm.jar** , is an uber-jar 
 
 Now let's write some code and create a domain model, service interface and a RESTful endpoint to access inventory:
 
-![Inventory RESTful Service](./images/mono-to-micro-part-1/wfswarm-inventory-arch.png)
+![Inventory RESTful Service]({% image_path mono-to-micro-part-1/wfswarm-inventory-arch.png %}){:width="80%"}
 
 ## Create Inventory Domain
 
@@ -71,7 +71,7 @@ The first step is to define the model (definition) of an Inventory object. Since
 Create a new Java class named `Inventory.java` in
 `com.redhat.coolstore.model` package with the following code, identical to the monolith code :
 
-```java
+~~~java
 package com.redhat.coolstore.model;
 
 import javax.persistence.Entity;
@@ -148,7 +148,7 @@ public class Inventory implements Serializable {
     }
 }
 
-```
+~~~
 
 Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
 
@@ -170,7 +170,7 @@ If builds successfully, continue to the next step to create a new service.
 
 In this step we will mirror the abstraction of a _service_ so that we can inject the Inventory _service_ into various places (like a RESTful resource endpoint) in the future. This is the same approach that our monolith uses, so we can re-use this idea again. Create an **InventoryService** class in the `com.redhat.coolstore.service` package with the below code:
 
-```java
+~~~java
 package com.redhat.coolstore.service;
 
 
@@ -208,7 +208,7 @@ public class InventoryService {
         return query.getResultList();
     }
 }
-```
+~~~
 
 Review the **InventoryService** class and note the EJB and JPA annotations on this class:
 
@@ -235,7 +235,7 @@ You should see a **BUILD SUCCESS** in the build logs. If builds successfully, co
 
 Thorntail uses JAX-RS standard for building REST services. Create a new Java class named `InventoryEndpoint.java` in `com.redhat.coolstore.rest` package with the following content :
 
-```java
+~~~java
 package com.redhat.coolstore.rest;
 
 import java.io.Serializable;
@@ -276,7 +276,7 @@ public class InventoryEndpoint implements Serializable {
 
 }
 
-```
+~~~
 
 The above REST services defines two endpoints:
 
@@ -305,9 +305,9 @@ Using the Thorntail maven plugin (predefined in `pom.xml`), you can conveniently
 
 Once the application is done initializing you should see:
 
-```
+~~~
 INFO  [org.wildfly.swarm] (main) WFSWARM99999: Wildfly-Swarm is Ready
-```
+~~~
 
 Running locally using `wildfly-swarm:run` will use an in-memory database with default credentials. In a production application you will use an external source for credentials using an OpenShift _secret_ in later steps, but for now this will work for development and testing.
 
@@ -315,15 +315,13 @@ Running locally using `wildfly-swarm:run` will use an in-memory database with de
 
 To test the running application, click on the **preview URL** on the top of the run-thorntail tab. This will open another tab or window of your browser pointing to port 8080 on your client.
 
-![Preview](./images/mono-to-micro-part-1/preview.png)
+![Preview]({% image_path mono-to-micro-part-1/preview.png %}){:width="80%"}
 
-> or use this at 
-
-`http://localhost:8080` link.
+> or use this at : `http://localhost:8080` link.
 
 You should now see a html page that looks like this
 
-![App](./images/mono-to-micro-part-1/app.png)
+![App]({% image_path mono-to-micro-part-1/app.png %}){:width="80%"}
 
 This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
 
@@ -335,9 +333,9 @@ To see the raw JSON output using `curl`, you can open an new terminal window by 
 
 You would see a JSON response like this:
 
-```
+~~~
 {"itemId":"329299","location":"Raleigh","quantity":736,"link":"http://maps.google.com/?q=Raleigh"}
-```
+~~~
 
 The REST API returned a JSON object representing the inventory count for this product. Congratulations!
 
@@ -347,9 +345,9 @@ Before moving on, click in the first terminal window where Thorntail is running 
 
 You should see something like:
 
-```
+~~~
 WFLYSRV0028: Stopped deployment inventory-1.0.0-SNAPSHOT.war (runtime-name: inventory-1.0.0-SNAPSHOT.war) in 70ms
-```
+~~~
 
 This indicates the application is stopped.
 
@@ -369,13 +367,15 @@ In this step we will deploy our new Inventory microservice for our CoolStore app
 
 Create a new project for the modernized services:
 
-`oc new-project userXX-modern-coolstore --display-name="CoolStore Microservice Application"`
+~~~shell
+oc new-project userXX-modern-coolstore --display-name="CoolStore Microservice Application"
+~~~
 
 **3. Open the OpenShift Web Console**
 
 You should be familiar with the OpenShift Web Console by now! Navigate to the new  project overview page
 
-![Web Console Overview](./images/mono-to-micro-part-1/overview.png)
+![Web Console Overview]({% image_path mono-to-micro-part-1/overview.png %}){:width="80%"}
 
 There's nothing there now, but that's about to change.
 
@@ -388,19 +388,21 @@ Let's deploy our new inventory microservice to OpenShift!
 Our production inventory microservice will use an external database (PostgreSQL) to house inventory data.
 First, deploy a new instance of PostgreSQL by executing:
 
-```
+~~~
 oc new-app -e POSTGRESQL_USER=inventory \
            -e POSTGRESQL_PASSWORD=mysecretpassword \
            -e POSTGRESQL_DATABASE=inventory \
            openshift/postgresql:latest \
            --name=inventory-database
-```
+~~~
 
 > **NOTE:** If you change the username and password you also need to update `src/main/fabric8/credential-secret.yml` which contains the credentials used when deploying to OpenShift.
 
 This will deploy the database to our new project. Wait for it to complete:
 
-`oc rollout status -w dc/inventory-database`
+~~~
+oc rollout status -w dc/inventory-database
+~~~
 
 **2. Build and Deploy**
 
@@ -408,7 +410,9 @@ Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
-`mvn clean fabric8:deploy -Popenshift`
+~~~
+mvn clean fabric8:deploy -Popenshift
+~~~
 
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
 
@@ -416,7 +420,9 @@ The build and deploy may take a minute or two. Wait for it to complete. You shou
 
 After the maven build finishes it will take less than a minute for the application to become available. To verify that everything is started, run the following command and wait for it complete successfully:
 
-`oc rollout status -w dc/inventory`
+~~~
+oc rollout status -w dc/inventory
+~~~
 
 >**NOTE:** Even if the rollout command reports success the application may not be ready yet and the reason for that is that we currently don't have any liveness check configured, but we will add that in the next steps.
 
@@ -431,7 +437,7 @@ to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-![Overview link](./images/mono-to-micro-part-1/routelink.png)
+![Overview link]({% image_path mono-to-micro-part-1/routelink.png %}){:width="80%"}
 
 > **NOTE**: If you get a '404 Not Found' error, just reload the page a few times until the Inventory UI appears. This
 is due to a lack of health check which you are about to fix!
@@ -440,11 +446,11 @@ The UI will refresh the inventory table every 2 seconds, as before.
 
 Back on the OpenShift console, Navigate to _Applications_ -> _Deployments_ -> `inventory` and then click on the top-most `(latest)` deployment in the listing (most likely `#1` or `#2`):
 
-![Overview link](./images/mono-to-micro-part-1/deployment-list.png)
+![Overview link]({% image_path mono-to-micro-part-1/deployment-list.png %}){:width="80%"}
 
 Notice OpenShift is warning you that the inventory application has no health checks:
 
-![Health Check Warning](./images/mono-to-micro-part-1/warning.png)
+![Health Check Warning]({% image_path mono-to-micro-part-1/warning.png %}){:width="80%"}
 
 In the next steps you will enhance OpenShift's ability to manage the application lifecycle by implementing a _health check pattern_. By default, without health checks (or health _probes_) OpenShift considers services to be ready to accept service requests even before the application is truly ready or if the application is hung or otherwise unable to service requests. OpenShift must be _taught_ how to recognize that our app is alive and ready
 to accept requests. 
@@ -473,12 +479,12 @@ Thorntail includes the `monitor` fraction which automatically adds health check 
 application when it is included as a fraction in the project. Open the file to insert the new dependencies
 into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
 
-```java
+~~~java
 <dependency>
     <groupId>org.wildfly.swarm</groupId>
     <artifactId>monitor</artifactId>
 </dependency>
-```
+~~~
 
 By adding the `monitor` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
 
@@ -496,7 +502,7 @@ Methods in this new class will be annotated with both the JAX-RS annotations as 
 
 Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
 
-```java
+~~~java
 package com.redhat.coolstore.rest;
 
 import javax.inject.Inject;
@@ -525,7 +531,7 @@ public class HealthChecks {
         }
     }
 }
-```
+~~~
 
 The `check()` method exposes an HTTP GET endpoint which will return the status of the service. The logic of this check does a simple query to the underlying database to ensure the connection to it is stable and available. The method is also annotated with Thorntail's `@Health` annotation, which directs Thorntail to expose this endpoint as a health check at `/health`.
 
@@ -543,10 +549,10 @@ You should see a **BUILD SUCCESS** at the end of the build output.
 
 During build and deploy, you'll notice Thorntail adding in health checks for you:
 
-```
+~~~
 [INFO] F8: wildfly-swarm-health-check: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 10 seconds
 [INFO] F8: wildfly-swarm-health-check: Adding liveness probe on port 8080, path='/health', scheme='HTTP', with initial delay 180 seconds
-```
+~~~
 
 To verify that everything is started, run the following command and wait for it report `replication controller "inventory-xxxx" successfully rolled out`
 
@@ -558,12 +564,14 @@ Once the project is deployed, you should be able to access the health check logi
 
 You should see a JSON response like:
 
-```json
-{"checks": [
-{"id":"service-state","result":"UP"}],
-"outcome": "UP"
+~~~json
+{
+    "checks": [
+        {"id":"service-state","result":"UP"}
+    ],
+    "outcome": "UP"
 }
-```
+~~~
 
 You can see the definition of the health check from the perspective of OpenShift:
 
@@ -571,10 +579,10 @@ You can see the definition of the health check from the perspective of OpenShift
 
 You should see:
 
-```
+~~~
     Liveness:	http-get http://:8080/health delay=180s timeout=1s period=10s #success=1 #failure=3
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
-```
+~~~
 
 **2. Adjust probe timeout**
 
@@ -586,24 +594,24 @@ And verify it's been changed (look at the `delay=` value for the Liveness probe)
 
 `oc describe dc/inventory | egrep 'Readiness|Liveness'`
 
-```
+~~~
     Liveness:	http-get http://:8080/health delay=30s timeout=1s period=10s #success=1 #failure=3
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
-```
+~~~
 
 ## Exercise Health Check
 
 From the OpenShift Web Console overview page, click on the route link to open the sample application UI:
 
-![Route Link](./images/mono-to-micro-part-1/routelink.png)
+![Route Link]({% image_path mono-to-micro-part-1/routelink.png %}){:width="80%"}
 
 This will open up the sample application UI in a new browser tab:
 
-![App UI](./images/mono-to-micro-part-1/app.png)
+![App UI]({% image_path mono-to-micro-part-1/app.png %}){:width="80%"}
 
 The app will begin polling the inventory as before and report success:
 
-![Greeting](./images/mono-to-micro-part-1/inventory.png)
+![Greeting]({% image_path mono-to-micro-part-1/inventory.png %}){:width="60%"}
 
 Now you will corrupt the service and cause its health check to start failing.
 To simulate the app crasing, let's kill the underlying service so it stops responding. Execute:
@@ -617,17 +625,17 @@ Check out the application sample UI page and notice it is now failing to access 
 been caused by an overloaded server, a bug in the code, or any other reason that could make the application
 unhealthy.
 
-![Greeting](./images/mono-to-micro-part-1/inventory-fail.png)
+![Greeting]({% image_path mono-to-micro-part-1/inventory-fail.png %}){:width="60%"}
 
 At this point, return to the OpenShift web console and click on the _Overview_ tab for the project. Notice that the dark blue circle has now gone light blue, indicating the application is failing its _liveness probe_:
 
-![Not Ready](./images/mono-to-micro-part-1/notready.png)
+![Not Ready]({% image_path mono-to-micro-part-1/notready.png %}){:width="80%"}
 
 After too many liveness probe failures, OpenShift will forcibly kill the pod and container running the service, and spin up a new one to take its place. Once this occurs, the light blue circle should return to dark blue. This should take about 30 seconds.
 
 Return to the same sample app UI (without reloading the page) and notice that the UI has automatically re-connected to the new service and successfully accessed the inventory once again:
 
-![Greeting](./images/mono-to-micro-part-1/inventory.png)
+![Greeting]({% image_path mono-to-micro-part-1/inventory.png %}){:width="60%"}
 
 ## Summary
 

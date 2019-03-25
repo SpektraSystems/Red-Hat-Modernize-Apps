@@ -113,7 +113,7 @@ You can review the above resources in the OpenShift Web Console or using the `oc
 > **NOTE**: Don't worry about reading and understanding the output of `oc describe`. Just make sure the command doesn't report errors!
 
 Run these commands to inspect the elements:
-```shell
+~~~shell
 oc get bc coolstore
 
 oc get is coolstore
@@ -123,7 +123,7 @@ oc get dc coolstore
 oc get svc coolstore
 
 oc describe route www
-```
+~~~
 Verify that you can access the monolith by clicking on the exposed OpenShift route at  `http://www-userXX-coolstore-dev.$ROUTE_SUFFIX` to open up the sample application in a separate browser tab.
 
 You should also be able to see both the CoolStore monolith and its database running in separate pods:
@@ -132,11 +132,11 @@ You should also be able to see both the CoolStore monolith and its database runn
 
 The output should look like this:
 
-```
+~~~
 NAME                           READY     STATUS    RESTARTS   AGE
 coolstore-2-bpkkc              1/1       Running   0          4m
 coolstore-postgresql-1-jpcb8   1/1       Running   0          9m
-```
+~~~
 
 **1. Verify Database**
 
@@ -150,7 +150,7 @@ Once logged in, use the following command to execute an SQL statement to show so
 
 You should see the following:
 
-```
+~~~
           name
 ------------------------
  Red Fedora
@@ -163,7 +163,7 @@ You should see the following:
  Oculus Rift
  Lytro Camera
 (9 rows)
-```
+~~~
 
 Don't forget to exit the pod's shell with `exit`
 
@@ -197,10 +197,10 @@ Let's copy some files out of the running container. To copy files from a running
 
 The output should show you the name of the pod:
 
-```
+~~~
 NAME                           READY     STATUS    RESTARTS   AGE
 coolstore-2-bpkkc              1/1       Running   0          32m
-```
+~~~
 
 The name of my running coolstore monolith pod is `coolstore-2-bpkkc` but **yours will be different**.
 
@@ -218,13 +218,13 @@ Next, run the `oc rsync` command in your terminal window, using the new variable
 
 The output will show that the file was downloaded:
 
-```
+~~~
 receiving incremental file list
 version.txt
 
 sent 30 bytes  received 65 bytes  62,566.00 bytes/sec
 total size is 65 speedup is 1.00
-```
+~~~
 
 Now you can open the file locally using this link: `version.txt` and inspect its contents.
 
@@ -281,13 +281,13 @@ CoolStore app.
 
 Add the following CSS to turn the header bar background to Red Hat red (click **Copy To Editor** to add it at the bottom):
 
-```java
+~~~java
 
 .navbar-header {
     background: #CC0000
 }
 
-```
+~~~
 
 **2. Rebuild application For RED background**
 
@@ -297,10 +297,10 @@ Let's re-build the application using this command:
 
 or use the command `build-eap-openshift` in the command palette. In the tab **sync-eap-openshift** you should see the following :
 
-```
+~~~
 sent 65 bytes  received 12 bytes  51.33 bytes/sec
 total size is 14,653,352  speedup is 190,303.27
-```
+~~~
 
 This will update the ROOT.war file and cause the application to change.
 
@@ -315,15 +315,15 @@ On Windows/Linux press `CTRL`+`F5` or hold down `SHIFT` and press the Reload but
 `CTRL`+`SHIFT`+`F5`. On Mac OS X, press `SHIFT`+`CMD`+`R`, or hold `SHIFT` while pressing the
 Reload button.
 
-![Red](./images/developer-intro/nav-red.png)
+![Red]({% image_path developer-intro/nav-red.png %}){:width="80%"}
 
 **3. Rebuild again for BLUE background**
 
 Repeat the process, but replace the background color to be blue (click **Copy to Editor** to replace `#CC0000` with `blue`):
 
-```java
+~~~java
 background: blue
-```
+~~~
 
 Again, re-build the app:
 
@@ -337,7 +337,7 @@ Re-visit the app by reloading the Coolstore webpage (or clicking again on the Co
 
 `http://www-userXX-coolstore-dev.$ROUTE_SUFFIX)`.
 
-![Blue](./images/developer-intro/nav-blue.png)
+![Blue]({% image_path developer-intro/nav-blue.png %}){:width="80%"}
 
 It's blue! You can do this as many times as you wish, which is great for speedy development and testing.
 
@@ -398,7 +398,7 @@ Navigate to the Web Console to see your new app and the components using this li
 
 `https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-prod/overview`
 
-![Prod](./images/developer-intro/coolstore-prod-overview.png)
+![Prod]({% image_path developer-intro/coolstore-prod-overview.png %}){:width="80%"}
 
 You can see the production database, and an application called _Jenkins_ which OpenShift uses to manage CI/CD pipeline deployments. There is no running production app just yet. The only running app is back in the _dev_ environment, where you used a binary build to run the app previously.
 
@@ -433,7 +433,7 @@ Our pipeline is somewhat simplified for the purposes of this Workshop. Inspect t
 
 You can see the Jenkinsfile definition of the pipeline in the output:
 
-```
+~~~
 Jenkinsfile contents:
   node ('maven') {
     stage 'Build'
@@ -449,7 +449,7 @@ Jenkinsfile contents:
     stage 'Run Tests in PROD'
     sleep 30
   }
-```
+~~~
 > /!\ You have to replace `userXX` by your own `userID`
 
 Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using [the large set of steps and plugins that Jenkins provides](https://jenkins.io/doc/pipeline/steps/) in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the [OpenShift GitHub Repository](https://github.com/openshift/origin/tree/master/examples/jenkins/pipeline) or [here](https://github.com/demo-redhat-forum-2018/monolith/blob/step-2/Jenkinsfile).
@@ -466,19 +466,19 @@ You can use the _oc_ command line to invoke the build pipeline, or the Web Conso
 
 Next, navigate to _Builds -> Pipelines_ and click __Start Pipeline__ next to the `coolstore-monolith` pipeline:
 
-![Prod](./images/developer-intro/pipe-start.png)
+![Prod]({% image_path developer-intro/pipe-start.png %}){:width="80%"}
 
 This will start the pipeline. **It will take a minute or two to start the pipeline** (future runs will not
 take as much time as the Jenkins infrastructure will already be warmed up). You can watch the progress of the pipeline:
 
-![Prod](./images/developer-intro/pipe-prog.png)
+![Prod]({% image_path developer-intro/pipe-prog.png %}){:width="80%"}
 
 Once the pipeline completes, return to the Prod Project Overview at 
 
 `https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-prod`
 and notice that the application is now deployed and running!
 
-![Prod](./images/developer-intro/pipe-done.png)
+![Prod]({% image_path developer-intro/pipe-done.png %}){:width="80%"}
 
 View the production app **with the blue header from before** is running by clicking: CoolStore Production App at 
 
@@ -514,22 +514,22 @@ Open the `monolith-pipeline` configuration page in the Web Console (you can navi
 
 On this page you can see the pipeline definition. Click _Actions -> Edit_ to edit the pipeline:
 
-![Prod](./images/developer-intro/pipe-edit.png)
+![Prod]({% image_path developer-intro/pipe-edit.png %}){:width="80%"}
 
 In the pipeline definition editor, add a new stage to the pipeline, just before the `Deploy to PROD` step:
 
 > **NOTE**: You will need to copy and paste the below code into the right place as shown in the below image.
 
-```groovy
+~~~groovy
   stage 'Approve Go Live'
   timeout(time:30, unit:'MINUTES') {
     input message:'Go Live in Production (switch to new version)?'
   }
-```
+~~~
 
 Your final pipeline should look like:
 
-![Prod](./images/developer-intro/pipe-edit2.png)
+![Prod]({% image_path developer-intro/pipe-edit2.png %}){:width="80%"}
 
 Click **Save**.
 
@@ -539,9 +539,9 @@ With the approval step in place, let's simulate a new change from a developer wh
 
 As a developer you can easily un-do edits you made earlier to the CSS file using the source control management system (Git). To revert your changes, execute:
 
-```
+~~~
 git checkout /projects/modernize-apps/monolith/src/main/webapp/app/css/coolstore.css
-```
+~~~
 
 Next, re-build the app once more:
 
@@ -557,7 +557,7 @@ And verify that the original black header is visible in the dev application:
 
 `http://www-userXX-coolstore-dev.$ROUTE_SUFFIX`
 
-![Prod](./images/developer-intro/pipe-orig.png)
+![Prod]({% image_path developer-intro/pipe-orig.png %}){:width="60%"}
 
 While the production application is still blue:
 
@@ -565,7 +565,7 @@ While the production application is still blue:
 
 `http://www-userXX-coolstore-prod.$ROUTE_SUFFIX`
 
-![Prod](./images/developer-intro/nav-blue.png)
+![Prod]({% image_path developer-intro/nav-blue.png %}){:width="80%"}
 
 We're happy with this change in dev, so let's promote the new change to prod, using the new approval step!
 
@@ -577,7 +577,7 @@ Invoke the pipeline once more by clicking **Start Pipeline** on the Pipeline Con
 
 The same pipeline progress will be shown, however before deploying to prod, you will see a prompt in the pipeline:
 
-![Prod](./images/developer-intro/pipe-prompt.png)
+![Prod]({% image_path developer-intro/pipe-prompt.png %}){:width="80%"}
 
 Click on the link for `Input Required`. This will open a new tab and direct you to Jenkins itself, where you can login with
 the same credentials as OpenShift:
@@ -587,7 +587,7 @@ the same credentials as OpenShift:
 
 Accept the browser certificate warning and the Jenkins/OpenShift permissions, and then you'll find yourself at the approval prompt:
 
-![Prod](./images/developer-intro/pipe-jenkins-prompt.png)
+![Prod]({% image_path developer-intro/pipe-jenkins-prompt.png %}){:width="80%"}
 
 **3. Approve the change to go live**
 
@@ -606,13 +606,13 @@ Once it completes, verify that the production application has the new change (or
 
 `http://www-userXX-coolstore-prod.$ROUTE_SUFFIX`
 
-![Prod](./images/developer-intro/pipe-orig.png)
+![Prod]({% image_path developer-intro/pipe-orig.png %}){:width="60%"}
 
 ## Congratulations!
 
 You have added a human approval step for all future developer changes. You now have two projects that can be visualized as:
 
-![Prod](./images/developer-intro/goal.png)
+![Prod]({% image_path developer-intro/goal.png %}){:width="80%"}
 
 ## Summary
 

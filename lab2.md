@@ -20,7 +20,7 @@ We will then take the following steps to migrate (lift & shift) an existing Java
 
 ## What is Red Hat Application Migration Toolkit?
 
-![Logo](./images/moving-existing-apps/rhamt-logo.png)
+![Logo]({% image_path moving-existing-apps/rhamt-logo.png %}){:width="50%"}
 
 Red Hat Application Migration Toolkit (RHAMT) is an extensible and customizable rule-based tool that helps simplify migration of Java applications.
 
@@ -53,10 +53,10 @@ the [RHAMT documentation](https://access.redhat.com/documentation/en/red-hat-app
 
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
-```sh
+~~~
 export JAVA_HOME=$(jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));')
 cd /projects/modernize-apps/monolith
-```
+~~~
 
 ## Analyzing a Java EE app using Red Hat Application Migration Toolkit
 
@@ -81,10 +81,10 @@ The RHAMT CLI is has been installed for you. To verify that the tool was properl
 
 You should see:
 
-```sh
+~~~shell
 Using RHAMT at /rhamt
 > Red Hat Application Migration Toolkit (RHAMT) CLI, version 4.2.0.Final.
-```
+~~~
 
 **2. Inspect the project source code**
 
@@ -99,7 +99,7 @@ subdirectories according to Maven best practices.
 
 You should see:
 
-```
+~~~
 .
 +-- hello.txt
 +-- pom.xml
@@ -110,7 +110,7 @@ You should see:
         +-- openshift
         +-- resources
         \-- webapp
-```
+~~~
 
 This is a minimal Java EE project which uses [JAX-RS](https://docs.oracle.com/javaee/7/tutorial/jaxrs.htm) for building
 RESTful services and the [Java Persistence API (JPA)](https://docs.oracle.com/javaee/7/tutorial/partpersist.htm) for connecting
@@ -118,14 +118,14 @@ to a database and an [AngularJS](https://angularjs.org) frontend.
 
 When you later deploy the application, it will look like:
 
-![CoolStore Monolith](./images/moving-existing-apps/coolstore-web.png)
+![CoolStore Monolith]({% image_path moving-existing-apps/coolstore-web.png %}){:width="80%"}
 
 **3. Run the RHAMT CLI against the project**
 
 The RHAMT CLI has a number of options to control how it runs. Click on the below command
 to execute the RHAMT CLI and analyze the existing project:
 
-```
+~~~
 /rhamt/bin/rhamt-cli \
   --sourceMode \
   --input /projects/modernize-apps/monolith \
@@ -134,7 +134,7 @@ to execute the RHAMT CLI and analyze the existing project:
   --source weblogic \
   --target eap:7 \
   --packages com.redhat weblogic
-```
+~~~
 
 > Note the use of the ``--source`` and ``--target`` options. This allows you to target specific migration paths supported by RHMAT. Other
 migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP** 5/6/7.
@@ -147,13 +147,13 @@ Next, right-click on the `/projects/rhamt-reports/monolith/index.html` file on t
 
 You should see the landing page for the report:
 
-![Landing Page](./images/moving-existing-apps/landingpage.png)
+![Landing Page]({% image_path moving-existing-apps/landingpage.png %}){:width="80%"}
 
 The main landing page of the report lists the applications that were processed. Each row contains a high-level overview of the story points, number of incidents, and technologies encountered in that application.
 
 Click on the `monolith` link to access details for the project:
 
-![Project Overview](./images/moving-existing-apps/project-overview.png)
+![Project Overview]({% image_path moving-existing-apps/project-overview.png %}){:width="80%"}
 
 ## Understanding the report
 
@@ -185,8 +185,6 @@ There are several other sub-pages accessible by the menu near the top. Click on 
 
 Now that you have the RHAMT report available, let's get to work migrating the app!
 
-
-
 ## Migrate Application Startup Code
 
 In this step we will migrate some Weblogic-specific code in the app to use standard Java EE interfaces.
@@ -195,7 +193,7 @@ In this step we will migrate some Weblogic-specific code in the app to use stand
 
 Open the Issues report
 
-![Issues](./images/moving-existing-apps/project-issues.png)
+![Issues]({% image_path moving-existing-apps/project-issues.png %}){:width="80%"}
 
 RHAMT provides helpful links to understand the issue deeper and offer guidance for the migration.
 
@@ -220,7 +218,7 @@ The first issue we will tackle is the one reporting the use of _Weblogic Applica
 _Weblogic LifecycleListener_ in this file. Open the file to make these changes in the file.
 
 
-```java
+~~~java
 package com.redhat.coolstore.utils;
 
 import javax.annotation.PostConstruct;
@@ -248,16 +246,16 @@ public class StartupListener {
     }
 
 }
-```
+~~~
 
 **3. Test the build**
 
 Build and package the app using Maven to make sure the changed code still compiles:
 
-```sh
+~~~
 cd /projects/modernize-apps/monolith
 mvn clean package
-```
+~~~
 
 or use the command palette to build your apps
 
@@ -287,7 +285,7 @@ Open the offending file `src/main/java/com/redhat/coolstore/service/OrderService
 
 **2. Make the changes** Open the file to make these changes:
 
-```java
+~~~java
 package com.redhat.coolstore.service;
 
 import javax.ejb.ActivationConfigProperty;
@@ -338,7 +336,7 @@ public class OrderServiceMDB implements MessageListener {
 	}
 
 }
-```
+~~~
 
 That one was pretty easy.
 
@@ -415,7 +413,7 @@ Run or click on this command to remove them:
 
 Open `/projects/modernize-apps/monolith/src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java`. Open the file to fix the code:
 
-```java
+~~~java
 package com.redhat.coolstore.service;
 
 import com.redhat.coolstore.model.Order;
@@ -469,7 +467,7 @@ public class InventoryNotificationMDB implements MessageListener {
         }
     }
 }
-```
+~~~
 
 Remember the `<trans-timeout-seconds>` setting from the `weblogic-ejb-jar.xml` file? This is now set as an
 `@ActivationConfigProperty` in the new code. There are pros and cons to using annotations vs. XML descriptors and care should be
@@ -495,7 +493,7 @@ In this step we will re-run the RHAMT report to verify our migration was success
 
 Click on the below command to clean the old build artifacts and re-execute the RHAMT CLI and analyze the new project:
 
-```
+~~~
 mvn clean && \
 /rhamt/bin/rhamt-cli \
   --sourceMode \
@@ -505,7 +503,7 @@ mvn clean && \
   --source weblogic \
   --target eap:7 \
   --packages com.redhat weblogic
-```
+~~~
 
 **Wait for it to complete before continuing!**. You should see `Report created: /projects/rhamt-reports/monolith/index.html`.
 
@@ -515,7 +513,7 @@ Reload the report web page (right-click on the file `rhamt-reports/monolith/inde
 
 You have successfully migrated this app to JBoss EAP, congratulations!
 
-![Issues](./images/moving-existing-apps/project-issues-story.png)
+![Issues]({% image_path moving-existing-apps/project-issues-story.png %}){:width="80%"}
 
 ## Migration Complete!
 
@@ -533,19 +531,19 @@ JBoss EAP comes with a nice maven-plugin tool that can stop, start, deploy, and 
 
 At the `TODO: Add wildfly plugin here` we are going to add a the following configuration
 
-```java
+~~~java
 <plugin>
     <groupId>org.wildfly.plugins</groupId>
     <artifactId>wildfly-maven-plugin</artifactId>
     <version>1.2.1.Final</version>
     <!-- TODO: Add configuration here -->
 </plugin>
-```
+~~~
 
 Next we are going to add some configuration at the `TODO: Add configuration here` marker. First we need to point to our JBoss EAP installation using the `jboss-home` configuration. After that we will also have to tell JBoss EAP to use the profile configured for full Java
 EE, since it defaults to use the Java EE Web Profile. This is done by adding a `server-config` and set it to value `standalone-full.xml`
 
-```java
+~~~java
 <configuration>
     <jboss-home>${env.JBOSS_HOME}</jboss-home>
     <server-config>standalone-full.xml</server-config>
@@ -559,11 +557,11 @@ EE, since it defaults to use the Java EE Web Profile. This is done by adding a `
     </server-args>
     <javaOpts>-Djava.net.preferIPv4Stack=true</javaOpts>
 </configuration>
-```
+~~~
 
-Since our application is using a Database we also configuration that by adding the following at the ```<-- TODO: Add Datasource definition here -->``` comment
+Since our application is using a Database we also configuration that by adding the following at the ~~~<-- TODO: Add Datasource definition here -->~~~ comment
 
-```java
+~~~java
 <resource>
     <addIfAbsent>true</addIfAbsent>
     <address>subsystem=datasources,data-source=CoolstoreDS</address>
@@ -577,18 +575,18 @@ Since our application is using a Database we also configuration that by adding t
         <password>sa</password>
     </properties>
 </resource>
-```
+~~~
 
-Since our application is using a JMS Topic we are also need to add the configuration for that by adding the following at the ```<-- TODO: Add JMS Topic here -->``` comment
+Since our application is using a JMS Topic we are also need to add the configuration for that by adding the following at the ~~~<-- TODO: Add JMS Topic here -->~~~ comment
 
-```java
+~~~java
 <resource>
     <address>subsystem=messaging-activemq,server=default,jms-topic=orders</address>
     <properties>
         <entries>!!["topic/orders"]</entries>
     </properties>
 </resource>
-```
+~~~
 
 We are now ready to build and test the project
 
@@ -616,7 +614,7 @@ Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-nam
 
 Access the application by clicking on the preview URL above your terminal
 
-![CoolStore Monolith](./images/moving-existing-apps/coolstore-web.png)
+![CoolStore Monolith]({% image_path moving-existing-apps/coolstore-web.png %}){:width="80%"}
 
 You may see WARNINGs in the console output. We will fix these soon!
 
@@ -634,7 +632,7 @@ Open the `pom.xml` file.
 
 At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the following configuration to the pom.xml
 
-```java
+~~~java
 <profile>
   <id>openshift</id>
   <build>
@@ -657,13 +655,13 @@ At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the fol
       </plugins>
   </build>
 </profile>
-```
+~~~
 
 **2. Create the OpenShift project**
 
 First, access the **OpenShift Console** at {{$OPENSHIFT_CONSOLE_URL}} 
 
-![OpenShift Console](./images/moving-existing-apps/openshift-login.png)
+![OpenShift Console]({% image_path moving-existing-apps/openshift-login.png %}){:width="80%"}
 
 Login using:
 
@@ -672,7 +670,7 @@ Login using:
 
 You will see the OpenShift landing page:
 
-![OpenShift Console](./images/moving-existing-apps/openshift-landing.png)
+![OpenShift Console]({% image_path moving-existing-apps/openshift-landing.png %}){:width="80%"}
 
 Click **Create Project**, fill in the fields, and click **Create**:
 
@@ -683,11 +681,11 @@ Click **Create Project**, fill in the fields, and click **Create**:
 > **NOTE**: YOU **MUST** USE `userXX-coolstore-dev` AS THE PROJECT NAME, as this name is referenced later
 on and you will experience failures if you do not name it `userXX-coolstore-dev`!
 
-![OpenShift Console](./images/moving-existing-apps/create-dialog.png)
+![OpenShift Console]({% image_path moving-existing-apps/create-dialog.png %}){:width="50%"}
 
 Click on the name of the newly-created project:
 
-![OpenShift Console](./images/moving-existing-apps/create-new.png)
+![OpenShift Console]({% image_path moving-existing-apps/create-new.png %}){:width="50%"}
 
 This will take you to the project overview. There's nothing there yet, but that's about to change.
 
@@ -710,7 +708,7 @@ Then open up the Monolith Overview page at
 `https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-dev/`
 and verify the monolith template items are created:
 
-![OpenShift Console](./images/moving-existing-apps/no-deployments.png)
+![OpenShift Console]({% image_path moving-existing-apps/no-deployments.png %}){:width="60%"}
 
 You can see the components being deployed on the Project Overview, but notice the **No deployments for Coolstore**. You have not yet deployed the container image built in previous steps, but you'll do that next.
 
@@ -722,9 +720,9 @@ First, build the project once more using the `openshift` Maven profile, which wi
 
 Build the project:
 
-```shell
+~~~shell
 mvn clean package -Popenshift
-```
+~~~
 
 or use the command called `build-eap-openshift` in the command palette
 
@@ -732,15 +730,15 @@ Wait for the build to finish and the `BUILD SUCCESS` message!
 
 And finally, start the build process that will take the `.war` file and combine it with JBoss EAP and produce a Linux container image which will be automatically deployed into the project, thanks to the *DeploymentConfig* object created from the template:
 
-```shell
+~~~shell
 oc start-build coolstore --from-file=deployments/ROOT.war
-```
+~~~
 
 or use the command called `deploy-eap-openshift` in the command palette
 
 Check the OpenShift web console and you'll see the application being built:
 
-![OpenShift Console](./images/moving-existing-apps/building.png)
+![OpenShift Console]({% image_path moving-existing-apps/building.png %}){:width="60%"}
 
 Wait for the build and deploy to complete:
 
@@ -753,20 +751,20 @@ You should eventually see `replication controller "coolstore-1" successfully rol
 
 When it's done you should see the application deployed successfully with blue circles for the database and the monolith:
 
-![OpenShift Console](./images/moving-existing-apps/build-done.png)
+![OpenShift Console]({% image_path moving-existing-apps/build-done.png %}){:width="60%"}
 
 Test the application by clicking on the Route link at 
 
 `http://www-coolstore-dev.$ROUTE_SUFFIX`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
-![OpenShift Console](./images/moving-existing-apps/route-link.png)
+![OpenShift Console]({% image_path moving-existing-apps/route-link.png %}){:width="60%"}
 
 ## Congratulations!
 
 Now you are using the same application that we built locally on OpenShift. That wasn't too hard right?
 
-![CoolStore Monolith](./images/moving-existing-apps/coolstore-web.png)
+![CoolStore Monolith]({% image_path moving-existing-apps/coolstore-web.png %}){:width="80%"}
 
 In the next step you'll explore more of the developer features of OpenShift in preparation for moving the monolith to a microservices architecture later on. Let's go!
 
