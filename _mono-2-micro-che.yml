@@ -25,6 +25,7 @@ vars:
   NEXUS_URL: "http://nexus.lab-infra.svc:8081/repository/maven-all-public"
   OPENSHIFT_USER: userX
   OPENSHIFT_PASWORD: PASSWORD
+  ROUTE_SUFFIX: ROUTE_SUFFIX
   
 modules:
   activate:
