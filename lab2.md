@@ -705,7 +705,7 @@ This will deploy both a PostgreSQL database and JBoss EAP, but it will not start
 
 Then open up the Monolith Overview page at 
 
-`https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-dev/`
+`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-dev/`
 and verify the monolith template items are created:
 
 ![OpenShift Console]({% image_path moving-existing-apps/no-deployments.png %}){:width="60%"}
@@ -755,7 +755,7 @@ When it's done you should see the application deployed successfully with blue ci
 
 Test the application by clicking on the Route link at 
 
-`http://www-coolstore-dev.$ROUTE_SUFFIX`,
+`http://www-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
 ![OpenShift Console]({% image_path moving-existing-apps/route-link.png %}){:width="60%"}

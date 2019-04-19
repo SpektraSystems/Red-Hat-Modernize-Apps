@@ -432,7 +432,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://inventory-userXX-modern-coolstore.$ROUTE_SUFFIX`
+`http://inventory-userXX-modern-coolstore.{{ROUTE_SUFFIX}}`
 to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
@@ -558,9 +558,9 @@ To verify that everything is started, run the following command and wait for it 
 
 `oc rollout status -w dc/inventory`
 
-Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Replace ${INVENTORY_ROUTE_HOST} with the inventory route host.
+Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Replace {{INVENTORY_ROUTE_HOST}} with the inventory route host.
 
-``curl http://${INVENTORY_ROUTE_HOST}/health``
+``curl http://{{INVENTORY_ROUTE_HOST}}/health``
 
 You should see a JSON response like:
 

@@ -1169,7 +1169,7 @@ After the maven build finishes it will take less than a minute for the applicati
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the route URL at 
 
-`http://cart-userXX-modern-coolstore.$ROUTE_SUFFIX` to access the sample UI.
+`http://cart-userXX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
@@ -1196,14 +1196,14 @@ The output of this command shows us the hostname:
 
 ~~~
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-userXX-coolstore-dev.${ROUTING_SUFFIX}             coolstore   <all>                   None
+www       www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}             coolstore   <all>                   None
 ~~~
 
-My hostname is `www-userXX-coolstore-dev.${ROUTING_SUFFIX}` but **yours will be different**.
+My hostname is `www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours will be different**.
 
 **2. Open the openshift console for Cart - Applications - Routes at**
 
-`https://$OPENSHIFT_MASTER/console/project/userXX-modern-coolstore/browse/routes`
+`https://{{OPENSHIFT_MASTER}}/console/project/userXX-modern-coolstore/browse/routes`
 > Make sure to replace the name of the project with your user number.
 
 **3. Click on Create Route, and set**
@@ -1219,7 +1219,7 @@ Leave other values set to their defaults, and click **Save**
 
 **4. Test the route**
 
-Test the route by running `curl http://www-userXX-coolstore-dev.${ROUTING_SUFFIX}/services/cart/99999`
+Test the route by running `curl http://www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}/services/cart/99999`
 
 You should get a complete set of products, along with their inventory.
 

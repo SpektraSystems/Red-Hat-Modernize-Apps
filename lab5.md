@@ -945,7 +945,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://catalog-userXX-modern-coolstore.$ROUTE_SUFFIX` to access the sample UI. 
+`http://catalog-userXX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI. 
 > /!\ Don't forget to change the user number in your route.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
@@ -980,14 +980,14 @@ The output of this command shows us the hostname:
 
 ~~~
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-userXX-coolstore-dev.$ROUTE_SUFFIX             coolstore   <all>                   None
+www       www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   <all>                   None
 ~~~
 
-My hostname is `www-userXX-coolstore-dev.$ROUTE_SUFFIX` but **yours will be different**.
+My hostname is `www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
 
 **2. Open the openshift console for Catalog - Applications - Routes at 
 
-`https://$OPENSHIFT_MASTER/console/project/catalog/browse/routes`**
+`https://{{OPENSHIFT_MASTER}}/console/project/catalog/browse/routes`**
 
 **3. Click on Create Route, and set**
 
@@ -1002,7 +1002,7 @@ Leave other values set to their defaults, and click **Create**
 
 **4. Test the route**
 
-Test the route by running `curl http://www-userXX-coolstore-dev.$ROUTE_SUFFIX/services/products`
+Test the route by running `curl http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}/services/products`
 
 You should get a complete set of products, along with their inventory.
 
@@ -1010,7 +1010,7 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI at 
 
-`http://www-userXX-coolstore-dev.$ROUTE_SUFFIX` and observe that the new catalog is being used along with the monolith:
+`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` and observe that the new catalog is being used along with the monolith:
 
 ![Greeting]({% image_path mono-to-micro-part-2/coolstore-web.png %}){:width="80%"}
 

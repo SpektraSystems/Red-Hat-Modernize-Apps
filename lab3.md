@@ -124,7 +124,7 @@ oc get svc coolstore
 
 oc describe route www
 ~~~
-Verify that you can access the monolith by clicking on the exposed OpenShift route at  `http://www-userXX-coolstore-dev.$ROUTE_SUFFIX` to open up the sample application in a separate browser tab.
+Verify that you can access the monolith by clicking on the exposed OpenShift route at  `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` to open up the sample application in a separate browser tab.
 
 You should also be able to see both the CoolStore monolith and its database running in separate pods:
 
@@ -258,7 +258,7 @@ For this workshop, we'll Live synchronize the entire WAR file.
 
 First, click on the Coolstore application link at 
 
-`http://www-coolstore-dev.$ROUTE_SUFFIX` to open the application in a browser tab so you can watch changes.
+`http://www-coolstore-dev.{{ROUTE_SUFFIX}}` to open the application in a browser tab so you can watch changes.
 
 **1. Turn on Live Sync**
 
@@ -306,7 +306,7 @@ This will update the ROOT.war file and cause the application to change.
 
 Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at 
 
-`http://www-userXX-coolstore-dev.$ROUTE_SUFFIX)`.
+`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}})`.
 
 You should now see the red header:
 
@@ -335,7 +335,7 @@ This will update the ROOT.war file again and cause the application to change.
 
 Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at 
 
-`http://www-userXX-coolstore-dev.$ROUTE_SUFFIX)`.
+`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}})`.
 
 ![Blue]({% image_path developer-intro/nav-blue.png %}){:width="80%"}
 
@@ -396,7 +396,7 @@ Navigate to the Web Console to see your new app and the components using this li
 
 * Coolstore Prod Project Overview at 
 
-`https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-prod/overview`
+`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod/overview`
 
 ![Prod]({% image_path developer-intro/coolstore-prod-overview.png %}){:width="80%"}
 
@@ -462,7 +462,7 @@ You can use the _oc_ command line to invoke the build pipeline, or the Web Conso
 
 * Web Console - Coolstore Monolith Prod at 
 
-`https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-prod`
+`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod`
 
 Next, navigate to _Builds -> Pipelines_ and click __Start Pipeline__ next to the `coolstore-monolith` pipeline:
 
@@ -475,14 +475,14 @@ take as much time as the Jenkins infrastructure will already be warmed up). You 
 
 Once the pipeline completes, return to the Prod Project Overview at 
 
-`https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-prod`
+`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod`
 and notice that the application is now deployed and running!
 
 ![Prod]({% image_path developer-intro/pipe-done.png %}){:width="80%"}
 
 View the production app **with the blue header from before** is running by clicking: CoolStore Production App at 
 
-`http://www-userXX-coolstore-prod.$ROUTE_SUFFIX` (it may take
+`http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}` (it may take
 a few moments for the container to deploy fully.)
 
 ## Congratulations!
@@ -510,7 +510,7 @@ Open the `monolith-pipeline` configuration page in the Web Console (you can navi
 
 * Pipeline Config page at 
 
-`https://$OPENSHIFT_MASTER/console/project/userXX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
+`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
 
 On this page you can see the pipeline definition. Click _Actions -> Edit_ to edit the pipeline:
 
@@ -555,7 +555,7 @@ And verify that the original black header is visible in the dev application:
 
 * Coolstore - Dev at 
 
-`http://www-userXX-coolstore-dev.$ROUTE_SUFFIX`
+`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}`
 
 ![Prod]({% image_path developer-intro/pipe-orig.png %}){:width="60%"}
 
@@ -563,7 +563,7 @@ While the production application is still blue:
 
 * Coolstore - Prod at 
 
-`http://www-userXX-coolstore-prod.$ROUTE_SUFFIX`
+`http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}`
 
 ![Prod]({% image_path developer-intro/nav-blue.png %}){:width="80%"}
 
@@ -573,7 +573,7 @@ We're happy with this change in dev, so let's promote the new change to prod, us
 
 Invoke the pipeline once more by clicking **Start Pipeline** on the Pipeline Config page at 
 
-`https://$OPENSHIFT_MASTER/console/project/coolstore-prod/browse/pipelines/monolith-pipeline`
+`https://{{OPENSHIFT_MASTER}}/console/project/coolstore-prod/browse/pipelines/monolith-pipeline`
 
 The same pipeline progress will be shown, however before deploying to prod, you will see a prompt in the pipeline:
 
@@ -604,7 +604,7 @@ Once it completes, verify that the production application has the new change (or
 
 * Coolstore - Prod at 
 
-`http://www-userXX-coolstore-prod.$ROUTE_SUFFIX`
+`http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}`
 
 ![Prod]({% image_path developer-intro/pipe-orig.png %}){:width="60%"}
 
