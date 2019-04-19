@@ -22,7 +22,7 @@ programming languages. [CodeReady Workspaces](https://www.eclipse.org/che/) is t
 and gives you a full-featured IDE running in the cloud. You have an CodeReady Workspaces instance deployed on your OpenShift cluster
 which you will use during these labs.
 
-Go to the [CodeReady Workspaces url]({{ ECLIPSE_CHE_URL }}) in order to configure your development workspace: {{ ECLIPSE_CHE_URL }}
+Go to the [CodeReady Workspaces url]({{ ECLIPSE_CHE_URL }}) in order to configure your development workspace
 
 First, you need to register as a user. Register and choose the same username and password as 
 your OpenShift credentials.
