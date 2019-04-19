@@ -72,7 +72,7 @@ Choose **Maven** from the project configurations and then click on **Save**
 
 ![Codeready Workspaces - Convert to Project]({% image_path getting-started/codeready-convert2.png %}){:width="80%"}
 
-Repeat the above for **cart**, **catalog**, **inventory** and **ratings** projects.
+Repeat the above for **cart**, **catalog**, **inventory** projects.
 
 Note the **Terminal** window in Codeready Workspaces. For the rest of these labs, anytime you need to run 
 a command in a terminal, you can use the Codeready Workspaces **Terminal** window.
