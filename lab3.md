@@ -411,8 +411,6 @@ OpenShift simplifies building CI/CD Pipelines by integrating the popular [Jenkin
 
 The first step for any deployment pipeline is to store all code and configurations in  a source code repository. In this workshop, the source code and configurations are stored in a GitHub repository we've been using at [https://github.com/clerixmaxime/modernize-apps-labs]. This repository has been copied locally to your environment and you've been using it ever since!
 
-You can see the changes you've personally made using `git --no-pager status` to show the code changes you've made using the Git command (part of the [Git source code management system](https://git-scm.com/)).
-
 #### Pipelines
 
 OpenShift has built-in support for CI/CD pipelines by allowing developers to define a [Jenkins pipeline](https://jenkins.io/solutions/pipeline/) for execution by a Jenkins automation engine, which is automatically provisioned on-demand by OpenShift when needed.
@@ -531,12 +529,12 @@ Click **Save**.
 
 **2. Make a simple change to the app**
 
-With the approval step in place, let's simulate a new change from a developer who wants to change the color of the header in the coolstore back to the original (black) color.
+With the approval step in place, let's simulate a new change from a developer who wants to change the color of the header in the coolstore back to the original (black) color. Revert the changes that you previously made to the file `src/main/webapp/app/css/coolstore.css` by removing the following section:
 
-As a developer you can easily un-do edits you made earlier to the CSS file using the source control management system (Git). To revert your changes, execute:
-
-~~~
-git checkout /projects/modernize-apps/monolith/src/main/webapp/app/css/coolstore.css
+~~~css
+.navbar-header {
+    background: #CC0000
+}
 ~~~
 
 Next, re-build the app once more:
