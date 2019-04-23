@@ -281,7 +281,7 @@ Next, let's make a change to the app that will be obvious in the UI.
 First, open `src/main/webapp/app/css/coolstore.css`, which contains the CSS stylesheet for the
 CoolStore app.
 
-Add the following CSS to turn the header bar background to Red Hat red (click **Copy To Editor** to add it at the bottom):
+Add the following CSS to turn the header bar background to Red Hat red :
 
 ~~~css
 .navbar-header {
@@ -291,13 +291,7 @@ Add the following CSS to turn the header bar background to Red Hat red (click **
 
 **2. Rebuild application For RED background**
 
-Let's re-build the application using this command:
-
-~~~shell
-mvn package -Popenshift
-~~~
-
-or use the command `build-eap-openshift` in the command palette. In the tab **sync-eap-openshift** you should see the following :
+Let's re-build the application using the command `build-eap-openshift` in the command palette. In the tab **sync-eap-openshift** you should see the following :
 
 ~~~shell
 sent 65 bytes  received 12 bytes  51.33 bytes/sec
