@@ -592,7 +592,7 @@ Tests run: 4, Failures: 2, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 ~~~
 
-Again the test fails because we are trying to call the Inventory service which is not running. We will soon implement the code to call the inventory service, but first we need a away to test this service without having to really on the inventory services to be up an running. For that we are going to use an API Simulator called [HoverFly](http://hoverfly.io) and particular it's capability to simulate remote APIs. HoverFly is very convenient to use with Unit test and all we have to do is to add a `ClassRule` that will simulate all calls to inventory. Open the file to insert the code at the `//TODO: Add ClassRule for HoverFly Inventory simulation` marker:
+Again the test fails because we are trying to call the Inventory service which is not running. We will soon implement the code to call the inventory service, but first we need a way to test this service without having the inventory service to be up an running. For that we are going to use an API Simulator called [HoverFly](http://hoverfly.io) and particular it's capability to simulate remote APIs. HoverFly is very convenient to use with Unit test and all we have to do is to add a `ClassRule` that will simulate all calls to inventory. Open the file to insert the code at the `//TODO: Add ClassRule for HoverFly Inventory simulation` marker:
 
 ~~~java
 @ClassRule
@@ -612,7 +612,7 @@ This `ClassRule` means that if our tests are trying to call our inventory url Ho
 
 Since we now have a nice way to test our service-to-service interaction we can now create the client that calls the Inventory. Netflix has provided some nice extensions to the Spring Framework that are mostly captured in the Spring Cloud project, however Spring Cloud is mainly focused on Pivotal Cloud Foundry and because of that Red Hat and others have contributed Spring Cloud Kubernetes to the Spring Cloud project, which enables the same functionallity for Kubernetes based platforms like OpenShift. 
 
-The inventory client will use a Netflix project called _Feign_, which provides a nice way to avoid having to write boilerplate code. Feign also integrate with Hystrix which gives us capability to Circute Break calls that doesn't work. We will discuss this more later, but let's start with the implementation of the Inventory Client. Using Feign all we have todo is to create a interface that details which parameters and return type we expect, annotate it with `@RequestMapping` and provide some details and then annotate the interface with `@Feign` and provide it with a name.
+The inventory client will use a Netflix project called _Feign_, which provides a nice way to avoid having to write boilerplate code. Feign also integrate with Hystrix which gives us capability for circuit breaking. We will discuss this more later, but let's start with the implementation of the Inventory Client. Using Feign all we have to do is to create a interface that details which parameters and return type we expect, annotate it with `@RequestMapping` and provide some details and then annotate the interface with `@Feign` and provide it with a name.
 
 Create the Inventory client by clicking ``src/main/java/com/redhat/coolstore/client/InventoryClient.java``
 
@@ -642,9 +642,7 @@ public interface InventoryClient {
 
 There is one more thing that we need to do which is to tell Feign where the inventory service is running. Before that notice that we are setting the `@FeignClient(name="inventory")`.
 
-Open ``src/main/resources/application-default.properties``
-
-And add these properties by clicking **Copy to Editor** and adding to the `#TODO: Configure netflix libraries` marker:
+Open ``src/main/resources/application-default.properties`` and add these properties below the `#TODO: Configure netflix libraries` marker:
 
 ~~~java
 inventory.ribbon.listOfServers=inventory:8080
@@ -678,6 +676,7 @@ import com.redhat.coolstore.client.InventoryClient;
 ~~~
 
 Also in the `readAll()` method replace the comment `//TODO: Update the quantity for the products by calling the Inventory service` with the following:
+
 ~~~java
 productList.parallelStream()
             .forEach(p -> {
@@ -878,11 +877,9 @@ You have now successfully created your the Catalog service using Spring Boot and
 
 In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
 
-## Create the OpenShift project
+## Deploy to OpenShift
 
-We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
-
-**1. Create project**
+We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application.
 
 Make sure that you are on the right project
 
@@ -891,8 +888,6 @@ oc project userXX-modern-coolstore
 ~~~
 
 Next, we'll deploy your new microservice to OpenShift.
-
-## Deploy to OpenShift
 
 Now that you've logged into OpenShift, let's deploy our new catalog microservice:
 
@@ -931,7 +926,6 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 inventory.ribbon.listOfServers=inventory:8080
 ~~~
 
-> /!\ Make sure to update the last line with your user number.
 
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 
