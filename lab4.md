@@ -45,7 +45,7 @@ Run the Maven build to make sure the skeleton project builds successfully. You s
 
 > Make sure to run the **package** Maven goal and not **install**. The latter would download a lot more dependencies and do things you don't need yet!
 
-~~~shell
+~~~sh
 mvn clean package
 ~~~~
 
@@ -163,7 +163,7 @@ Examine `src/main/resources/project-stages.yml` to see the database connection d
 
 Build and package the Inventory service using Maven to make sure you code compiles:
 
-~~~shell
+~~~sh
 mvn clean package
 ~~~~
 
@@ -231,7 +231,7 @@ This service class exposes a few APIs that we'll use later:
 
 Re-Build and package the Inventory service using Maven to make sure your code compiles:
 
-~~~shell
+~~~sh
 mvn clean package
 ~~~~
 
@@ -296,7 +296,7 @@ The code also injects our new **InventoryService** using the [CDI @Inject](https
 
 Build and package the Inventory service again using Maven:
 
-~~~shell
+~~~sh
 mvn clean package
 ~~~~
 
@@ -310,7 +310,7 @@ You should see a **BUILD SUCCESS** in the build logs.
 
 Using the Thorntail maven plugin (predefined in `pom.xml`), you can conveniently run the application locally and test the endpoint.
 
-~~~shell
+~~~sh
 mvn wildfly-swarm:run
 ~~~
 
@@ -322,7 +322,7 @@ or use the command `run-thorntail` in the command palette.
 
 Once the application is done initializing you should see:
 
-~~~shell
+~~~sh
 INFO  [org.wildfly.swarm] (main) WFSWARM99999: Wildfly-Swarm is Ready
 ~~~
 
@@ -362,7 +362,7 @@ Before moving on, click in the first terminal window where Thorntail is running 
 
 You should see something like:
 
-~~~shell
+~~~sh
 WFLYSRV0028: Stopped deployment inventory-1.0.0-SNAPSHOT.war (runtime-name: inventory-1.0.0-SNAPSHOT.war) in 70ms
 ~~~
 
@@ -384,7 +384,7 @@ In this step we will deploy our new Inventory microservice for our CoolStore app
 
 Create a new project for the modernized services:
 
-~~~shell
+~~~sh
 oc new-project userXX-modern-coolstore --display-name="CoolStore Microservice Application"
 ~~~
 
@@ -405,7 +405,7 @@ Let's deploy our new inventory microservice to OpenShift!
 Our production inventory microservice will use an external database (PostgreSQL) to house inventory data.
 First, deploy a new instance of PostgreSQL by executing:
 
-~~~shell
+~~~sh
 oc new-app -e POSTGRESQL_USER=inventory \
            -e POSTGRESQL_PASSWORD=mysecretpassword \
            -e POSTGRESQL_DATABASE=inventory \
@@ -417,7 +417,7 @@ oc new-app -e POSTGRESQL_USER=inventory \
 
 This will deploy the database to our new project. Wait for it to complete:
 
-~~~shell
+~~~sh
 oc rollout status -w dc/inventory-database
 ~~~
 
@@ -427,7 +427,8 @@ Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
-~~~shell
+~~~sh
+cd /projects/modernize-apps/inventory
 mvn clean fabric8:deploy -Popenshift
 ~~~
 
@@ -437,7 +438,7 @@ The build and deploy may take a minute or two. Wait for it to complete. You shou
 
 After the maven build finishes it will take less than a minute for the application to become available. To verify that everything is started, run the following command and wait for it complete successfully:
 
-~~~shell
+~~~sh
 oc rollout status -w dc/inventory
 ~~~
 
@@ -496,7 +497,7 @@ Thorntail includes the `monitor` fraction which automatically adds health check 
 application when it is included as a fraction in the project. Open the file to insert the new dependencies
 into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
 
-~~~java
+~~~xml
 <dependency>
     <groupId>org.wildfly.swarm</groupId>
     <artifactId>monitor</artifactId>
@@ -560,24 +561,26 @@ With our new health check in place, we'll need to build and deploy the updated a
 
 With our health check in place, lets rebuild and redeploy using the same command as before:
 
-~~~shell
+~~~sh
 mvn fabric8:undeploy clean fabric8:deploy -Popenshift
 ~~~~
 
 or use the command `deploy-openshift` in the command palette.
 
+> /!\ Make sure that you select a file in the directory inventory when running this command.
+
 You should see a **BUILD SUCCESS** at the end of the build output.
 
 During build and deploy, you\'ll notice Thorntail adding in health checks for you:
 
-~~~shell
+~~~sh
 [INFO] F8: wildfly-swarm-health-check: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 10 seconds
 [INFO] F8: wildfly-swarm-health-check: Adding liveness probe on port 8080, path='/health', scheme='HTTP', with initial delay 180 seconds
 ~~~
 
 To verify that everything is started, run the following command and wait for it report `replication controller "inventory-xxxx" successfully rolled out`
 
-~~~shell
+~~~sh
 oc rollout status -w dc/inventory
 ~~~
 
@@ -602,7 +605,7 @@ You can see the definition of the health check from the perspective of OpenShift
 
 You should see:
 
-~~~shell
+~~~sh
     Liveness:	http-get http://:8080/health delay=180s timeout=1s period=10s #success=1 #failure=3
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
 ~~~
@@ -617,7 +620,7 @@ And verify it's been changed (look at the `delay=` value for the Liveness probe)
 
 `oc describe dc/inventory | egrep 'Readiness|Liveness'`
 
-~~~shell
+~~~sh
     Liveness:	http-get http://:8080/health delay=30s timeout=1s period=10s #success=1 #failure=3
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
 ~~~

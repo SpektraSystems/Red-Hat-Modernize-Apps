@@ -28,61 +28,6 @@ During this workshop, you will be using both the command line tool and the web c
 
 Now that you know how to interact with OpenShift, let's focus on some core concepts that you as a developer will need to understand as you are building your applications!
 
-## Developer Concepts
-
-There are several concepts in OpenShift useful for developers, and in this workshop
-you should be familiar with them.
-
-## Projects
-
-[Projects](https://docs.openshift.com/container-platform/3.6/architecture/core_concepts/projects_and_users.html#projects) are a top level concept to help you organize your deployments. An OpenShift project allows a community of users (or a user) to organize and manage their content in isolation from other communities. Each project has its own resources, policies (who can or cannot perform actions), and constraints (quotas and limits on resources, etc). Projects act as a wrapper around all the application services and endpoints you (or your teams) are using for your work.
-
-## Containers
-The basic units of OpenShift applications are called containers (sometimes called Linux Containers). [Linux container technologies](https://access.redhat.com/articles/1353593) are lightweight mechanisms for isolating running processes so that they are limited to interacting with only their designated resources.
-
-Though you do not directly interact with the Docker CLI or service when using OpenShift Container Platform, understanding their capabilities and terminology is important for understanding their role in OpenShift Container Platform and how your applications function inside of containers.
-
-## Pods
-OpenShift Container Platform leverages the Kubernetes concept of a pod, which is one or more containers deployed together on one host, and the smallest compute unit that can be defined, deployed, and managed.
-
-Pods are the rough equivalent of a machine instance (physical or virtual) to a container. Each pod is allocated its own internal IP address, therefore owning its entire port space, and containers within pods can share their local storage and networking.
-
-## Images
-Containers in OpenShift are based on Docker-formatted container images. An image is a binary that includes all of the requirements for running a single container, as well as metadata describing its needs and capabilities.
-
-You can think of it as a packaging technology. Containers only have access to resources defined in the image unless you give the container additional access when creating it. By deploying the same image in multiple containers across multiple hosts and load balancing between them, OpenShift Container Platform can provide redundancy and horizontal scaling for a service packaged into an image.
-
-## Image Streams
-An image stream and its associated tags provide an abstraction for referencing Images from within OpenShift. The image stream and its tags allow you to see what images are available and ensure that you are using the specific image you need even if the image in the repository changes.
-
-## Builds
-A build is the process of transforming input parameters into a resulting object. Most often, the process is used to transform input parameters or source code into a runnable image. A _BuildConfig_ object is the definition of the entire build process. It can build from different sources, including a Dockerfile, a source code repository like Git, or a Jenkins Pipeline definition.
-
-## Pipelines
-Pipelines allow developers to define a _Jenkins_ pipeline for execution by the Jenkins pipeline plugin. The build can be started, monitored, and managed by OpenShift Container Platform in the same way as any other build type.
-
-Pipeline workflows are defined in a Jenkinsfile, either embedded directly in the build configuration, or supplied in a Git repository and referenced by the build configuration.
-
-## Deployments
-An OpenShift Deployment describes how images are deployed to pods, and how the pods are deployed to the underlying container runtime platform. OpenShift deployments also provide the ability to transition from an existing deployment of an image to a new one and also define hooks to be run before or after creating the replication controller.
-
-## Services
-A Kubernetes service serves as an internal load balancer. It identifies a set of replicated pods in order to proxy the connections it receives to them. Backing pods can be added to or removed from a service arbitrarily while the service remains consistently available, enabling anything that depends on the service to refer to it at a consistent address.
-
-## Routes
-_Services_ provide internal abstraction and load balancing within an OpenShift environment, sometimes clients (users, systems, devices, etc.) **outside** of OpenShift need to access an application. The way that external clients are able to access applications running in OpenShift is through the OpenShift routing layer. And the data object behind that is a _Route_.
-
-The default OpenShift router (HAProxy) uses the HTTP header of the incoming request to determine where to proxy the connection. You can optionally define security, such as TLS, for the _Route_. If you want your _Services_, and, by extension, your _Pods_,  to be accessible to the outside world, you need to create a _Route_.
-
-## Templates
-
-Templates contain a collection of object definitions (BuildConfigs, DeploymentConfigs, Services, Routes, etc) that compose an entire working project. They are useful for packaging up an entire collection of runtime objects into a somewhat portable representation of a running application, including the configuration of the elements.
-
-You will use several pre-defined templates to initialize different environments for the application. You've already used one in the previous scenario to deploy the application into a _dev_ environment, and you'll use more in this scenario to provision the _production_ environment as well.
-
-Consult the [OpenShift documentation](https://docs.openshift.com) for more details on these and other concepts.
-
-
 ## Verifying the Dev Environment
 
 In the previous lab you created a new OpenShift project called `userXX-coolstore-dev` which represents your developer personal project in which you deployed the CoolStore monolith.
@@ -114,7 +59,7 @@ You can review the above resources in the OpenShift Web Console or using the `oc
 
 Run these commands to inspect the elements:
 
-~~~shell
+~~~sh
 oc get bc coolstore
 
 oc get is coolstore
@@ -134,7 +79,7 @@ You should also be able to see both the CoolStore monolith and its database runn
 
 The output should look like this:
 
-~~~shell
+~~~sh
 NAME                           READY     STATUS    RESTARTS   AGE
 coolstore-2-bpkkc              1/1       Running   0          4m
 coolstore-postgresql-1-jpcb8   1/1       Running   0          9m
@@ -152,7 +97,7 @@ Once logged in, use the following command to execute an SQL statement to show so
 
 You should see the following:
 
-~~~shell
+~~~sh
           name
 ------------------------
  Red Fedora
@@ -181,68 +126,7 @@ Although any changes to the local container filesystem are discarded when the co
 
 In addition to uploading files into a running container, you might also want to be able to download files. During development these may be data files or log files created by the application.
 
-## Copy files from container
-
-As you recall from the last step, we can use `oc rsh` to execute commands inside the running pod.
-
-For our Coolstore Monolith running with JBoss EAP, the application is installed in the `/opt/eap` directory in the running container. Execute the `ls` command inside the container to see this:
-
-`oc rsh dc/coolstore ls -l /opt/eap`
-
-You should see a listing of files in this directory **in the running container**.
-
-> It is very important to remember where commands are executed! If you think you are in a container and in fact are on some other machine, destructive commands may do real harm, so be careful! In general it is not a good idea to operate inside immutable containers outside of the development environment. But for doing testing and debugging it's OK.
-
-Let's copy some files out of the running container. To copy files from a running container on OpenShift, we'll use the `oc rsync` command. This command expects the name of the pod to copy from, which can be seen with this command:
-
-`oc get pods --selector deploymentconfig=coolstore`
-
-The output should show you the name of the pod:
-
-~~~shell
-NAME                           READY     STATUS    RESTARTS   AGE
-coolstore-2-bpkkc              1/1       Running   0          32m
-~~~
-
-The name of my running coolstore monolith pod is `coolstore-2-bpkkc` but **yours will be different**.
-
-Save the name of the pod into an environment variable called `COOLSTORE_DEV_POD_NAME` so that we can use it for future commands:
-
-`export COOLSTORE_DEV_POD_NAME=$(oc get pods --selector deploymentconfig=coolstore -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}')`
-
-Verify the variable holds the name of your pod with:
-
-`echo $COOLSTORE_DEV_POD_NAME`
-
-Next, run the `oc rsync` command in your terminal window, using the new variable to refer to the name of the pod running our coolstore:
-
-`oc rsync $COOLSTORE_DEV_POD_NAME:/opt/eap/version.txt .`
-
-The output will show that the file was downloaded:
-
-~~~shell
-receiving incremental file list
-version.txt
-
-sent 30 bytes  received 65 bytes  62,566.00 bytes/sec
-total size is 65 speedup is 1.00
-~~~
-
-Now you can open the file locally using this link: `version.txt` and inspect its contents.
-
-This is useful for verifying that the contents of files in your applications are what you expect.
-
-You can also upload files using the same `oc rsync` command but unlike when copying from the container to the local machine, there is no form for copying a single file. To copy selected files only, you will need to use the ``--exclude`` and ``--include`` options to filter what is and isn't copied from a specified directory. We will use this in the next step.
-
-Manually copying is cool, but what about automatic live copying on change? That's in the next step too!
-
-## Before moving on
-
-Let's clean up the temp files we used. Execute:
-
-`rm -f version.txt`
-
-## Live Synchronization of Project Files
+### Live Synchronization of Project Files
 
 In addition to being able to manually upload or download files when you choose to, the ``oc rsync`` command can also be set up to perform live synchronization of files between your local computer and the container. When there is a change to a file, the changed file will be automatically copied up to the container.
 
@@ -253,8 +137,6 @@ An example of where it can be useful to have changes automatically copied from y
 For scripted programming languages such as JavaScript, PHP, Python or Ruby, where no separate compilation phase is required you can perform live code development with your application running inside of OpenShift.
 
 For JBoss EAP applications you can sync individual files (such as HTML/CSS/JS files), or sync entire application .WAR files. It's more challenging to synchronize individual files as it requires that you use an *exploded* archive deployment, so the use of [JBoss Developer Studio](https://developers.redhat.com/products/devstudio/overview/) is recommended, which automates this process (see [these docs](https://tools.jboss.org/features/livereload.html) for more info).
-
-## Live synchronization of project files
 
 For this workshop, we'll Live synchronize the entire WAR file.
 
@@ -293,7 +175,7 @@ Add the following CSS to turn the header bar background to Red Hat red :
 
 Let's re-build the application using the command `build-eap-openshift` in the command palette. In the tab **sync-eap-openshift** you should see the following :
 
-~~~shell
+~~~sh
 sent 65 bytes  received 12 bytes  51.33 bytes/sec
 total size is 14,653,352  speedup is 190,303.27
 ~~~
@@ -321,7 +203,7 @@ background: blue
 
 Again, re-build the app:
 
-~~~shell
+~~~sh
 mvn package -Popenshift
 ~~~
 
@@ -490,7 +372,7 @@ In the final step we'll add a human interaction element to the pipeline, so that
 * [OpenShift Pipeline Documentation](https://docs.openshift.com/container-platform/latest/dev_guide/dev_tutorials/openshift_pipeline.html)
 
 
-## Adding Pipeline Approval Steps
+## Adding Pipeline Approval Steps (OPTIONAL, you can directly go to the next section)
 
 In previous steps you used an OpenShift Pipeline to automate the process of building and deploying changes from the dev environment to production.
 
@@ -539,7 +421,7 @@ With the approval step in place, let's simulate a new change from a developer wh
 
 Next, re-build the app once more:
 
-~~~shell
+~~~sh
 mvn clean package -Popenshift
 ~~~~
 
@@ -547,7 +429,7 @@ or use the command `build-eap-openshift` in the command palette.
 
 And re-deploy it to the dev environment using a binary build just as we did before:
 
-~~~shell
+~~~sh
 oc start-build -n coolstore-dev coolstore --from-file=deployments/ROOT.war
 ~~~~
 

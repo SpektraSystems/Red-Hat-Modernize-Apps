@@ -531,7 +531,7 @@ JBoss EAP comes with a nice maven-plugin tool that can stop, start, deploy, and 
 
 At the `TODO: Add wildfly plugin here` we are going to add a the following configuration
 
-~~~java
+~~~xml
 <plugin>
     <groupId>org.wildfly.plugins</groupId>
     <artifactId>wildfly-maven-plugin</artifactId>
@@ -543,7 +543,7 @@ At the `TODO: Add wildfly plugin here` we are going to add a the following confi
 Next we are going to add some configuration at the `TODO: Add configuration here` marker. First we need to point to our JBoss EAP installation using the `jboss-home` configuration. After that we will also have to tell JBoss EAP to use the profile configured for full Java
 EE, since it defaults to use the Java EE Web Profile. This is done by adding a `server-config` and set it to value `standalone-full.xml`
 
-~~~java
+~~~xml
 <configuration>
     <jboss-home>${env.JBOSS_HOME}</jboss-home>
     <server-config>standalone-full.xml</server-config>
@@ -561,7 +561,7 @@ EE, since it defaults to use the Java EE Web Profile. This is done by adding a `
 
 Since our application is using a Database we also configuration that by adding the following at the `<-- TODO: Add Datasource definition here -->` comment
 
-~~~java
+~~~xml
 <resource>
     <addIfAbsent>true</addIfAbsent>
     <address>subsystem=datasources,data-source=CoolstoreDS</address>
@@ -579,7 +579,7 @@ Since our application is using a Database we also configuration that by adding t
 
 Since our application is using a JMS Topic we are also need to add the configuration for that by adding the following at the `<-- TODO: Add JMS Topic here -->` comment
 
-~~~java
+~~~xml
 <resource>
     <address>subsystem=messaging-activemq,server=default,jms-topic=orders</address>
     <properties>
@@ -639,7 +639,7 @@ Open the `pom.xml` file.
 
 At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the following configuration to the pom.xml
 
-~~~java
+~~~xml
 <profile>
   <id>openshift</id>
   <build>
@@ -666,7 +666,7 @@ At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the fol
 
 **2. Create the OpenShift project**
 
-First, access the **OpenShift Console** at {{$OPENSHIFT_CONSOLE_URL}} 
+First, access the **OpenShift Console** at [OpenShift Console URL]({{$OPENSHIFT_CONSOLE_URL}}) 
 
 ![OpenShift Console]({% image_path moving-existing-apps/openshift-login.png %}){:width="80%"}
 

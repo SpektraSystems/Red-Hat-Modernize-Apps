@@ -24,7 +24,7 @@ Another thing you will learn in this scenario is one of the techniques to aggreg
 
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
-~~~shell
+~~~sh
 cd /projects/modernize-apps/catalog
 ~~~
 
@@ -294,7 +294,7 @@ The Spring Data framework will automatically see if there is a schema.sql in the
 
 Now we are ready to run the test to verify that everything works. Because we created the `ProductRepositoryTest.java` all we have todo is to run: 
 
-~~~shell
+~~~sh
 mvn verify
 ~~~ 
 
@@ -491,7 +491,7 @@ The Spring MVC Framework default uses Jackson to serialize or map Java objects t
 
 Now you can run the `CatalogEndpointTest` and verify that it works.
 
-~~~shell
+~~~sh
 mvn verify -Dtest=CatalogEndpointTest
 ~~~ 
 
@@ -501,7 +501,7 @@ Since we now have endpoints that returns the catalog we can also start the servi
 
 Start the application by running the following command:
 
-~~~shell
+~~~sh
 mvn spring-boot:run
 ~~~~
 
@@ -584,7 +584,7 @@ Now if we run the test it **should fail**!
 
 It failed:
 
-~~~shell
+~~~sh
 Tests run: 4, Failures: 2, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
@@ -689,7 +689,7 @@ productList.parallelStream()
 
 We are now ready to test the service
 
-~~~shell
+~~~sh
 mvn verify
 ~~~ 
 
@@ -768,7 +768,7 @@ Notice that the Hoverfly Rule will now return serverError for all request to inv
 
 Now if you run ``mvn verify -Dtest=CatalogEndpointTest`` the test will fail with the following error message:
 
-~~~shell
+~~~sh
 Failed tests:   test_retriving_one_proudct(com.redhat.coolstore.service.CatalogEndpointTest): expected:<[9999]> but was:<[-1]>
 ~~~
 
@@ -805,7 +805,7 @@ Open ``src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and
 
 Now if you run ``mvn verify -Dtest=CatalogEndpointTest`` the test will fail with the following error message:
 
-~~~shell
+~~~sh
 Failed tests:   test_retriving_one_proudct(com.redhat.coolstore.service.CatalogEndpointTest): expected:<[9999]> but was:<[-1]>
 ~~~
 
@@ -826,7 +826,7 @@ As you have seen in previous steps, using the Spring Boot maven plugin (predefin
 
 Execute the following command to run the new service locally:
 
-~~~shell
+~~~sh
 mvn spring-boot:run
 ~~~~
 
@@ -836,7 +836,7 @@ or use `run-spring-boot` command in the command palette.
 
 Once the application is done initializing you should see:
 
-~~~shell
+~~~sh
 INFO  [main] com.redhat.coolstore.RestApplication : Started RestApplication [...]
 ~~~
 
@@ -886,7 +886,7 @@ We have already deployed our coolstore monolith and inventory to OpenShift. In t
 
 Make sure that you are on the right project
 
-~~~shell
+~~~sh
 oc project userXX-modern-coolstore
 ~~~
 
@@ -901,7 +901,7 @@ Now that you've logged into OpenShift, let's deploy our new catalog microservice
 Our production catalog microservice will use an external database (PostgreSQL) to house inventory data.
 First, deploy a new instance of PostgreSQL by executing:
 
-~~~shell
+~~~sh
 oc new-app -e POSTGRESQL_USER=catalog \
              -e POSTGRESQL_PASSWORD=mysecretpassword \
              -e POSTGRESQL_DATABASE=catalog \
@@ -991,7 +991,7 @@ Flow the steps below to create a path based route.
 
 The output of this command shows us the hostname:
 
-~~~shell
+~~~sh
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
 www       www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   <all>                   None
 ~~~

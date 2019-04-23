@@ -13,6 +13,8 @@ modules:
   lab5:
     name: Mono To Micro - Spring Boot (Part 2)
   lab6:
-    name: Mono To Micro - Reactive Microservices with VertX (Part 3)
+    name: Mono To Micro - Reactive Microservices with VertX (Part 3 - Bonus)
   lab7:
     name: "Appendix: Lab Env Info"
+  lab8:
+    name: "Appendix: OpenShift Concepts"
