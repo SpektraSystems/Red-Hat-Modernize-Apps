@@ -446,7 +446,7 @@ You can see the Jenkinsfile definition of the pipeline in the output:
   }
 ~~~
 
-> /!\ You have to replace `userXX` by your own `userID`
+> /!\ You have to replace `userXX` by your own `userID` when using the openshiftTag() method. Use the following command `oc edit bc/monolith-pipeline` to edit your pipeline
 
 Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using [the large set of steps and plugins that Jenkins provides](https://jenkins.io/doc/pipeline/steps/) in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the [OpenShift GitHub Repository](https://github.com/openshift/origin/tree/master/examples/jenkins/pipeline) or [here](https://github.com/demo-redhat-forum-2018/monolith/blob/step-2/Jenkinsfile).
 
