@@ -985,9 +985,9 @@ www       www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   <all
 
 My hostname is `www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
 
-**2. Open the openshift console for Catalog - Applications - Routes at 
+**2. Open the openshift console for Catalog - Applications - Routes at** 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/catalog/browse/routes`**
+`https://{{OPENSHIFT_MASTER}}/console/project/catalog/browse/routes`
 
 **3. Click on Create Route, and set**
 
