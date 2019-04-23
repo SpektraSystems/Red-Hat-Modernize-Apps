@@ -53,7 +53,7 @@ the [RHAMT documentation](https://access.redhat.com/documentation/en/red-hat-app
 
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
-~~~
+~~~shell
 export JAVA_HOME=$(jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));')
 cd /projects/modernize-apps/monolith
 ~~~
@@ -77,7 +77,7 @@ For this scenario, we will use the CLI as you are the only one that will run RHA
 
 The RHAMT CLI is has been installed for you. To verify that the tool was properly installed, run:
 
-`/rhamt/bin/rhamt-cli --version`
+``/rhamt/bin/rhamt-cli --version``
 
 You should see:
 
@@ -99,7 +99,7 @@ subdirectories according to Maven best practices.
 
 You should see:
 
-~~~
+~~~shell
 .
 +-- hello.txt
 +-- pom.xml
@@ -125,7 +125,7 @@ When you later deploy the application, it will look like:
 The RHAMT CLI has a number of options to control how it runs. Click on the below command
 to execute the RHAMT CLI and analyze the existing project:
 
-~~~
+~~~shell
 /rhamt/bin/rhamt-cli \
   --sourceMode \
   --input /projects/modernize-apps/monolith \
@@ -159,9 +159,9 @@ Click on the `monolith` link to access details for the project:
 
 The Dashboard gives an overview of the entire application migration effort. It summarizes:
 
-* The incidents and story points by category
-* The incidents and story points by level of effort of the suggested changes
-* The incidents by package
+* The **incidents and story points by category**
+* The **incidents and story points by level of effort** of the suggested changes
+* The **incidents by package**
 
 > Story points are an abstract metric commonly used in Agile software development to estimate the relative level of effort needed to implement a feature or change.
 Red Hat Application Migration Toolkit uses story points to express the level of effort needed to migrate particular application constructs, and the application as a whole.
@@ -252,7 +252,7 @@ public class StartupListener {
 
 Build and package the app using Maven to make sure the changed code still compiles:
 
-~~~
+~~~shell
 cd /projects/modernize-apps/monolith
 mvn clean package
 ~~~
@@ -493,7 +493,7 @@ In this step we will re-run the RHAMT report to verify our migration was success
 
 Click on the below command to clean the old build artifacts and re-execute the RHAMT CLI and analyze the new project:
 
-~~~
+~~~shell
 mvn clean && \
 /rhamt/bin/rhamt-cli \
   --sourceMode \
@@ -559,7 +559,7 @@ EE, since it defaults to use the Java EE Web Profile. This is done by adding a `
 </configuration>
 ~~~
 
-Since our application is using a Database we also configuration that by adding the following at the ~~~<-- TODO: Add Datasource definition here -->~~~ comment
+Since our application is using a Database we also configuration that by adding the following at the `<-- TODO: Add Datasource definition here -->` comment
 
 ~~~java
 <resource>
@@ -577,7 +577,7 @@ Since our application is using a Database we also configuration that by adding t
 </resource>
 ~~~
 
-Since our application is using a JMS Topic we are also need to add the configuration for that by adding the following at the ~~~<-- TODO: Add JMS Topic here -->~~~ comment
+Since our application is using a JMS Topic we are also need to add the configuration for that by adding the following at the `<-- TODO: Add JMS Topic here -->` comment
 
 ~~~java
 <resource>
@@ -594,8 +594,10 @@ We are now ready to build and test the project
 
 Our application is at this stage pretty standards based, but it needs two things. One is the need to add the JMS Topic since our application depends on it. 
 
-`cd /projects/modernize-apps/monolith ; \
-mvn wildfly:start wildfly:add-resource wildfly:shutdown`
+~~~shell
+cd /projects/modernize-apps/monolith
+mvn wildfly:start wildfly:add-resource wildfly:shutdown
+~~~
 
 or use the command palette `<shift>+F10` and then select `add-jms-resource`
 
@@ -607,9 +609,14 @@ Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the cor
 
 We are now ready to deploy the application
 
-``export JBOSS_HOME=$HOME/jboss-eap-7.1 ; mvn wildfly:run``
+~~~shell
+mvn wildfly:run
+~~~
+
+or use the command palette `<shift>+F10` and then select `run-eap`
 
 Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-name: "ROOT.war")`
+
 ## Test the application
 
 Access the application by clicking on the preview URL above your terminal

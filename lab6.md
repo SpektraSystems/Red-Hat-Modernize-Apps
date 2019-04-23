@@ -38,7 +38,7 @@ Eclipse Vert.x is event-driven and non-blocking, which means that applications i
 * Vert.x is fun - Enjoy being a developer again. Unlike restrictive traditional application containers, Vert.x gives you incredible power and agility to create compelling, scalable, 21st-century applications the way you want to, with a minimum of fuss, in the language you want.
 * Vert.x is lightweight - Vert.x core is around 650kB in size.
 * Vert.x is fast. Here are some independent [numbers](https://www.techempower.com/benchmarks/#section=data-r8&hw=i7&test=plaintext).
-* Vert.x is **not an application server**. There's no monolithic Vert.x instance into which you deploy applications. You just run your apps wherever you want to.
+* Vert.x is not an application server. There's no monolithic Vert.x instance into which you deploy applications. You just run your apps wherever you want to.
 * Vert.x is modular - when you need more bits just add the bits you need and nothing more.
 * Vert.x is simple but not simplistic. Vert.x allows you to create powerful apps, simply.
 * Vert.x is an ideal choice for creating light-weight, high-performance, microservices.
@@ -50,7 +50,7 @@ Eclipse Vert.x is event-driven and non-blocking, which means that applications i
 
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
-~~~sh
+~~~shell
 cd /projects/modernize-apps/cart
 ~~~
 
@@ -60,7 +60,7 @@ The sample project shows the components of a basic Vert.x project laid out in di
 
 **1. Examine the Maven project structure.**
 
-~~~sh
+~~~shell
 .
 +-- pom.xml
 \-- src
@@ -240,11 +240,15 @@ public class CartServiceVerticle extends AbstractVerticle {
 
 Currently our verticle doesn't really do anything except logging some info. Let's try it out. Execute:
 
-``mvn compile vertx:run`` or use ``build-vertx`` command in the command palette.
+~~~shell
+mvn compile vertx:run
+~~~ 
+
+or use ``build-vertx`` command in the command palette.
 
 You should see output that looks like this:
 
-~~~sh
+~~~shell
 [INFO] Launching Vert.x Application
 [INFO] jan 12, 2018 11:25:40 FM com.redhat.coolstore.CartServiceVerticle
 [INFO] INFO: Starting CartServiceVerticle
@@ -278,7 +282,11 @@ vertx.createHttpServer().requestHandler(router::accept).listen(serverPort);
 
 Now let's restart the application. Execute:
 
-``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
+~~~shell
+mvn compile vertx:run
+~~~~
+
+or use ``run-vertx`` command in the command palette.
 
 **3. Test the static router**
 
@@ -288,11 +296,11 @@ You should now see an HTML page that looks like this:
 
 ![Local Web Browser Tab]({% image_path reactive-microservices/web-page.png %}){:width="80%"}
 
-> **NOTE:** The Fetch button doesn't work yet, but we will fix that later in this lab.
+> **NOTE:** The Fetch button doesn\'t work yet, but we will fix that later in this lab.
 
 **3. Add a simple REST Handler**
 
-Now let's add a simple rest service. Replace the `//TODO: Create hello router` marker with this code to
+Now let\'s add a simple rest service. Replace the `//TODO: Create hello router` marker with this code to
 create and start the web server listing to the port retrieved from the configuration:
 
 ~~~java
@@ -312,11 +320,17 @@ It's actually not necessary to set the status, since it will default to HTTP OK 
 
 Restart the application by running the following in the terminal or in clicking the execute button.
 
-``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
+~~~shell
+mvn compile vertx:run
+~~~~
+
+or use ``run-vertx`` command in the command palette.
 
 After Vert.x is start execute a curl command in another terminal so like this. 
 
-~~~curl -X GET http://localhost:10080/hello; echo~~~
+~~~shell
+curl -X GET http://localhost:10080/hello; echo
+~~~
 
 The response body should be a JSON string `{"message":"Hello"}`.
 
@@ -450,7 +464,7 @@ At the moment we only need one value in the configuration file, but we will add 
 
 Copy this into the configuration file `src/main/resources/config-default.json`:
 
-~~~java
+~~~json
 {
     "http.port" : 8082
 }
@@ -462,20 +476,19 @@ First open the `pom.xml`
 
 Then Change the `<vertx.verticle>com.redhat.coolstore.CartServiceVerticle</vertx.verticle>` to `<vertx.verticle>com.redhat.coolstore.MainVerticle</vertx.verticle>`
 
-~~~java
-com.redhat.coolstore.MainVerticle
-~~~
-
-
 **3. Test the default configuration**
 
 Restart the application by running the following in the terminal or in clicking the execute button.
 
-``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
+~~~shell
+mvn compile vertx:run
+~~~~
 
-In the output you should now see that the server is starting on port 8082 and not 10080 like before.
+or use ``run-vertx`` command in the command palette.
 
-Click on the **preview URL** which will open another tab or window of your browser pointing to port 8082 on your client. 
+In the output you should now see that the server is starting on port `8082` and not `10080` like before.
+
+Click on the **preview URL** which will open another tab or window of your browser pointing to port `8082` on your client. 
 
 Again you should now see an HTML page that looks like this:
 
@@ -489,7 +502,7 @@ In next step of this scenario, we will start implementing our rest endpoints.
 
 ## Create REST endpoints for retrieving carts
 
-So now that you have learned how to create a rest service and also how to implement environmental specific configuration let's start building our rest endpoints. But before that lets discuss the `Router`, which is part of Vert.x Web.
+So now that you have learned how to create a rest service and also how to implement environmental specific configuration let\'s start building our rest endpoints. But before that lets discuss the `Router`, which is part of Vert.x Web.
 
 The `Router` in Vert.x is very flexible and makes it easy to deal with complex HTTP routing. Some of the key features of Vert.x-Web include:
 * Routing (based on method, path, etc)
@@ -500,7 +513,7 @@ The `Router` in Vert.x is very flexible and makes it easy to deal with complex H
 * Body size limits
 * ... and [much more](http://vertx.io/docs/vertx-web/js/)
 
-In our example we will only use basic GET, POST and DELETE routing. Let's get started with the GET operations.
+In our example we will only use basic GET, POST and DELETE routing. Let\'s get started with the GET operations.
 
 **1. Creating a GET /services/cart endpoint**
 First we are going to create a very simple endpoint that returns a `ShopppingCart` object as a JSON String using some utility methods from the `src/main/java/com/redhat/coolstore/utils/Transformers.java` to get a `JsonObject` that we can then return as String.
@@ -515,7 +528,6 @@ private void getCart(RoutingContext rc) {
     sendCart(cart,rc);
 }
 ~~~
-
 
 **2. Creating a GET /services/carts endpoint that returns all carts**
 
@@ -537,6 +549,7 @@ private void getCarts(RoutingContext rc) {
 ~~~
 
 The most important line in this method is this:
+
 ~~~java
 carts.keySet().forEach(cartId ->; cartList.add(Transformers.shoppingCartToJson(carts.get(cartId))));
 ~~~ 
@@ -547,17 +560,19 @@ In this lambda expression we are iterating through the list of shopping carts an
 
 Open the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file.
 
-Add the first route by adding the following at `//TODO: Create cart router` marker
+Add the first route by adding the following at `//TODO: Create cart router` marker:
+
 ~~~java
 router.get("/services/cart/:cartId").handler(this::getCart);
 ~~~
 
-Add the second route by adding the following at `//TODO: Create carts router` marker
+Add the second route by adding the following at `//TODO: Create carts router` marker:
+
 ~~~java
 router.get("/services/carts").handler(this::getCarts);
 ~~~
 
-The `this::getCarts` is a lambda reference to the `getCarts(RoutingContext)`. Another way to write this would be like this
+The `this::getCarts` is a lambda reference to the `getCarts(RoutingContext)`. Another way to write this would be like this:
 
 ~~~java
 router.get("/services/carts").handler(rc -> {
@@ -569,13 +584,17 @@ router.get("/services/carts").handler(rc -> {
 
 Restart the application by running the following in the terminal or in clicking the execute button.
 
-``mvn compile vertx:run``  or use ``run-vertx`` command in the command palette.
+~~~shell
+mvn compile vertx:run
+~~~~
+
+or use ``run-vertx`` command in the command palette.
 
 Now test the route with a curl command in the terminal like this:
 
 `curl -X GET http://localhost:8082/services/carts; echo`
 
-This should print the body of the response  that looks somewhat like this. Note that the the content from this is generate from the ~~~src/main/java/com/redhat/coolstore/utils/Transformers.java~~~ and will return a random number of products, so you actual content may vary.
+This should print the body of the response  that looks somewhat like this. Note that the the content from this is generate from the `src/main/java/com/redhat/coolstore/utils/Transformers.java` and will return a random number of products, so you actual content may vary.
 
 
 ~~~json
@@ -601,7 +620,10 @@ This should print the body of the response  that looks somewhat like this. Note 
 ~~~
 
 Also test getting a single cart curl like this:
-~~~curl -X GET http://localhost:8082/services/cart/99999; echo~~~
+
+~~~shell
+curl -X GET http://localhost:8082/services/cart/99999; echo
+~~~
 
 Click on the **preview URL** which will open another tab or window of your browser pointing to port 8082 on your client. 
 
@@ -681,7 +703,7 @@ For making calls to external HTTP services Vert.x supplies a WebClient. The `Web
 
 Copy this into the configuration file `src/main/resources/config-default.json`:
 
-~~~java
+~~~json
 {
     "http.port" : 8082,
     "catalog.service.port" : 8081,
@@ -735,14 +757,17 @@ Phew! That wasn't easy... However, in real life thing are never as easy as they 
 
 **4. Test our changes**
 
-Let's first test to update the quantity for a product that is already in the shopping cart
+Let's first test to update the quantity for a product that is already in the shopping cart. Start the cart service:
 
-Start the cart service
-``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
+~~~shell
+mvn compile vertx:run
+~~~~
+
+or use ``run-vertx`` command in the command palette.
 
 Then execute this to test retrieving a specific cart and the quantity of item `329299` in the cart:
 
-~~~
+~~~shell
 curl -s http://localhost:8082/services/cart/99999 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
@@ -752,7 +777,7 @@ This will return the quantity like below, but the actual number may be different
 
 Now let's call our addToCart method.
 
-~~~
+~~~shell
 curl -s -X POST http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
@@ -768,13 +793,17 @@ The CartService depends on the CatalogService and just like in the Spring Boot e
 
 First lets check if the catalog service is still running locally.
 
-~~~
+~~~shell
 curl -v http://localhost:8081/services/products 2>&1 | grep "HTTP/1.1 200"
 ~~~
 
 If that prints `< HTTP/1.1 200` then our service is responding correctly otherwise we need to start the Catalog application in a separate terminal like this:
 
-`cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests` or use `run-spring-boot` command in the command palette.
+~~~shell
+cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests
+~~~~
+
+or use `run-spring-boot` command in the command palette.
 
 > /!\ When launching the `run-spring-boot` command you should have selected the catalog project in the project explorer
 
@@ -782,7 +811,7 @@ Wait for it to complete. You should see `Started RestApplication in xxxxx second
 
 To test to add a product we are going to use a new shopping cart id. Execute:
 
-~~~
+~~~shell
 curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 ; echo
 ~~~
 
@@ -852,7 +881,7 @@ Start the cart service ``mvn compile vertx:run`` or use ``run-vertx`` command in
 
 The run this to get the quantity of item `329299` in the cart:
 
-~~~
+~~~shell
 curl -s http://localhost:8082/services/cart/99999 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
@@ -862,7 +891,7 @@ This will return the quantity like below, but the actual number may be different
 
 Now let's call our removeShoppingCartItem method.
 
-~~~
+~~~shell
 curl -s -X DELETE http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
@@ -1060,13 +1089,13 @@ Firstly, build and start the cart service
 
 Now issue a curl command to add a product that exists
 
-~~~
+~~~shell
 curl -s -X POST http://localhost:8082/services/cart/99999/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
 Let's also make sure that it works with a totally new shopping cart, which would test the second part of our changes:
 
-~~~
+~~~shell
 curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
@@ -1100,7 +1129,7 @@ Create the file: ``src/main/resources/config-openshift.json``
 
 Copy the following content to the file:
 
-~~~java
+~~~json
 {
     "http.port" : 8080,
     "catalog.service.port" : 8080,
@@ -1122,7 +1151,7 @@ Create the file ``src/main/fabric8/deployment.yml``
 
 Add the following content to the file
 
-~~~java
+~~~yaml
 apiVersion: v1
 kind: Deployment
 metadata:
@@ -1142,7 +1171,7 @@ Create the file by clicking on open ``src/main/fabric8/route.yml``
 
 Add the following content:
 
-~~~java
+~~~yaml
 apiVersion: v1
 kind: Route
 metadata:
@@ -1194,7 +1223,7 @@ Flow the steps below to create a path based route.
 
 The output of this command shows us the hostname:
 
-~~~
+~~~shell
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
 www       www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}             coolstore   <all>                   None
 ~~~

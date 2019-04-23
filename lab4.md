@@ -21,7 +21,7 @@ The goal is to deploy this new microservice alongside the existing monolith, and
 
 ## What is Thorntail? 
 
-![Logo]({% image_path mono-to-micro-part-1/swarm-logo.png %}){:width="50%"}
+![Logo]({% image_path mono-to-micro-part-1/thorntail.png %}){:width="50%"}
 
 Java EE applications are traditionally created as an **ear** or **war** archive including all  dependencies and deployed in an application server. Multiple Java EE applications can and  were typically deployed in the same application server. This model is well understood in the development teams and has been used over the past several years.
 
@@ -43,10 +43,13 @@ This project currently contains no code other than the main class for exposing a
 
 Run the Maven build to make sure the skeleton project builds successfully. You should get a **BUILD SUCCESS** message in the logs, otherwise the build has failed.
 
-> Make sure to run the **package** Maven goal and not **install**. The latter would
-> download a lot more dependencies and do things you don't need yet!
+> Make sure to run the **package** Maven goal and not **install**. The latter would download a lot more dependencies and do things you don't need yet!
 
-`mvn clean package` or use the command `build` in the command palette. 
+~~~shell
+mvn clean package
+~~~~
+
+or use the command `build` in the command palette. 
 
 > /!\ Make sure that you select a file in the directory inventory when running this command.
 
@@ -58,13 +61,13 @@ Once built, the resulting *jar* is located in the **target** directory:
 
 The listed jar archive, **inventory-1.0.0-SNAPSHOT-swarm.jar** , is an uber-jar with all the dependencies required packaged in the *jar* to enable running the application with **java -jar**. Thorntail also creates a *war* packaging as a standard Java EE web app that could be deployed to any Java EE app server (for example, JBoss EAP, or its upstream WildFly project).
 
-Now let's write some code and create a domain model, service interface and a RESTful endpoint to access inventory:
+Now let\'s write some code and create a domain model, service interface and a RESTful endpoint to access inventory:
 
 ![Inventory RESTful Service]({% image_path mono-to-micro-part-1/wfswarm-inventory-arch.png %}){:width="80%"}
 
 ## Create Inventory Domain
 
-With our skeleton project in place, let's get to work defining the business logic.
+With our skeleton project in place, let\'s get to work defining the business logic.
 
 The first step is to define the model (definition) of an Inventory object. Since Thorntail uses JPA, we can re-use the same model definition from our monolithic application - no need to re-write or re-architect!
 
@@ -160,7 +163,11 @@ Examine `src/main/resources/project-stages.yml` to see the database connection d
 
 Build and package the Inventory service using Maven to make sure you code compiles:
 
-`mvn clean package` or use the command `build` in the command palette. 
+~~~shell
+mvn clean package
+~~~~
+
+or use the command `build` in the command palette. 
 
 > /!\ Make sure that you select a file in the directory inventory when running this command.
 
@@ -224,12 +231,15 @@ This service class exposes a few APIs that we'll use later:
 
 Re-Build and package the Inventory service using Maven to make sure your code compiles:
 
-`mvn clean package` or use the command `build` in the command palette. 
+~~~shell
+mvn clean package
+~~~~
+
+or use the command `build` in the command palette. 
 
 > /!\ Make sure that you select a file in the directory inventory when running this command.
 
 You should see a **BUILD SUCCESS** in the build logs. If builds successfully, continue to the next step to create a new RESTful endpoint that uses this service.
-
 
 ## Create RESTful Endpoints
 
@@ -275,7 +285,6 @@ public class InventoryEndpoint implements Serializable {
     }
 
 }
-
 ~~~
 
 The above REST services defines two endpoints:
@@ -287,7 +296,11 @@ The code also injects our new **InventoryService** using the [CDI @Inject](https
 
 Build and package the Inventory service again using Maven:
 
-`mvn clean package` or use the command `build` in the command palette. 
+~~~shell
+mvn clean package
+~~~~
+
+or use the command `build` in the command palette. 
 
 > /!\ Make sure that you select a file in the directory inventory when running this command.
 
@@ -297,7 +310,11 @@ You should see a **BUILD SUCCESS** in the build logs.
 
 Using the Thorntail maven plugin (predefined in `pom.xml`), you can conveniently run the application locally and test the endpoint.
 
-`mvn wildfly-swarm:run` or use the command `run-thorntail` in the command palette. 
+~~~shell
+mvn wildfly-swarm:run
+~~~
+
+or use the command `run-thorntail` in the command palette. 
 
 > /!\ Make sure that you select a file in the directory inventory when running this command.
 
@@ -305,7 +322,7 @@ Using the Thorntail maven plugin (predefined in `pom.xml`), you can conveniently
 
 Once the application is done initializing you should see:
 
-~~~
+~~~shell
 INFO  [org.wildfly.swarm] (main) WFSWARM99999: Wildfly-Swarm is Ready
 ~~~
 
@@ -317,7 +334,7 @@ To test the running application, click on the **preview URL** on the top of the 
 
 ![Preview]({% image_path mono-to-micro-part-1/preview.png %}){:width="80%"}
 
-> or use this at : `http://localhost:8080` link.
+or use this at : `http://localhost:8080` link.
 
 You should now see a html page that looks like this
 
@@ -333,7 +350,7 @@ To see the raw JSON output using `curl`, you can open an new terminal window by 
 
 You would see a JSON response like this:
 
-~~~
+~~~json
 {"itemId":"329299","location":"Raleigh","quantity":736,"link":"http://maps.google.com/?q=Raleigh"}
 ~~~
 
@@ -345,7 +362,7 @@ Before moving on, click in the first terminal window where Thorntail is running 
 
 You should see something like:
 
-~~~
+~~~shell
 WFLYSRV0028: Stopped deployment inventory-1.0.0-SNAPSHOT.war (runtime-name: inventory-1.0.0-SNAPSHOT.war) in 70ms
 ~~~
 
@@ -388,7 +405,7 @@ Let's deploy our new inventory microservice to OpenShift!
 Our production inventory microservice will use an external database (PostgreSQL) to house inventory data.
 First, deploy a new instance of PostgreSQL by executing:
 
-~~~
+~~~shell
 oc new-app -e POSTGRESQL_USER=inventory \
            -e POSTGRESQL_PASSWORD=mysecretpassword \
            -e POSTGRESQL_DATABASE=inventory \
@@ -400,7 +417,7 @@ oc new-app -e POSTGRESQL_USER=inventory \
 
 This will deploy the database to our new project. Wait for it to complete:
 
-~~~
+~~~shell
 oc rollout status -w dc/inventory-database
 ~~~
 
@@ -410,7 +427,7 @@ Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
-~~~
+~~~shell
 mvn clean fabric8:deploy -Popenshift
 ~~~
 
@@ -420,7 +437,7 @@ The build and deploy may take a minute or two. Wait for it to complete. You shou
 
 After the maven build finishes it will take less than a minute for the application to become available. To verify that everything is started, run the following command and wait for it complete successfully:
 
-~~~
+~~~shell
 oc rollout status -w dc/inventory
 ~~~
 
@@ -543,20 +560,26 @@ With our new health check in place, we'll need to build and deploy the updated a
 
 With our health check in place, lets rebuild and redeploy using the same command as before:
 
-`mvn fabric8:undeploy clean fabric8:deploy -Popenshift` or use the command `deploy-openshift` in the command palette.
+~~~shell
+mvn fabric8:undeploy clean fabric8:deploy -Popenshift
+~~~~
+
+or use the command `deploy-openshift` in the command palette.
 
 You should see a **BUILD SUCCESS** at the end of the build output.
 
-During build and deploy, you'll notice Thorntail adding in health checks for you:
+During build and deploy, you\'ll notice Thorntail adding in health checks for you:
 
-~~~
+~~~shell
 [INFO] F8: wildfly-swarm-health-check: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 10 seconds
 [INFO] F8: wildfly-swarm-health-check: Adding liveness probe on port 8080, path='/health', scheme='HTTP', with initial delay 180 seconds
 ~~~
 
 To verify that everything is started, run the following command and wait for it report `replication controller "inventory-xxxx" successfully rolled out`
 
-`oc rollout status -w dc/inventory`
+~~~shell
+oc rollout status -w dc/inventory
+~~~
 
 Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Replace {{INVENTORY_ROUTE_HOST}} with the inventory route host.
 
@@ -579,7 +602,7 @@ You can see the definition of the health check from the perspective of OpenShift
 
 You should see:
 
-~~~
+~~~shell
     Liveness:	http-get http://:8080/health delay=180s timeout=1s period=10s #success=1 #failure=3
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
 ~~~
@@ -594,7 +617,7 @@ And verify it's been changed (look at the `delay=` value for the Liveness probe)
 
 `oc describe dc/inventory | egrep 'Readiness|Liveness'`
 
-~~~
+~~~shell
     Liveness:	http-get http://:8080/health delay=30s timeout=1s period=10s #success=1 #failure=3
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
 ~~~

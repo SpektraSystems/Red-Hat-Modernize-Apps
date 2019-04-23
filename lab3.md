@@ -113,6 +113,7 @@ You can review the above resources in the OpenShift Web Console or using the `oc
 > **NOTE**: Don't worry about reading and understanding the output of `oc describe`. Just make sure the command doesn't report errors!
 
 Run these commands to inspect the elements:
+
 ~~~shell
 oc get bc coolstore
 
@@ -124,6 +125,7 @@ oc get svc coolstore
 
 oc describe route www
 ~~~
+
 Verify that you can access the monolith by clicking on the exposed OpenShift route at  `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` to open up the sample application in a separate browser tab.
 
 You should also be able to see both the CoolStore monolith and its database running in separate pods:
@@ -132,7 +134,7 @@ You should also be able to see both the CoolStore monolith and its database runn
 
 The output should look like this:
 
-~~~
+~~~shell
 NAME                           READY     STATUS    RESTARTS   AGE
 coolstore-2-bpkkc              1/1       Running   0          4m
 coolstore-postgresql-1-jpcb8   1/1       Running   0          9m
@@ -150,7 +152,7 @@ Once logged in, use the following command to execute an SQL statement to show so
 
 You should see the following:
 
-~~~
+~~~shell
           name
 ------------------------
  Red Fedora
@@ -197,7 +199,7 @@ Let's copy some files out of the running container. To copy files from a running
 
 The output should show you the name of the pod:
 
-~~~
+~~~shell
 NAME                           READY     STATUS    RESTARTS   AGE
 coolstore-2-bpkkc              1/1       Running   0          32m
 ~~~
@@ -218,7 +220,7 @@ Next, run the `oc rsync` command in your terminal window, using the new variable
 
 The output will show that the file was downloaded:
 
-~~~
+~~~shell
 receiving incremental file list
 version.txt
 
@@ -238,7 +240,7 @@ Manually copying is cool, but what about automatic live copying on change? That'
 
 Let's clean up the temp files we used. Execute:
 
-`rm -f version.txt hello.txt`
+`rm -f version.txt`
 
 ## Live Synchronization of Project Files
 
@@ -281,32 +283,30 @@ CoolStore app.
 
 Add the following CSS to turn the header bar background to Red Hat red (click **Copy To Editor** to add it at the bottom):
 
-~~~java
-
+~~~css
 .navbar-header {
     background: #CC0000
 }
-
 ~~~
 
 **2. Rebuild application For RED background**
 
 Let's re-build the application using this command:
 
-`mvn package -Popenshift`
+~~~shell
+mvn package -Popenshift
+~~~
 
 or use the command `build-eap-openshift` in the command palette. In the tab **sync-eap-openshift** you should see the following :
 
-~~~
+~~~shell
 sent 65 bytes  received 12 bytes  51.33 bytes/sec
 total size is 14,653,352  speedup is 190,303.27
 ~~~
 
 This will update the ROOT.war file and cause the application to change.
 
-Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at 
-
-`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}})`.
+Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at : `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}`
 
 You should now see the red header:
 
@@ -321,13 +321,15 @@ Reload button.
 
 Repeat the process, but replace the background color to be blue (click **Copy to Editor** to replace `#CC0000` with `blue`):
 
-~~~java
+~~~css
 background: blue
 ~~~
 
 Again, re-build the app:
 
-`mvn package -Popenshift`
+~~~shell
+mvn package -Popenshift
+~~~
 
 or use the command `build-eap-openshift` in the command palette.
 
@@ -417,7 +419,7 @@ The first step for any deployment pipeline is to store all code and configuratio
 
 You can see the changes you've personally made using `git --no-pager status` to show the code changes you've made using the Git command (part of the [Git source code management system](https://git-scm.com/)).
 
-## Pipelines
+#### Pipelines
 
 OpenShift has built-in support for CI/CD pipelines by allowing developers to define a [Jenkins pipeline](https://jenkins.io/solutions/pipeline/) for execution by a Jenkins automation engine, which is automatically provisioned on-demand by OpenShift when needed.
 
@@ -433,8 +435,7 @@ Our pipeline is somewhat simplified for the purposes of this Workshop. Inspect t
 
 You can see the Jenkinsfile definition of the pipeline in the output:
 
-~~~
-Jenkinsfile contents:
+~~~groovy
   node ('maven') {
     stage 'Build'
     sleep 5
@@ -450,6 +451,7 @@ Jenkinsfile contents:
     sleep 30
   }
 ~~~
+
 > /!\ You have to replace `userXX` by your own `userID`
 
 Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using [the large set of steps and plugins that Jenkins provides](https://jenkins.io/doc/pipeline/steps/) in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the [OpenShift GitHub Repository](https://github.com/openshift/origin/tree/master/examples/jenkins/pipeline) or [here](https://github.com/demo-redhat-forum-2018/monolith/blob/step-2/Jenkinsfile).
@@ -545,11 +547,19 @@ git checkout /projects/modernize-apps/monolith/src/main/webapp/app/css/coolstore
 
 Next, re-build the app once more:
 
-`mvn clean package -Popenshift` or use the command `build-eap-openshift` in the command palette.
+~~~shell
+mvn clean package -Popenshift
+~~~~
+
+or use the command `build-eap-openshift` in the command palette.
 
 And re-deploy it to the dev environment using a binary build just as we did before:
 
-`oc start-build -n coolstore-dev coolstore --from-file=deployments/ROOT.war` or use the command `deploy-eap-openshift` in the command palette.
+~~~shell
+oc start-build -n coolstore-dev coolstore --from-file=deployments/ROOT.war
+~~~~
+
+or use the command `deploy-eap-openshift` in the command palette.
 
 And verify that the original black header is visible in the dev application:
 
@@ -585,7 +595,7 @@ the same credentials as OpenShift:
 * Username: `userXX`
 * Password: `openshift`
 
-Accept the browser certificate warning and the Jenkins/OpenShift permissions, and then you'll find yourself at the approval prompt:
+Accept the browser certificate warning and the Jenkins/OpenShift permissions, and then you will find yourself at the approval prompt:
 
 ![Prod]({% image_path developer-intro/pipe-jenkins-prompt.png %}){:width="80%"}
 
@@ -620,6 +630,6 @@ In this scenario you learned how to use the OpenShift Container Platform as a de
 
 You can use these techniques in future projects to modernize your existing applications and add a lot of functionality without major re-writes.
 
-The monolithic application we've been using so far works great, but is starting to show its age. Even small changes to one part of the app require many teams to be involved in the push to production.
+The monolithic application we have been using so far works great, but is starting to show its age. Even small changes to one part of the app require many teams to be involved in the push to production.
 
-In the next few scenarios we'll start to modernize our application and begin to move away from monolithic architectures and toward microservice-style architectures using Red Hat technology. Let's go!
+In the next few scenarios we will start to modernize our application and begin to move away from monolithic architectures and toward microservice-style architectures using Red Hat technology. Let\'s go!
