@@ -338,6 +338,12 @@ Pipeline syntax allows creating complex deployment scenarios with the possibilit
 
 To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the _dev_ environment to our _production_ environment using the above `openshiftTag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
 
+Jenkins should have the authorization to tag the image available in the DEV environment. Enter the following command:
+
+~~~sh
+oc policy add-role-to-user edit system:serviceaccount:userXX-coolstore-prod:jenkins -n userXX-coolstore-dev
+~~~
+
 **2. Promote the dev image to production using the pipeline**
 
 You can use the _oc_ command line to invoke the build pipeline, or the Web Console. Let's use the Web Console. Open the production project in the web console:
