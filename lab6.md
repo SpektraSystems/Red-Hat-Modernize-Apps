@@ -262,6 +262,7 @@ You should see output that looks like this:
 Now let's add a Web server that can server static content, which only requires three lines of code at the `//TODO: Create Router` marker:
 
 Create the router object:
+
 ~~~java
 Router router = Router.router(vertx);
 ~~~
@@ -362,7 +363,7 @@ By default you can access the configuration in verticle by calling `config().get
 
 One thing that can seem a bit strange is that the **Config Retriever** reads the configuration asynchronously. So if we want to change the default behaviour we need to take that into consideration.
 
-Consider the following example.
+Consider the following example (Do not implement it).
 
 ~~~java
 private void setupConfiguration(Vertx vertx) {
@@ -387,7 +388,7 @@ private void setupConfiguration(Vertx vertx) {
 }
 ~~~
 
-Then in our start method of our Verticle we could run
+Then in our start method of our Verticle we could run (Do not implement it)
 
 ~~~java
 public void start() {
@@ -409,8 +410,7 @@ The reason that it doesn't work is that when we calling `setupConfiguration()` t
 
 One solution to this problem is to load our Verticle from another verticle and pass the configuration as a deployment option.
 
-Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Add a `src/main/java/com/redhat/coolstore/MainVerticle.java` file
-and add the following content:
+Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Add a `src/main/java/com/redhat/coolstore/MainVerticle.java` file and add the following content:
 
 ~~~java
 package com.redhat.coolstore;
@@ -550,9 +550,7 @@ private void getCarts(RoutingContext rc) {
 
 The most important line in this method is this:
 
-~~~java
-carts.keySet().forEach(cartId ->; cartList.add(Transformers.shoppingCartToJson(carts.get(cartId))));
-~~~ 
+```carts.keySet().forEach(cartId -> cartList.add(Transformers.shoppingCartToJson(carts.get(cartId))));``` 
 
 In this lambda expression we are iterating through the list of shopping carts and transforming them to JsonObject using the `Transformers` utility class to get a `JsonObject` that we add to a `JsonArray`. We can then return a String encoding of that JsonArray to the response.
 
