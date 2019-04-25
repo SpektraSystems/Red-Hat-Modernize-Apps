@@ -93,8 +93,6 @@ an online shopping store called _Coolstore_ containing retail items that you can
 cart and purchase. The source code is laid out in different
 subdirectories according to Maven best practices.
 
-> Click on the `tree` command below to automatically copy it into the terminal and execute it
-
 ``tree -L 3``
 
 You should see:
