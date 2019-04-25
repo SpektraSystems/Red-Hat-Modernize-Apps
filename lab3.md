@@ -146,6 +146,12 @@ First, click on the Coolstore application link at
 
 **1. Turn on Live Sync**
 
+Export Coolstore Pod name:
+
+~~~sh
+export COOLSTORE_DEV_POD_NAME=$(oc get pods --output='name' -l deploymentConfig=coolstore | cut -c 5-)
+~~~
+
 Turn on **Live sync** by executing this command:
 
 `oc  rsync deployments/ $COOLSTORE_DEV_POD_NAME:/deployments --watch --no-perms &`
