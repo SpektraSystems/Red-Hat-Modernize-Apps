@@ -54,7 +54,6 @@ the [RHAMT documentation](https://access.redhat.com/documentation/en/red-hat-app
 Run the following commands to set up your environment for this scenario and start in the right directory:
 
 ~~~shell
-export JAVA_HOME=$(jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));')
 cd /projects/modernize-apps/monolith
 ~~~
 
@@ -124,7 +123,7 @@ The RHAMT CLI has a number of options to control how it runs. Click on the below
 to execute the RHAMT CLI and analyze the existing project:
 
 ~~~shell
-/rhamt/bin/rhamt-cli \
+  ${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli \
   --sourceMode \
   --input /projects/modernize-apps/monolith \
   --output /projects/rhamt-reports/monolith \
@@ -132,6 +131,7 @@ to execute the RHAMT CLI and analyze the existing project:
   --source weblogic \
   --target eap:7 \
   --packages com.redhat weblogic
+
 ~~~
 
 > Note the use of the ``--source`` and ``--target`` options. This allows you to target specific migration paths supported by RHMAT. Other
@@ -493,7 +493,7 @@ Click on the below command to clean the old build artifacts and re-execute the R
 
 ~~~shell
 mvn clean && \
-/rhamt/bin/rhamt-cli \
+${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli \
   --sourceMode \
   --input /projects/modernize-apps/monolith \
   --output /projects/rhamt-reports/monolith \
@@ -521,6 +521,15 @@ plus Red Hat OpenShift bring to the table.
 ## Migrate and run the project
 
 Now that we migrated the application you are probably eager to test it. To test it we locally JBoss EAP has been already installed and configured.
+Run the following command in the terminal window.
+~~~
+unzip -d $HOME $HOME/jboss-eap-7.1.0.zip
+~~~
+We should also set the JBOSS_HOME environment variable like this:
+~~~
+export JBOSS_HOME=$HOME/jboss-eap-7.1
+~~~
+Done! That is how easy it is to install JBoss EAP.
 
 Open the `pom.xml` file.
 
@@ -670,8 +679,8 @@ First, access the **OpenShift Console** at [OpenShift Console URL]({{$OPENSHIFT_
 
 Login using:
 
-* Username: `userXX`
-* Password: `openshift`
+* Username: `ocpuser0XX`
+* Password: `demo@pass123`
 
 You will see the OpenShift landing page:
 
@@ -679,12 +688,12 @@ You will see the OpenShift landing page:
 
 Click **Create Project**, fill in the fields, and click **Create**:
 
-* Name: `userXX-coolstore-dev`
+* Name: `ocpuser0XX-coolstore-dev`
 * Display Name: `Coolstore Monolith - Dev`
 * Description: _leave this field empty_
 
-> **NOTE**: YOU **MUST** USE `userXX-coolstore-dev` AS THE PROJECT NAME, as this name is referenced later
-on and you will experience failures if you do not name it `userXX-coolstore-dev`!
+> **NOTE**: YOU **MUST** USE `ocpuser0XX-coolstore-dev` AS THE PROJECT NAME, as this name is referenced later
+on and you will experience failures if you do not name it `ocpuser0XX-coolstore-dev`!
 
 ![OpenShift Console]({% image_path moving-existing-apps/create-dialog.png %}){:width="50%"}
 
@@ -700,7 +709,7 @@ We'll use the CLI to deploy the components for our monolith. To deploy the monol
 
 Switch to the dev project you created earlier:
 
-`oc project userXX-coolstore-dev`
+`oc project ocpuser0XX-coolstore-dev`
 
 And finally deploy template:
 
@@ -710,7 +719,7 @@ This will deploy both a PostgreSQL database and JBoss EAP, but it will not start
 
 Then open up the Monolith Overview page at 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-dev/`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/`
 and verify the monolith template items are created:
 
 ![OpenShift Console]({% image_path moving-existing-apps/no-deployments.png %}){:width="60%"}
