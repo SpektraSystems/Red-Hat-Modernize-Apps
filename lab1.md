@@ -13,6 +13,14 @@ on your workstation.
 The choice is yours but whatever you pick, like most things in life, stick with it for all the labs. We 
 ourselves are in love with CodeReady Workspaces and highly recommend it.
 
+## Login to OpenShift web console
+
+OpenShift ships with a web-based console that will allow users to
+perform various tasks via a browser.  To get a feel for how the web console
+works, open your browser and go to the OpenShift Web Console url provided in the environment details page.
+
+The first screen you will see is the authentication screen. Enter your **username** and **password** and 
+then log in. After you have authenticated to the web console, you will be presented with a list of projects that your user has permission to work with. 
 ## Setup Your Workspace on CodeReady Workspaces
 
 Follow these instructions to setup the development environment on CodeReady Workspaces. 
@@ -24,19 +32,8 @@ which you will use during these labs.
 
 Go to the [CodeReady Workspaces url]({{ ECLIPSE_CHE_URL }}) in order to configure your development workspace
 
-First, you need to register as a user. Register and choose the same username and password as 
-your OpenShift credentials.
 
-![CodeReady Workspaces - Register]({% image_path getting-started/codeready-register.png %}){:width="80%"}
-
-Log into CodeReady Workspaces with your user. You can now create your workspace based on a stack. A 
-stack is a template of workspace configuration. For example, it includes the programming language and tools needed
-in your workspace. Stacks make it possible to recreate identical workspaces with all the tools and needed configuration
-on-demand. 
-
-For this lab, click on the **Java Modernize-Apps** stack and then on the **Create** button. 
-
-![CodeReady Workspaces Workspace]({% image_path getting-started/codeready-create-workspace.png %}){:width="80%"}
+Log into CodeReady Workspaces with your user.
 
 Click on **Open** to open the workspace and then on the **Start** button to start the workspace for use, if it hasn't started automatically.
 
@@ -47,19 +44,8 @@ CodeReady Workspaces IDE running in your browser.
 
 Now you can import the project skeletons into your workspace.
 
-In the project explorer pane, click on the **Import Projects...** and enter the following:
 
-  * Type: `ZIP`
-  * URL: `{{LABS_DOWNLOAD_URL}}`
-  * Name: `modernize-apps`
-  * Check **Skip the root folder of the archive**
-
-![Codeready Workspaces - Import Project]({% image_path getting-started/codeready-import-project.png %}){:width="80%"}
-
-Click on **Import**. Make sure you choose the **Blank** project configuration since the zip file contains multiple 
-project skeletons. Click on **Save**
-
-The projects are imported now into your workspace and is visible in the project explorer.
+The projects are already imported into your workspace and is visible in the project explorer.
 
 Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. In order to 
 enable these capabilities, let's convert the imported project skeletons to a Maven projects. 
@@ -84,12 +70,10 @@ a command in a terminal, you can use the Codeready Workspaces **Terminal** windo
 In order to login, we will use the `oc` command and then specify the server that we
 want to authenticate to.
 
-Issue the following command in Codeready Workspaces terminal and replace `{{OPENSHIFT_CONSOLE_URL}}` 
-with your OpenShift Web Console url. 
+Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select "Copy Login Command". This will copy the entire login command, including your login token, to your clipboard
+Then, go to the CodeReady Workspaces Terminal window and paste the login command you copied in the previous step, and press enter
 
-~~~shell
-$ oc login {{OPENSHIFT_CONSOLE_URL}}
-~~~
+![Login-oc]({% image_path getting-started/oc-login.jpg %}){:width="80%"}
 
 You may see the following output:
 
@@ -106,15 +90,6 @@ by OpenShift. In a real-world scenario, either OpenShift's certificate would be
 signed by a standard CA (eg: Thawte, Verisign, StartSSL, etc.) or signed by a
 corporate-standard CA that you already have installed on your system.
 
-Enter the **username** and **password** provided to you by the instructor
-
 Congratulations, you are now authenticated to the OpenShift server.
-
-OpenShift ships with a web-based console that will allow users to
-perform various tasks via a browser.  To get a feel for how the web console
-works, open your browser and go to the OpenShift Web Console.
-
-The first screen you will see is the authentication screen. Enter your **username** and **password** and 
-then log in. After you have authenticated to the web console, you will be presented with a list of projects that your user has permission to work with. 
 
 Now you are ready to get started with the labs!
