@@ -75,7 +75,7 @@ For this scenario, we will use the CLI as you are the only one that will run RHA
 
 The RHAMT CLI is has been installed for you. To verify that the tool was properly installed, run:
 
-``/rhamt/bin/rhamt-cli --version``
+``${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli --version``
 
 You should see:
 
@@ -140,7 +140,7 @@ migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP
 
 **3. View the results**
 
-Next,Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
+Next, go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
 
 You should see the landing page for the report:
 
@@ -181,6 +181,13 @@ There are several other sub-pages accessible by the menu near the top. Click on 
 > Some of the above sections may not appear depending on what was detected in the project.
 
 Now that you have the RHAMT report available, let's get to work migrating the app!
+
+## Set Maven environment variables
+
+In order to use Maven we have to set up the following environment variable. Run the below command on the codeready workspace terminal before moving on.
+```
+export MAVEN_OPTS='-Xmx1024m -XX:MaxPermSize=1024m'
+```
 
 ## Migrate Application Startup Code
 
