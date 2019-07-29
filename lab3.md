@@ -28,9 +28,48 @@ During this workshop, you will be using both the command line tool and the web c
 
 Now that you know how to interact with OpenShift, let's focus on some core concepts that you as a developer will need to understand as you are building your applications!
 
+## Setup for Exercise
+
+On the CodeReady Workspaces Terminal window, run the following commands to set up your environment for this scenario and start in the right directory:
+```
+cd /projects/modernize-apps/monolith
+```
+
+## Developer Concepts
+There are several concepts in OpenShift useful for developers, and in this workshop you should be familiar with them.
+## Projects
+Projects are a top level concept to help you organize your deployments. An OpenShift project allows a community of users (or a user) to organize and manage their content in isolation from other communities. Each project has its own resources, policies (who can or cannot perform actions), and constraints (quotas and limits on resources, etc). Projects act as a wrapper around all the application services and endpoints you (or your teams) are using for your work.
+## Containers
+The basic units of OpenShift applications are called containers (sometimes called Linux Containers). Linux container technologies are lightweight mechanisms for isolating running processes so that they are limited to interacting with only their designated resources.
+Though you do not directly interact with the Docker CLI or service when using OpenShift Container Platform, understanding their capabilities and terminology is important for understanding their role in OpenShift Container Platform and how your applications function inside of containers.
+## Pods
+OpenShift Container Platform leverages the Kubernetes concept of a pod, which is one or more containers deployed together on one host, and the smallest compute unit that can be defined, deployed, and managed.
+Pods are the rough equivalent of a machine instance (physical or virtual) to a container. Each pod is allocated its own internal IP address, therefore owning its entire port space, and containers within pods can share their local storage and networking.
+## Images
+Containers in OpenShift are based on Docker-formatted container images. An image is a binary that includes all of the requirements for running a single container, as well as metadata describing its needs and capabilities.
+You can think of it as a packaging technology. Containers only have access to resources defined in the image unless you give the container additional access when creating it. By deploying the same image in multiple containers across multiple hosts and load balancing between them, OpenShift Container Platform can provide redundancy and horizontal scaling for a service packaged into an image.
+## Image Streams
+An image stream and its associated tags provide an abstraction for referencing Images from within OpenShift. The image stream and its tags allow you to see what images are available and ensure that you are using the specific image you need even if the image in the repository changes.
+## Builds
+A build is the process of transforming input parameters into a resulting object. Most often, the process is used to transform input parameters or source code into a runnable image. A BuildConfig object is the definition of the entire build process. It can build from different sources, including a Dockerfile, a source code repository like Git, or a Jenkins Pipeline definition.
+## Pipelines
+Pipelines allow developers to define a Jenkins pipeline for execution by the Jenkins pipeline plugin. The build can be started, monitored, and managed by OpenShift Container Platform in the same way as any other build type.
+Pipeline workflows are defined in a Jenkinsfile, either embedded directly in the build configuration, or supplied in a Git repository and referenced by the build configuration.
+## Deployments
+An OpenShift Deployment describes how images are deployed to pods, and how the pods are deployed to the underlying container runtime platform. OpenShift deployments also provide the ability to transition from an existing deployment of an image to a new one and also define hooks to be run before or after creating the replication controller.
+## Services
+A Kubernetes service serves as an internal load balancer. It identifies a set of replicated pods in order to proxy the connections it receives to them. Backing pods can be added to or removed from a service arbitrarily while the service remains consistently available, enabling anything that depends on the service to refer to it at a consistent address.
+## Routes
+Services provide internal abstraction and load balancing within an OpenShift environment, sometimes clients (users, systems, devices, etc.) outside of OpenShift need to access an application. The way that external clients are able to access applications running in OpenShift is through the OpenShift routing layer. And the data object behind that is a Route.
+The default OpenShift router (HAProxy) uses the HTTP header of the incoming request to determine where to proxy the connection. You can optionally define security, such as TLS, for the Route. If you want your Services, and, by extension, your Pods, to be accessible to the outside world, you need to create a Route.
+## Templates
+Templates contain a collection of object definitions (BuildConfigs, DeploymentConfigs, Services, Routes, etc) that compose an entire working project. They are useful for packaging up an entire collection of runtime objects into a somewhat portable representation of a running application, including the configuration of the elements.
+You will use several pre-defined templates to initialize different environments for the application. You've already used one in the previous scenario to deploy the application into a dev environment, and you'll use more in this scenario to provision the production environment as well.
+Consult the OpenShift documentation for more details on these and other concepts.
+
 ## Verifying the Dev Environment
 
-In the previous lab you created a new OpenShift project called `userXX-coolstore-dev` which represents your developer personal project in which you deployed the CoolStore monolith.
+In the previous lab you created a new OpenShift project called `ocpuser0XX-coolstore-dev` which represents your developer personal project in which you deployed the CoolStore monolith.
 
 **1. Verify Application**
 
@@ -71,7 +110,7 @@ oc get svc coolstore
 oc describe route www
 ~~~
 
-Verify that you can access the monolith by clicking on the exposed OpenShift route at  `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` to open up the sample application in a separate browser tab.
+Verify that you can access the monolith by clicking on the exposed OpenShift route at  `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` to open up the sample application in a separate browser tab.
 
 You should also be able to see both the CoolStore monolith and its database running in separate pods:
 
@@ -126,6 +165,55 @@ Although any changes to the local container filesystem are discarded when the co
 
 In addition to uploading files into a running container, you might also want to be able to download files. During development these may be data files or log files created by the application.
 
+## Copy files from container
+
+As you recall from the last step, we can use oc rsh to execute commands inside the running pod.
+For our Coolstore Monolith running with JBoss EAP, the application is installed in the /opt/eap directory in the running container. Execute the ls command inside the container to see this:
+```
+oc rsh dc/coolstore ls -l /opt/eap
+```
+You should see a listing of files in this directory in the running container.
+It is very important to remember where commands are executed! If you think you are in a container and in fact are on some other machine, destructive commands may do real harm, so be careful! In general it is not a good idea to operate inside immutable containers outside of the development environment. But for doing testing and debugging it's OK.
+Let's copy some files out of the running container. To copy files from a running container on OpenShift, we'll use the oc rsync command. This command expects the name of the pod to copy from, which can be seen with this command:
+```
+oc get pods --selector deploymentconfig=coolstore
+```
+The output should show you the name of the pod:
+```
+NAME                           READY     STATUS    RESTARTS   AGE
+coolstore-2-bpkkc              1/1       Running   0          32m
+```
+The name of my running coolstore monolith pod is coolstore-2-bpkkc but yours will be different.
+Save the name of the pod into an environment variable called COOLSTORE_DEV_POD_NAME so that we can use it for future commands:
+```
+export COOLSTORE_DEV_POD_NAME=$(oc get pods --selector deploymentconfig=coolstore -o jsonpath='{.items[?(@.status.phase=="Running")].metadata.name}')
+```
+Verify the variable holds the name of your pod with:
+```
+echo $COOLSTORE_DEV_POD_NAME
+```
+Next, run the `oc rsync` command in your terminal window, using the new variable to refer to the name of the pod running our coolstore:
+```
+oc rsync $COOLSTORE_DEV_POD_NAME:/opt/eap/version.txt .
+```
+The output will show that the file was downloaded:
+receiving incremental file list
+```
+version.txt
+sent 30 bytes  received 65 bytes  62,566.00 bytes/sec
+total size is 65 speedup is 1.00
+```
+Now you can open the file locally using this link: version.txt and inspect its contents.
+This is useful for verifying that the contents of files in your applications are what you expect.
+You can also upload files using the same oc rsync command but unlike when copying from the container to the local machine, there is no form for copying a single file. To copy selected files only, you will need to use the --exclude and --include options to filter what is and isn't copied from a specified directory. We will use this in the next step.
+Manually copying is cool, but what about automatic live copying on change? That's in the next step too!
+
+## Before moving on
+
+Let's clean up the temp files we used. Execute:
+```
+rm -f version.txt
+```
 ### Live Synchronization of Project Files
 
 In addition to being able to manually upload or download files when you choose to, the ``oc rsync`` command can also be set up to perform live synchronization of files between your local computer and the container. When there is a change to a file, the changed file will be automatically copied up to the container.
@@ -142,17 +230,11 @@ For this workshop, we'll Live synchronize the entire WAR file.
 
 First, click on the Coolstore application link at 
 
-`http://www-coolstore-dev.{{ROUTE_SUFFIX}}` to open the application in a browser tab so you can watch changes.
+`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` to open the application in a browser tab so you can watch changes.
 
 **1. Turn on Live Sync**
 
-Export Coolstore Pod name:
-
-~~~sh
-export COOLSTORE_DEV_POD_NAME=$(oc get pods --output='name' -l deploymentConfig=coolstore | cut -c 5-)
-~~~
-
-Turn on **Live sync** by executing this command:
+On the CodeReady Workspaces Terminal window, turn on Live sync by executing this command:
 
 `oc  rsync deployments/ $COOLSTORE_DEV_POD_NAME:/deployments --watch --no-perms &`
 
@@ -166,10 +248,9 @@ much faster than waiting for a full re-build and re-deploy of the container imag
 
 Next, let's make a change to the app that will be obvious in the UI.
 
-First, open `src/main/webapp/app/css/coolstore.css`, which contains the CSS stylesheet for the
-CoolStore app.
+From the CodeReady Workspaces File Explorer, open `modernize-apps/monolith/src/main/webapp/app/css/coolstore.css`, which contains the CSS stylesheet for the CoolStore app."
 
-Add the following CSS to turn the header bar background to Red Hat red :
+At the bottom of the CSS stylesheet file, add the following to turn the header bar background to Red Hat red:
 
 ~~~css
 .navbar-header {
@@ -179,16 +260,13 @@ Add the following CSS to turn the header bar background to Red Hat red :
 
 **2. Rebuild application For RED background**
 
-Let's re-build the application using the command `build-eap-openshift` in the command palette. In the tab **sync-eap-openshift** you should see the following :
-
-~~~sh
-sent 65 bytes  received 12 bytes  51.33 bytes/sec
-total size is 14,653,352  speedup is 190,303.27
-~~~
-
+Let's re-build the application by entering the following command at the CodeReady Workspaces Terminal window:
+```
+mvn package -Popenshift
+```
 This will update the ROOT.war file and cause the application to change.
 
-Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at : `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}`
+Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at : `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`
 
 You should now see the red header:
 
@@ -201,8 +279,7 @@ Reload button.
 
 **3. Rebuild again for BLUE background**
 
-Repeat the process, but replace the background color to be blue (click **Copy to Editor** to replace `#CC0000` with `blue`):
-
+Repeat the process, but replace the background color to be blue (replace #CC0000 with blue):
 ~~~css
 background: blue
 ~~~
@@ -213,13 +290,11 @@ Again, re-build the app:
 mvn package -Popenshift
 ~~~
 
-or use the command `build-eap-openshift` in the command palette.
-
 This will update the ROOT.war file again and cause the application to change.
 
 Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at 
 
-`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}})`.
+`http://www-ovpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}})`.
 
 <kbd>![](images/developer-intro/nav-blue.png)</kbd>
 
@@ -227,12 +302,9 @@ It's blue! You can do this as many times as you wish, which is great for speedy 
 
 We'll leave the blue header for the moment, but will change it back to the original color soon.
 
-Because we used `oc rsync` to quickly re-deploy changes to the running pod, the changes will be lost if we restart the pod. Let's update the container image
-to contain our new blue header. Execute:
+Because we used `oc rsync` to quickly re-deploy changes to the running pod, the changes will be lost if we restart the pod. Let's update the container image to contain our new blue header. From the CodeReady Workspaces Terminal window, execute the following command:
 
 `oc start-build coolstore --from-file=deployments/ROOT.war`
-
-or use the command `deploy-eap-openshift` in the command palette. And again, wait for it to complete.
 
 ## Before continuing
 
@@ -244,13 +316,13 @@ On to the next challenge!
 
 ## Deploying the Production Environment
 
-In the previous scenarios, you deployed the Coolstore monolith using an OpenShift Template into the `userXX-coolstore-dev` Project. The template created the necessary objects (BuildConfig, DeploymentConfig, ImageStreams, Services, and Routes) and gave you as a Developer a "playground" in which to run the app, make changes and debug.
+In the previous scenarios, you deployed the Coolstore monolith using an OpenShift Template into the `ocpuser0XX-coolstore-dev` Project. The template created the necessary objects (BuildConfig, DeploymentConfig, ImageStreams, Services, and Routes) and gave you as a Developer a "playground" in which to run the app, make changes and debug.
 
 In this step we are now going to setup a separate production environment and explore some best practices and techniques for developers and DevOps teams for getting code from the developer (that's YOU!) to production with less downtime and greater consistency.
 
 ## Prod vs. Dev
 
-The existing `userXX-coolstore-dev` project is used as a developer environment for building new versions of the app after code changes and deploying them to the development environment.
+The existing `ocpuser0XX-coolstore-dev` project is used as a developer environment for building new versions of the app after code changes and deploying them to the development environment.
 
 In a real project on OpenShift, _dev_, _test_ and _production_ environments would typically use different OpenShift projects and perhaps even different OpenShift clusters.
 
@@ -262,11 +334,11 @@ We will create and initialize the new production environment using another templ
 
 **1. Initialize production project environment**
 
-Execute the following `oc` command to create a new project:
+Execute the following oc command to create a new project (ensure to replace ocpuser0XX by your designated OCP username):
 
-`oc new-project userXX-coolstore-prod --display-name='Coolstore Monolith - Production'`
+`oc new-project ocpuser0XX-coolstore-prod --display-name='Coolstore Monolith - Production'`
 
-This will create a new OpenShift project called `userXX-coolstore-prod` from which our production application will run.
+This will create a new OpenShift project called `ocpuser0XX-coolstore-prod` from which our production application will run.
 
 **2. Add the production elements**
 
@@ -280,7 +352,7 @@ Navigate to the Web Console to see your new app and the components using this li
 
 * Coolstore Prod Project Overview at 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod/overview`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod/overview`
 
 <kbd>![](images/developer-intro/coolstore-prod-overview.png)</kbd>
 
@@ -309,7 +381,7 @@ As part of the production environment template you used in the last step, a Pipe
 
 **1. Inspect the Pipeline Definition**
 
-Our pipeline is somewhat simplified for the purposes of this Workshop. Inspect the contents of the pipeline using the following command:
+Our pipeline is somewhat simplified for the purposes of this Workshop. Inspect the contents of the pipeline by executing the following command at the CodeReady Workspaces Terminal:
 
 `oc describe bc/monolith-pipeline`
 
@@ -332,25 +404,37 @@ You can see the Jenkinsfile definition of the pipeline in the output:
   }
 ~~~
 
-> /!\ You have to replace `userXX` by your own `userID` when using the openshiftTag() method. Use the following command `oc edit bc/monolith-pipeline` to edit your pipeline
+**2. Update the pipeline with your project names**
 
-Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using [the large set of steps and plugins that Jenkins provides](https://jenkins.io/doc/pipeline/steps/) in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the [OpenShift GitHub Repository](https://github.com/openshift/origin/tree/master/examples/jenkins/pipeline) or [here](https://github.com/demo-redhat-forum-2018/monolith/blob/step-2/Jenkinsfile).
+In Project ocpuser0XX-coolstore-prod, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "monolith-pipeline" but here's a quick link):
+•	Pipeline Config page at
+https://$OPENSHIFT_MASTER/ocpuser0XX-console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration
+On this page you can see the pipeline definition. Click Actions -> Edit to edit the pipeline:
+ 
+Update the “namespace” and “destination namespace” to “ocpuser0XX-coolstore-dev” and “ocpuser0XX-coolstore-prod” respectively.
+stage 'Deploy to PROD'
+```
+    openshiftTag(sourceStream: 'coolstore', sourceTag: 'latest', namespace: 'ocpuser0XX-coolstore-dev', destinationStream: 'coolstore', destinationTag: 'prod', destinationNamespace: 'ocpuser0XX-coolstore-prod')
+    sleep 10
+```
+The Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using the large set of steps and plugins that Jenkins provides in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the OpenShift GitHub Repository.
+
 
 To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the _dev_ environment to our _production_ environment using the above `openshiftTag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
 
-Jenkins should have the authorization to tag the image available in the DEV environment. Enter the following command:
+Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal,run: 
 
 ~~~sh
-oc policy add-role-to-user edit system:serviceaccount:userXX-coolstore-prod:jenkins -n userXX-coolstore-dev
+oc policy add-role-to-user edit system:serviceaccount:ocpuser0XX-coolstore-prod:jenkins -n ocpuser0XX-coolstore-dev
 ~~~
 
-**2. Promote the dev image to production using the pipeline**
+**3. Promote the dev image to production using the pipeline**
 
-You can use the _oc_ command line to invoke the build pipeline, or the Web Console. Let's use the Web Console. Open the production project in the web console:
+You can use the oc command line to invoke the build pipeline, or the OpenShift Web Console. Let's use the OpenShift Web Console. Open the production project in the web console:
 
 * Web Console - Coolstore Monolith Prod at 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod`
 
 Next, navigate to _Builds -> Pipelines_ and click __Start Pipeline__ next to the `coolstore-monolith` pipeline:
 
@@ -363,14 +447,14 @@ take as much time as the Jenkins infrastructure will already be warmed up). You 
 
 Once the pipeline completes, return to the Prod Project Overview at 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod`
 and notice that the application is now deployed and running!
 
 <kbd>![](images/developer-intro/pipe-done.png)</kbd>
 
 View the production app **with the blue header from before** is running by clicking: CoolStore Production App at 
 
-`http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}` (it may take
+`http://www-ocpuser0XX-coolstore-prod.{{ROUTE_SUFFIX}}` (it may take
 a few moments for the container to deploy fully.)
 
 ## Congratulations!
@@ -392,13 +476,13 @@ In this step, we'll add a final checkpoint to the pipeline which will require yo
 
 **1. Edit the pipeline**
 
-Ordinarily your pipeline definition would be checked into a source code management system like Git, and to change the pipeline you'd edit the _Jenkinsfile_ in the source base. For this workshop we'll just edit it directly to add the necessary changes. You can edit it with the `oc` command but we'll use the Web Console.
+Ordinarily your pipeline definition would be checked into a source code management system like Git, and to change the pipeline you'd edit the _Jenkinsfile_ in the source base. For this workshop we'll just edit it directly to add the necessary changes. You can edit it with the `oc` command but we'll use the OpenShift Web Console.
 
-Open the `monolith-pipeline` configuration page in the Web Console (you can navigate to it from _Builds -> Pipelines_ but here's a quick link):
+In Project ocpuser0XX-coolstore-prod, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "monolith-pipeline" but here's a quick link):
 
 * Pipeline Config page at 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
 
 On this page you can see the pipeline definition. Click _Actions -> Edit_ to edit the pipeline:
 
@@ -431,27 +515,23 @@ With the approval step in place, let's simulate a new change from a developer wh
 }
 ~~~
 
-Next, re-build the app once more:
+Next, re-build the app once more by entering the following command in the CodeReady Workspaces Terminal window:
 
 ~~~sh
 mvn clean package -Popenshift
 ~~~~
 
-or use the command `build-eap-openshift` in the command palette.
-
-And re-deploy it to the dev environment using a binary build just as we did before:
+And re-deploy it to the dev environment using a binary build just as we did before (ensure to replace ocpuser0XX with your designated username):
 
 ~~~sh
-oc start-build -n coolstore-dev coolstore --from-file=deployments/ROOT.war
+oc start-build -n ocpuser0XX-coolstore-dev coolstore --from-file=deployments/ROOT.war
 ~~~~
 
-or use the command `deploy-eap-openshift` in the command palette.
-
-And verify that the original black header is visible in the dev application:
+Once it completes, verify that the production application has the new change (original black header) - ensure to do a hard refresh on your browser window to see the update:
 
 * Coolstore - Dev at 
 
-`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}`
+`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`
 
 <kbd>![](images/developer-intro/pipe-orig.png)</kbd>
 
@@ -459,7 +539,7 @@ While the production application is still blue:
 
 * Coolstore - Prod at 
 
-`http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}`
+`http://www-ocpuser0XX-coolstore-prod.{{ROUTE_SUFFIX}}`
 
 <kbd>![](images/developer-intro/nav-blue.png)</kbd>
 
@@ -469,7 +549,7 @@ We're happy with this change in dev, so let's promote the new change to prod, us
 
 Invoke the pipeline once more by clicking **Start Pipeline** on the Pipeline Config page at 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/coolstore-prod/browse/pipelines/monolith-pipeline`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline`
 
 The same pipeline progress will be shown, however before deploying to prod, you will see a prompt in the pipeline:
 
@@ -478,8 +558,8 @@ The same pipeline progress will be shown, however before deploying to prod, you 
 Click on the link for `Input Required`. This will open a new tab and direct you to Jenkins itself, where you can login with
 the same credentials as OpenShift:
 
-* Username: `userXX`
-* Password: `openshift`
+* Username: Use the OpenShift username provided in the environment details page.
+* Password: Use the OpenShift password provided in the environment details page.
 
 Accept the browser certificate warning and the Jenkins/OpenShift permissions, and then you will find yourself at the approval prompt:
 
@@ -494,13 +574,13 @@ Once you click **Proceed**, you will see the log file from Jenkins showing the f
 
 Wait for the production deployment to complete:
 
-`oc rollout -n userXX-coolstore-prod status dc/coolstore-prod`
+`oc rollout -n ocpuser0XX-coolstore-prod status dc/coolstore-prod`
 
 Once it completes, verify that the production application has the new change (original black header):
 
 * Coolstore - Prod at 
 
-`http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}`
+`http://www-ocpuser0XX-coolstore-prod.{{ROUTE_SUFFIX}}`
 
 <kbd>![](images/developer-intro/pipe-orig.png)</kbd>
 
