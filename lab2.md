@@ -20,7 +20,7 @@ We will then take the following steps to migrate (lift & shift) an existing Java
 
 ## What is Red Hat Application Migration Toolkit?
 
-![Logo]({% image_path moving-existing-apps/rhamt-logo.png %}){:width="50%"}
+<kbd>![](images/moving-existing-apps/rhamt-logo.png)</kbd>
 
 Red Hat Application Migration Toolkit (RHAMT) is an extensible and customizable rule-based tool that helps simplify migration of Java applications.
 
@@ -115,7 +115,7 @@ to a database and an [AngularJS](https://angularjs.org) frontend.
 
 When you later deploy the application, it will look like:
 
-![CoolStore Monolith]({% image_path moving-existing-apps/coolstore-web.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/coolstore-web.png)</kbd>
 
 **3. Run the RHAMT CLI against the project**
 
@@ -145,13 +145,13 @@ Next, right-click on the `/projects/rhamt-reports/monolith/index.html` file on t
 
 You should see the landing page for the report:
 
-![Landing Page]({% image_path moving-existing-apps/landingpage.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/landingpage.png)</kbd>
 
 The main landing page of the report lists the applications that were processed. Each row contains a high-level overview of the story points, number of incidents, and technologies encountered in that application.
 
 Click on the `monolith` link to access details for the project:
 
-![Project Overview]({% image_path moving-existing-apps/project-overview.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/project-overview.png)</kbd>
 
 ## Understanding the report
 
@@ -191,7 +191,7 @@ In this step we will migrate some Weblogic-specific code in the app to use stand
 
 Open the Issues report
 
-![Issues]({% image_path moving-existing-apps/project-issues.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/project-issues.png)</kbd>
 
 RHAMT provides helpful links to understand the issue deeper and offer guidance for the migration.
 
@@ -628,7 +628,7 @@ Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-nam
 
 Access the application by clicking on the preview URL above your terminal
 
-![CoolStore Monolith]({% image_path moving-existing-apps/coolstore-web.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/coolstore-web.png)</kbd>
 
 You may see WARNINGs in the console output. We will fix these soon!
 
@@ -695,11 +695,11 @@ Click **Create Project**, fill in the fields, and click **Create**:
 > **NOTE**: YOU **MUST** USE `ocpuser0XX-coolstore-dev` AS THE PROJECT NAME, as this name is referenced later
 on and you will experience failures if you do not name it `ocpuser0XX-coolstore-dev`!
 
-![OpenShift Console]({% image_path moving-existing-apps/create-dialog.png %}){:width="50%"}
+<kbd>![](images/moving-existing-apps/create-dialog.png)</kbd>
 
 Click on the name of the newly-created project:
 
-![OpenShift Console]({% image_path moving-existing-apps/create-new.png %}){:width="50%"}
+<kbd>![](images/moving-existing-apps/create-new.png)</kbd>
 
 This will take you to the project overview. There's nothing there yet, but that's about to change.
 
@@ -722,7 +722,7 @@ Then open up the Monolith Overview page at
 `https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/`
 and verify the monolith template items are created:
 
-![OpenShift Console]({% image_path moving-existing-apps/no-deployments.png %}){:width="60%"}
+<kbd>![](images/moving-existing-apps/no-deployments.png)</kbd>
 
 You can see the components being deployed on the Project Overview, but notice the **No deployments for Coolstore**. You have not yet deployed the container image built in previous steps, but you'll do that next.
 
@@ -752,7 +752,7 @@ or use the command called `deploy-eap-openshift` in the command palette
 
 Check the OpenShift web console and you'll see the application being built:
 
-![OpenShift Console]({% image_path moving-existing-apps/building.png %}){:width="60%"}
+<kbd>![](images/moving-existing-apps/building.png)</kbd>
 
 Wait for the build and deploy to complete:
 
@@ -765,20 +765,20 @@ You should eventually see `replication controller "coolstore-1" successfully rol
 
 When it's done you should see the application deployed successfully with blue circles for the database and the monolith:
 
-![OpenShift Console]({% image_path moving-existing-apps/build-done.png %}){:width="60%"}
+<kbd>![](images/moving-existing-apps/build-done.png)</kbd>
 
 Test the application by clicking on the Route link at 
 
 `http://www-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
-![OpenShift Console]({% image_path moving-existing-apps/route-link.png %}){:width="60%"}
+<kbd>![](images/moving-existing-apps/route-link.png)</kbd>
 
 ## Congratulations!
 
 Now you are using the same application that we built locally on OpenShift. That wasn't too hard right?
 
-![CoolStore Monolith]({% image_path moving-existing-apps/coolstore-web.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/coolstore-web.png)</kbd>
 
 In the next step you'll explore more of the developer features of OpenShift in preparation for moving the monolith to a microservices architecture later on. Let's go!
 
