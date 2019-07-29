@@ -50,8 +50,7 @@ the [RHAMT documentation](https://access.redhat.com/documentation/en/red-hat-app
 
 
 ## Setup for Exercise
-
-Run the following commands to set up your environment for this scenario and start in the right directory:
+To start in the right directory, from the CodeReady Workspaces Terminal window, run the following commands to set up your environment for this scenario:
 
 ~~~shell
 cd /projects/modernize-apps/monolith
@@ -119,7 +118,7 @@ When you later deploy the application, it will look like:
 
 **3. Run the RHAMT CLI against the project**
 
-The RHAMT CLI has a number of options to control how it runs. Click on the below command
+The RHAMT CLI has a number of options to control how it runs. Run the below command
 to execute the RHAMT CLI and analyze the existing project:
 
 ~~~shell
@@ -141,7 +140,7 @@ migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP
 
 **3. View the results**
 
-Next, right-click on the `/projects/rhamt-reports/monolith/index.html` file on the file explorer and click preview to view the report in a new tab 
+Next,Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
 
 You should see the landing page for the report:
 
@@ -211,7 +210,9 @@ using this method makes the code much more portable.
 
 **2. Open the file**
 
-Open the file `monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java` using this link.
+Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
+`monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java`.Double click on the StartupListener.java" file to open it
+
 The first issue we will tackle is the one reporting the use of _Weblogic ApplicationLifecyleEvent_ and
 _Weblogic LifecycleListener_ in this file. Open the file to make these changes in the file.
 
@@ -248,8 +249,7 @@ public class StartupListener {
 
 **3. Test the build**
 
-Build and package the app using Maven to make sure the changed code still compiles:
-
+From the CodeReady Workspaces Terminal window, build and package the app using Maven to make sure the changed code still compiles:
 ~~~shell
 cd /projects/modernize-apps/monolith
 mvn clean package
@@ -279,7 +279,9 @@ We will use the standard Java Logging framework, a much more portable framework.
 
 **1. Open the file**
 
-Open the offending file `src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java`
+Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
+`monolith/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java`
+
 
 **2. Make the changes** Open the file to make these changes:
 
@@ -398,12 +400,12 @@ JBoss EAP's internal message queue implementation provided by [Apache ActiveMQ A
 **2. Remove the weblogic EJB Descriptors**
 
 The first step is to remove the unneeded `weblogic-ejb-jar.xml` file. This file is proprietary to Weblogic and not recognized or processed by JBoss
-EAP. Type or click the following command to remove it:
+EAP. Run the following command in Codeready workspace terminal to remove it:
 
 `rm -f /projects/modernize-apps/monolith/src/main/webapp/WEB-INF/weblogic-ejb-jar.xml`
 
 While we're at it, let's remove the stub weblogic implementation classes added as part of the scenario.
-Run or click on this command to remove them:
+Run this command to remove them:
 
 `rm -rf /projects/modernize-apps/monolith/src/main/java/weblogic`
 
@@ -489,7 +491,7 @@ In this step we will re-run the RHAMT report to verify our migration was success
 
 **1. Run the RHAMT CLI against the project**
 
-Click on the below command to clean the old build artifacts and re-execute the RHAMT CLI and analyze the new project:
+Run the below command to clean the old build artifacts and re-execute the RHAMT CLI and analyze the new project:
 
 ~~~shell
 mvn clean && \
@@ -508,10 +510,10 @@ ${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli \
 **2. View the results**
 
 Reload the report web page (right-click on the file `rhamt-reports/monolith/index.html` and then click preview) and verify that it now reports 0 Story Points:
-
+Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
 You have successfully migrated this app to JBoss EAP, congratulations!
 
-![Issues]({% image_path moving-existing-apps/project-issues-story.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/project-issues-story.png)</kbd>
 
 ## Migration Complete!
 
@@ -532,6 +534,9 @@ export JBOSS_HOME=$HOME/jboss-eap-7.1
 Done! That is how easy it is to install JBoss EAP.
 
 Open the `pom.xml` file.
+Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
+`monolith/pom.xml`. Double click on **pom.xml** to open the file
+
 
 ## The maven-wildfly-plugin
 JBoss EAP comes with a nice maven-plugin tool that can stop, start, deploy, and configure JBoss EAP directly from Apache Maven. Let's add that the pom.xml file.
@@ -599,14 +604,11 @@ We are now ready to build and test the project
 
 ## Configuring the JBoss EAP 
 
-Our application is at this stage pretty standards based, but it needs two things. One is the need to add the JMS Topic since our application depends on it. 
+Our application is at this stage pretty standards based, but it needs two things. One is the need to add the JMS Topic since our application depends on it. In the CodeReady Workspaces Terminal window, Run the following command
 
 ~~~shell
-cd /projects/modernize-apps/monolith
-mvn wildfly:start wildfly:add-resource wildfly:shutdown
+export JBOSS_HOME=$HOME/jboss-eap-7.1 ; mvn wildfly:start wildfly:add-resource wildfly:shutdown
 ~~~
-
-or use the command palette `<shift>+F10` and then select `add-jms-resource`
 
 Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the correct changes and try again!
 
@@ -614,27 +616,25 @@ Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the cor
 
 ## Deploying the application
 
-We are now ready to deploy the application
+We are now ready to deploy the application. In the Codeready workspace terminal window, Run the following command:
 
 ~~~shell
-mvn wildfly:run
+export JBOSS_HOME=$HOME/jboss-eap-7.1 ; mvn wildfly:run
 ~~~
-
-or use the command palette `<shift>+F10` and then select `run-eap`
 
 Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-name: "ROOT.war")`
 
 ## Test the application
 
-Access the application by clicking on the preview URL above your terminal
+Open another CodeReady Workspaces Terminal Window by clicking on the '+' sign next to it and selecting "Terminal". From the new Terminal window, access the application by running the below command:
 
-<kbd>![](images/moving-existing-apps/coolstore-web.png)</kbd>
-
-You may see WARNINGs in the console output. We will fix these soon!
+```
+curl http://localhost:8080 
+```
 
 ## Shutdown the application
 
-Before moving on, click here to stop the process: `clear` (or click in the **Terminal** window and type CTRL-C).
+Before moving on, in the Terminal window from which you started JBoss EAP, type CTRL-z to stop it. This command will stop the running process and send it to the background. To terminate the process, you need to do a "kill %1" from the terminal window.
 
 ## Deploy the monolith to OpenShift
 
@@ -673,18 +673,18 @@ At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the fol
 
 **2. Create the OpenShift project**
 
-First, access the **OpenShift Console** at [OpenShift Console URL]({{$OPENSHIFT_CONSOLE_URL}}) 
+First, navigate to the OpenShift console URL (if you closed the one you had opened earlier, open a new browser window and enter the URL provided to you).
 
-![OpenShift Console]({% image_path moving-existing-apps/openshift-login.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/openshift-login.png)</kbd>
 
 Login using:
 
-* Username: `ocpuser0XX`
-* Password: `demo@pass123`
+* Username: provide the openshift cluster username from the lab details page.
+* Password: provide the openshift cluster password from the lab details page.
 
 You will see the OpenShift landing page:
 
-![OpenShift Console]({% image_path moving-existing-apps/openshift-landing.png %}){:width="80%"}
+<kbd>![](images/moving-existing-apps/openshift-landing.png)</kbd>
 
 Click **Create Project**, fill in the fields, and click **Create**:
 
