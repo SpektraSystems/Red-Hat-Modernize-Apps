@@ -20,7 +20,10 @@ perform various tasks via a browser.  To get a feel for how the web console
 works, open your browser and go to the OpenShift Web Console url provided in the environment details page.
 
 The first screen you will see is the authentication screen. Enter your **username** and **password** and 
-then log in. After you have authenticated to the web console, you will be presented with a list of projects that your user has permission to work with. 
+then log in. 
+
+This is the OpenShift console, your visual point of access and management to your OpenShift cluster. CodeReady Workspaces and your deployment environment, both, run on this OpenShift cluster.
+
 ## Setup Your Workspace on CodeReady Workspaces
 
 Follow these instructions to setup the development environment on CodeReady Workspaces. 
@@ -40,7 +43,7 @@ Click on **Open** to open the workspace and then on the **Start** button to star
 It takes a little while for the workspace to be ready. When it's ready, you will see a fully functional 
 CodeReady Workspaces IDE running in your browser.
 
-![CodeReady Workspaces Workspace]({% image_path getting-started/codeready-workspace.png %}){:width="80%"}
+<kbd>![](images/getting-started/codeready-workspace.png)</kbd>
 
 Now you can import the project skeletons into your workspace.
 
@@ -52,28 +55,29 @@ enable these capabilities, let's convert the imported project skeletons to a Mav
 
 In the project explorer, right-click on **monolith** and then click on **Convert to Project**.
 
-![Codeready Workspaces - Convert to Project]({% image_path getting-started/codeready-convert.png %}){:width="80%"}
+<kbd>![](images/getting-started/codeready-convert.png)</kbd>
 
 Choose **Maven** from the project configurations and then click on **Save**
 
-![Codeready Workspaces - Convert to Project]({% image_path getting-started/codeready-convert2.png %}){:width="80%"}
+<kbd>![](images/getting-started/codeready-convert2.png)</kbd>
 
 Repeat the above for **cart**, **catalog**, **inventory** projects.
 
 Note the **Terminal** window in Codeready Workspaces. For the rest of these labs, anytime you need to run 
 a command in a terminal, you can use the Codeready Workspaces **Terminal** window.
 
-![Codeready Workspaces - Terminal]({% image_path getting-started/codeready-terminal.png %}){:width="80%"}
+<kbd>![](images/getting-started/codeready-terminal.png)</kbd>
+
 
 ## Explore OpenShift with OpenShift CLI
 
 In order to login, we will use the `oc` command and then specify the server that we
 want to authenticate to.
 
-Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select "Copy Login Command". This will copy the entire login command, including your login token, to your clipboard
-Then, go to the CodeReady Workspaces Terminal window and paste the login command you copied in the previous step, and press enter
+Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**. This will copy the entire login command, including your login token, to your clipboard
+Then, go to the CodeReady Workspaces Terminal window and paste the login command you copied in the previous step, and press **enter**
 
-![Login-oc]({% image_path getting-started/oc-login.jpg %}){:width="80%"}
+<kbd>![](images/getting-started/oc-login.jpg)</kbd>
 
 You may see the following output:
 
