@@ -197,7 +197,7 @@ On Windows/Linux press `CTRL`+`F5` or hold down `SHIFT` and press the Reload but
 `CTRL`+`SHIFT`+`F5`. On Mac OS X, press `SHIFT`+`CMD`+`R`, or hold `SHIFT` while pressing the
 Reload button.
 
-![Red]({% image_path developer-intro/nav-red.png %}){:width="80%"}
+<kbd>![](images/developer-intro/nav-red.png)</kbd>
 
 **3. Rebuild again for BLUE background**
 
@@ -221,7 +221,7 @@ Re-visit the app by reloading the Coolstore webpage (or clicking again on the Co
 
 `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}})`.
 
-![Blue]({% image_path developer-intro/nav-blue.png %}){:width="80%"}
+<kbd>![](images/developer-intro/nav-blue.png)</kbd>
 
 It's blue! You can do this as many times as you wish, which is great for speedy development and testing.
 
@@ -282,7 +282,7 @@ Navigate to the Web Console to see your new app and the components using this li
 
 `https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod/overview`
 
-![Prod]({% image_path developer-intro/coolstore-prod-overview.png %}){:width="80%"}
+<kbd>![](images/developer-intro/coolstore-prod-overview.png)</kbd>
 
 You can see the production database, and an application called _Jenkins_ which OpenShift uses to manage CI/CD pipeline deployments. There is no running production app just yet. The only running app is back in the _dev_ environment, where you used a binary build to run the app previously.
 
@@ -354,19 +354,19 @@ You can use the _oc_ command line to invoke the build pipeline, or the Web Conso
 
 Next, navigate to _Builds -> Pipelines_ and click __Start Pipeline__ next to the `coolstore-monolith` pipeline:
 
-![Prod]({% image_path developer-intro/pipe-start.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-start.png)</kbd>
 
 This will start the pipeline. **It will take a minute or two to start the pipeline** (future runs will not
 take as much time as the Jenkins infrastructure will already be warmed up). You can watch the progress of the pipeline:
 
-![Prod]({% image_path developer-intro/pipe-prog.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-prog.png)</kbd>
 
 Once the pipeline completes, return to the Prod Project Overview at 
 
 `https://{{OPENSHIFT_MASTER}}/console/project/userXX-coolstore-prod`
 and notice that the application is now deployed and running!
 
-![Prod]({% image_path developer-intro/pipe-done.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-done.png)</kbd>
 
 View the production app **with the blue header from before** is running by clicking: CoolStore Production App at 
 
@@ -402,7 +402,7 @@ Open the `monolith-pipeline` configuration page in the Web Console (you can navi
 
 On this page you can see the pipeline definition. Click _Actions -> Edit_ to edit the pipeline:
 
-![Prod]({% image_path developer-intro/pipe-edit.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-edit.png)</kbd>
 
 In the pipeline definition editor, add a new stage to the pipeline, just before the `Deploy to PROD` step:
 
@@ -417,7 +417,7 @@ In the pipeline definition editor, add a new stage to the pipeline, just before 
 
 Your final pipeline should look like:
 
-![Prod]({% image_path developer-intro/pipe-edit2.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-edit2.png)</kbd>
 
 Click **Save**.
 
@@ -453,7 +453,7 @@ And verify that the original black header is visible in the dev application:
 
 `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}`
 
-![Prod]({% image_path developer-intro/pipe-orig.png %}){:width="60%"}
+<kbd>![](images/developer-intro/pipe-orig.png)</kbd>
 
 While the production application is still blue:
 
@@ -461,7 +461,7 @@ While the production application is still blue:
 
 `http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}`
 
-![Prod]({% image_path developer-intro/nav-blue.png %}){:width="80%"}
+<kbd>![](images/developer-intro/nav-blue.png)</kbd>
 
 We're happy with this change in dev, so let's promote the new change to prod, using the new approval step!
 
@@ -473,7 +473,7 @@ Invoke the pipeline once more by clicking **Start Pipeline** on the Pipeline Con
 
 The same pipeline progress will be shown, however before deploying to prod, you will see a prompt in the pipeline:
 
-![Prod]({% image_path developer-intro/pipe-prompt.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-prompt.png)</kbd>
 
 Click on the link for `Input Required`. This will open a new tab and direct you to Jenkins itself, where you can login with
 the same credentials as OpenShift:
@@ -483,7 +483,7 @@ the same credentials as OpenShift:
 
 Accept the browser certificate warning and the Jenkins/OpenShift permissions, and then you will find yourself at the approval prompt:
 
-![Prod]({% image_path developer-intro/pipe-jenkins-prompt.png %}){:width="80%"}
+<kbd>![](images/developer-intro/pipe-jenkins-prompt.png)</kbd>
 
 **3. Approve the change to go live**
 
@@ -502,13 +502,13 @@ Once it completes, verify that the production application has the new change (or
 
 `http://www-userXX-coolstore-prod.{{ROUTE_SUFFIX}}`
 
-![Prod]({% image_path developer-intro/pipe-orig.png %}){:width="60%"}
+<kbd>![](images/developer-intro/pipe-orig.png)</kbd>
 
 ## Congratulations!
 
 You have added a human approval step for all future developer changes. You now have two projects that can be visualized as:
 
-![Prod]({% image_path developer-intro/goal.png %}){:width="80%"}
+<kbd>![](images/developer-intro/goal.png)</kbd>
 
 ## Summary
 
