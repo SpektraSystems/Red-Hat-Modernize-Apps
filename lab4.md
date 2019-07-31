@@ -315,19 +315,13 @@ Running locally using `wildfly-swarm:run` will use an in-memory database with de
 
 **3. Test the application**
 
-To test the running application, click on the **preview URL** on the top of the run-thorntail tab. This will open another tab or window of your browser pointing to port 8080 on your client.
+Open a second CodeReady Workspaces Terminal window (if a second one is not already open), Navigate to it and run the below command to see the html code deployed.
 
-<kbd>![](images/mono-to-micro-part-1/preview.png)</kbd>
-
-or use this at : `http://localhost:8080` link.
-
-You should now see a html page that looks like this
-
-<kbd>![](images/mono-to-micro-part-1/app.png)</kbd>
+```
+curl http://localhost:8080
+```
 
 This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
-
-You can also click the **Fetch Inventory** button to force it to refresh at any time.
 
 To see the raw JSON output using `curl`, you can open an new terminal window by clicking on the plus (+) icon on the terminal toolbar and then choose **Terminal**. Open a new terminal and run the test:
 
@@ -343,7 +337,7 @@ The REST API returned a JSON object representing the inventory count for this pr
 
 **4. Stop the application**
 
-Before moving on, click in the first terminal window where Thorntail is running and then press `CTRL-C` to stop the running application! (or close the tab run-thorntail)
+Before moving on, click in the first terminal window where Thorntail (ex-WildFly Swarm) is running and then press CTRL-z to stop the running application! This command will stop the running process and send it to the background. To terminate the process, you need to do a "kill %1" from the terminal window.
 
 You should see something like:
 
@@ -367,7 +361,7 @@ In this step we will deploy our new Inventory microservice for our CoolStore app
 
 **1. Create project**
 
-Create a new project for the modernized services:
+From the CodeReady Workspaces Terminal window, create a new project for the inventory service by entering the following command:
 
 ~~~sh
 oc new-project userXX-modern-coolstore --display-name="CoolStore Microservice Application"
@@ -476,7 +470,7 @@ In our case we will implement the health check logic in a REST endpoint and let 
 
 **Add `monitor` fraction**
 
-First, open the `pom.xml` file.
+First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
 
 Thorntail includes the `monitor` fraction which automatically adds health check infrastructure to your
 application when it is included as a fraction in the project. Open the file to insert the new dependencies
@@ -497,7 +491,7 @@ We are now ready to define the logic of our health check endpoint.
 
 **1. Create empty Java class**
 
-The logic will be put into a new Java class. Create a file `src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
+The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
 
 Methods in this new class will be annotated with both the JAX-RS annotations as well as [Thorntail's `@Health` annotation](https://wildfly-swarm.gitbooks.io/wildfly-swarm-users-guide/content/advanced/monitoring.html), indicating it should be used as a health check endpoint.
 
@@ -550,9 +544,6 @@ With our health check in place, lets rebuild and redeploy using the same command
 mvn fabric8:undeploy clean fabric8:deploy -Popenshift
 ~~~~
 
-or use the command `deploy-openshift` in the command palette.
-
-> /!\ Make sure that you select a file in the directory inventory when running this command.
 
 You should see a **BUILD SUCCESS** at the end of the build output.
 
@@ -610,6 +601,11 @@ And verify it's been changed (look at the `delay=` value for the Liveness probe)
     Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
 ~~~
 
+You can also edit health checks by navigating Applications > Deployments > inventory > #2 (latest) - ensure you select the version that says 'latest' - on the OpenShift Web Console, or click on this link at
+`https://$OPENSHIFT_MASTER/console/project/ocpuser0XX-inventory/edit/health-checks?kind=DeploymentConfig&name=inventory` to access the health check edit page for the Inventory deployment.
+
+In the next step we'll exercise the probe and watch as it fails and OpenShift recovers the application.
+
 ## Exercise Health Check
 
 From the OpenShift Web Console overview page, click on the route link to open the sample application UI:
@@ -625,7 +621,7 @@ The app will begin polling the inventory as before and report success:
 <kbd>![](images/mono-to-micro-part-1/inventory.png)</kbd>
 
 Now you will corrupt the service and cause its health check to start failing.
-To simulate the app crasing, let's kill the underlying service so it stops responding. Execute:
+To simulate the app crashing, let's kill the underlying service so it stops responding. Execute:
 
 `oc rsh dc/inventory pkill java`
 
