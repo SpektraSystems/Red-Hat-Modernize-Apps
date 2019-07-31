@@ -31,6 +31,13 @@ Thorntail is based on WildFly and it's compatible with [Eclipse MicroProfile](ht
 
 Since Thorntail is based on Java EE standards, it significantly simplifies refactoring existing Java EE application to microservices and allows much of existing code-base to be reused in the new services.
 
+## Setup for Exercise
+
+To start in the right directory, from the CodeReady Workspaces Terminal, run the following command:
+```
+cd /projects/modernize-apps/inventory
+```
+
 ## Examine the sample project
 
 The sample project shows the components of a basic Thorntail project laid out in different subdirectories according to Maven best practices.
@@ -39,7 +46,7 @@ The sample project shows the components of a basic Thorntail project laid out in
 
 This is a minimal Java EE project with support for JAX-RS for building RESTful services and JPA for connecting to a database. [JAX-RS](https://docs.oracle.com/javaee/7/tutorial/jaxrs.htm) is one of Java EE standards that uses Java annotations to simplify the development of RESTful web services. [Java Persistence API (JPA)](https://docs.oracle.com/javaee/7/tutorial/partpersist.htm) is another Java EE standard that provides Java developers with an object/relational mapping facility for managing relational data in Java applications.
 
-This project currently contains no code other than the main class for exposing a single RESTful application defined in `src/main/java/com/redhat/coolstore/rest/RestApplication.java`.
+This project currently contains no code other than the main class for exposing a single RESTful application defined in `modernize-apps/inventory/src/main/java/com/redhat/coolstore/rest/RestApplication.java`.
 
 Run the Maven build to make sure the skeleton project builds successfully. You should get a **BUILD SUCCESS** message in the logs, otherwise the build has failed.
 
@@ -48,10 +55,6 @@ Run the Maven build to make sure the skeleton project builds successfully. You s
 ~~~sh
 mvn clean package
 ~~~~
-
-or use the command `build` in the command palette. 
-
-> /!\ Make sure that you select a file in the directory inventory when running this command.
 
 You should see a **BUILD SUCCESS** in the logs.
 
@@ -71,8 +74,7 @@ With our skeleton project in place, let\'s get to work defining the business log
 
 The first step is to define the model (definition) of an Inventory object. Since Thorntail uses JPA, we can re-use the same model definition from our monolithic application - no need to re-write or re-architect!
 
-Create a new Java class named `Inventory.java` in
-`com.redhat.coolstore.model` package with the following code, identical to the monolith code :
+Using the CodeReady Workspaces File Explorer interface, create a new file named `Inventory.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/model` for the Inventory Java class in package `com.redhat.coolstore.model` with the following code, identical to the monolith code:
 
 ~~~java
 package com.redhat.coolstore.model;
@@ -155,11 +157,11 @@ public class Inventory implements Serializable {
 
 Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
 
-Thorntail configuration is done to a large extent through detecting the intent of the developer and automatically adding the required dependencies configurations to make sure it can get out of the way and developers can be productive with their code rather than Googling for configuration snippets. As an example, configuration database access with JPA is done by adding the JPA _fraction_ and a database driver to the `pom.xml`, and then configuring the database connection details in `src/main/resources/project-stages.yml`.
+Thorntail configuration is done to a large extent through detecting the intent of the developer and automatically adding the required dependencies configurations to make sure it can get out of the way and developers can be productive with their code rather than Googling for configuration snippets. As an example, configuration database access with JPA is done by adding the JPA fractionand a database driver to the pom.xml, and then configuring the database connection details in `modernize-apps/inventory/src/main/resources/project-stages.yml`.
 
-Examine `src/main/resources/META-INF/persistence.xml` to see the JPA datasource configuration for this project. Also note that the configurations uses `src/main/resources/META-INF/load.sql` to import initial data into the database.
+Examine `modernize-apps/inventory/src/main/resources/META-INF/persistence.xml` to see the JPA datasource configuration for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
 
-Examine `src/main/resources/project-stages.yml` to see the database connection details. An in-memory H2 database is used in this scenario for local development and in the following steps will be replaced with a PostgreSQL database with credentials coming from an OpenShift _secret_. Be patient! More on that later.
+Examine `modernize-apps/inventory/src/main/resources/project-stages.yml` to see the database connection details. An in-memory H2 database is used in this scenario for local development and in the following steps will be replaced with a PostgreSQL database with credentials coming from an OpenShift _secret_. Be patient! More on that later.
 
 Build and package the Inventory service using Maven to make sure you code compiles:
 
@@ -167,15 +169,11 @@ Build and package the Inventory service using Maven to make sure you code compil
 mvn clean package
 ~~~~
 
-or use the command `build` in the command palette. 
-
-> /!\ Make sure that you select a file in the directory inventory when running this command.
-
 If builds successfully, continue to the next step to create a new service.
 
 ## Create Inventory Service
 
-In this step we will mirror the abstraction of a _service_ so that we can inject the Inventory _service_ into various places (like a RESTful resource endpoint) in the future. This is the same approach that our monolith uses, so we can re-use this idea again. Create an **InventoryService** class in the `com.redhat.coolstore.service` package with the below code:
+In this step we will mirror the abstraction of a service so that we can inject the Inventory service into various places (like a RESTful resource endpoint) in the future. This is the same approach that our monolith uses, so we can re-use this idea again. Create a new file named `InventoryService.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/service` for the InventoryServices Java class in package `com.redhat.coolstore.service` with the code below:
 
 ~~~java
 package com.redhat.coolstore.service;
@@ -235,15 +233,11 @@ Re-Build and package the Inventory service using Maven to make sure your code co
 mvn clean package
 ~~~~
 
-or use the command `build` in the command palette. 
-
-> /!\ Make sure that you select a file in the directory inventory when running this command.
-
 You should see a **BUILD SUCCESS** in the build logs. If builds successfully, continue to the next step to create a new RESTful endpoint that uses this service.
 
 ## Create RESTful Endpoints
 
-Thorntail uses JAX-RS standard for building REST services. Create a new Java class named `InventoryEndpoint.java` in `com.redhat.coolstore.rest` package with the following content :
+Thorntail (ex-WildFly Swarm) uses JAX-RS standard for building REST services. Create a new file named `InventoryEndpoint.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/rest` for the InventoryEndpoint Java class in `package com.redhat.coolstore.rest` with the following content:
 
 ~~~java
 package com.redhat.coolstore.rest;
@@ -300,23 +294,14 @@ Build and package the Inventory service again using Maven:
 mvn clean package
 ~~~~
 
-or use the command `build` in the command palette. 
-
-> /!\ Make sure that you select a file in the directory inventory when running this command.
-
 You should see a **BUILD SUCCESS** in the build logs.
 
 ## Test Locally
 
-Using the Thorntail maven plugin (predefined in `pom.xml`), you can conveniently run the application locally and test the endpoint.
-
+Using the Thorntail (ex-WildFly Swarm) maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
 ~~~sh
 mvn wildfly-swarm:run
 ~~~
-
-or use the command `run-thorntail` in the command palette. 
-
-> /!\ Make sure that you select a file in the directory inventory when running this command.
 
 > As an uber-jar, it could also be run with `java -jar target/inventory-1.0-SNAPSHOT-swarm.jar` but you don't need to do this now
 
