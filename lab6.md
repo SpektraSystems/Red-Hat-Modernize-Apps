@@ -48,7 +48,7 @@ Eclipse Vert.x is event-driven and non-blocking, which means that applications i
 
 ## Setup for Exercise
 
-Run the following commands to set up your environment for this scenario and start in the right directory:
+To start in the right directory, from the CodeReady Workspaces Terminal, run the following command:
 
 ~~~sh
 cd /projects/modernize-apps/cart
@@ -123,7 +123,7 @@ public class MyVerticle extends AbstractVerticle {
 **1. Creating your first Verticle**
 
 We will start by creating the `CartServiceVerticle` like this. Create this file and add this code to the
-`src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file:
+`modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file:
 
 ~~~java
 package com.redhat.coolstore;
@@ -410,7 +410,7 @@ The reason that it doesn't work is that when we calling `setupConfiguration()` t
 
 One solution to this problem is to load our Verticle from another verticle and pass the configuration as a deployment option.
 
-Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Add a `src/main/java/com/redhat/coolstore/MainVerticle.java` file and add the following content:
+Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Add a `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file and add the following content:
 
 ~~~java
 package com.redhat.coolstore;
@@ -462,7 +462,7 @@ public class MainVerticle extends AbstractVerticle {
 **2. Create the configuration file**
 At the moment we only need one value in the configuration file, but we will add more later.
 
-Copy this into the configuration file `src/main/resources/config-default.json`:
+Copy this into the configuration file `modernize-apps/cart/src/main/resources/config-default.json`:
 
 ~~~json
 {
@@ -472,7 +472,7 @@ Copy this into the configuration file `src/main/resources/config-default.json`:
 
 Finally we need to tell the `vertx-maven-plugin` to use the MainVerticle instead of the CartServiceVerticle. In the `pom.xml` under `project->properties` there is a tag called `<vertx.verticle>` that currently specifies the full path to the `CartServiceVerticle`.
 
-First open the `pom.xml`
+First open `modernize-apps/cart/pom.xml`
 
 Then Change the `<vertx.verticle>com.redhat.coolstore.CartServiceVerticle</vertx.verticle>` to `<vertx.verticle>com.redhat.coolstore.MainVerticle</vertx.verticle>`
 
@@ -518,7 +518,7 @@ In our example we will only use basic GET, POST and DELETE routing. Let\'s get s
 **1. Creating a GET /services/cart endpoint**
 First we are going to create a very simple endpoint that returns a `ShopppingCart` object as a JSON String using some utility methods from the `src/main/java/com/redhat/coolstore/utils/Transformers.java` to get a `JsonObject` that we can then return as String.
 
-Add this code to the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` class at the `//TODO: Add handler for getting a shoppingCart by id` marker:
+Add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` class at the `//TODO: Add handler for getting a shoppingCart by id` marker:
 
 ~~~java
 private void getCart(RoutingContext rc) {
@@ -533,7 +533,7 @@ private void getCart(RoutingContext rc) {
 
 Now let's create a bit more complex implementation that returns many `ShoppingCarts` as a JSON array.
 
-Still in file `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` add this code at
+Still in file `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` add this code at
 the `//TODO: Add handler for getting a list of shoppingCarts` marker:
 
 ~~~java
@@ -556,7 +556,7 @@ In this lambda expression we are iterating through the list of shopping carts an
 
 **3. Add routes**
 
-Open the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file.
+Open the `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file.
 
 Add the first route by adding the following at `//TODO: Create cart router` marker:
 
@@ -592,7 +592,7 @@ Now test the route with a curl command in the terminal like this:
 
 `curl -X GET http://localhost:8082/services/carts; echo`
 
-This should print the body of the response  that looks somewhat like this. Note that the the content from this is generate from the `src/main/java/com/redhat/coolstore/utils/Transformers.java` and will return a random number of products, so you actual content may vary.
+This should print the body of the response  that looks somewhat like this. Note that the the content from this is generate from the `modernize-apps/cart/src/main/java/com/redhat/coolstore/utils/Transformers.java` and will return a random number of products, so you actual content may vary.
 
 
 ~~~json
@@ -649,7 +649,7 @@ So our implementation of this service needs to retrieve a Product object from th
 
 **1. Add route**
 
-Make sure `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` is open.
+Make sure `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` is open.
 
 Let's start by adding a router, by adding the following where at the `//TODO: Create add router` marker in class `CartServiceVerticle` 
 
@@ -699,7 +699,7 @@ Normally in Java you would probably implement this method as `Product getProduct
 
 For making calls to external HTTP services Vert.x supplies a WebClient. The `WebClient` methods like `get()`, `post()` etc and is very easy to use. In our case we are going to use get and pass in port, hostname and uri. We are also going to set a timeout for the operation. So let's first add those to our configuration. 
 
-Copy this into the configuration file `src/main/resources/config-default.json`:
+Copy this into the configuration file `modernize-apps/cart/src/main/resources/config-default.json`:
 
 ~~~json
 {
@@ -840,7 +840,7 @@ This should print the follow:
 **5. Add endpoint for deleting items**
 Since we are now so skilled in writing endpoints lets go ahead and also create the endpoint for removing a product. The only tricky part about removing is that the request might not remove all products in once. E.g. If we have 10 Red Hat Fedoras and the request just decreases 3 we should not remove the Shopping Cart item, but instead lower the quantity to 7. 
 
-Again in the `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file add the following at the `//TODO: Add handler for removing an item from the cart`
+Again in the `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` file add the following at the `//TODO: Add handler for removing an item from the cart`
 
 ~~~java
 private void removeShoppingCartItem(RoutingContext rc) {
@@ -985,7 +985,7 @@ The headers of the message are available with headers.
 **1. Add a Shipping Verticle**
 Since RHOAR currently do not support using distributed event bus we will create the Verticle locally. For now our shipping service will only return a fixed ShippingFee of 37.0. RHOAR is planned to support distributes event bus early 2018. Since the Event Bus API is the same very little code changes (if any) will be required to move this to a separate service in OpenShift in the future.
 
-Add this code to the `src/main/java/com/redhat/coolstore/ShippingServiceVerticle.java` file:
+Add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/ShippingServiceVerticle.java` file:
 
 ~~~java
 package com.redhat.coolstore;
@@ -1013,7 +1013,7 @@ public class ShippingServiceVerticle extends AbstractVerticle {
 }
 ~~~
 
-We also need to start the Verticle by deploying it form the MainVerticle. So add this code to the `src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PromoServiceVerticle` marker:
+We also need to start the Verticle by deploying it form the MainVerticle. So add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PromoServiceVerticle` marker:
 
 ~~~java
 vertx.deployVerticle(
@@ -1029,7 +1029,7 @@ In the future we might want to base the shipping service on the actual content o
 
 We will implement the shipping fee similary to how we implemented the `getProduct` that called out to the Catalog service. 
 
-In `src/main/java/com/redhat/coolstore/CartServiceVerticle.java` we will add the following method at the marker: `//TODO: Add method for getting the shipping fee`. Copy the content below:
+In `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` we will add the following method at the marker: `//TODO: Add method for getting the shipping fee`. Copy the content below:
 
 ~~~java
 private void getShippingFee(ShoppingCart cart, Handler<AsyncResult<Double>> resultHandler) {
@@ -1123,7 +1123,7 @@ Now that you've logged into OpenShift, let's deploy our new cart microservice:
 
 **Update configuration**
 
-Create the file: ``src/main/resources/config-openshift.json``
+Create the file: ``modernize-apps/cart/src/main/resources/config-openshift.json``
 
 Copy the following content to the file:
 
@@ -1141,11 +1141,11 @@ Copy the following content to the file:
 
 Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can take an existing Eclipse Vert.x application and generate the necessary Kubernetes configuration.
 
-You can also add additional config, like ``src/main/fabric8/deployment.yml`` which defines the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
+You can also add additional config, like ``modernize-apps/cart/src/main/fabric8/deployment.yml`` which defines the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
 
 Let's add a deployment.yml that will set the system property to use our `config-openshift.json` config.
 
-Create the file ``src/main/fabric8/deployment.yml``
+Create the file ``modernize-apps/cart/src/main/fabric8/deployment.yml``
 
 Add the following content to the file
 
@@ -1165,7 +1165,7 @@ spec:
 
 We also need to add a route.yml like this:
 
-Create the file by clicking on open ``src/main/fabric8/route.yml``
+Create the file by clicking on open ``modernize-apps/cart/src/main/fabric8/route.yml``
 
 Add the following content:
 
@@ -1196,7 +1196,7 @@ After the maven build finishes it will take less than a minute for the applicati
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the route URL at 
 
-`http://cart-userXX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI.
+`http://cart-ocpuser0XX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
@@ -1216,21 +1216,21 @@ Flow the steps below to create a path based route.
 
 **1. Obtain hostname of monolith UI from our Dev environment**
 
-`oc get route/www -n userXX-coolstore-dev`
+`oc get route/www -n ocpuser0XX-coolstore-dev`
 > Make sure to replace the name of the project with your user number.
 
 The output of this command shows us the hostname:
 
 ~~~sh
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}             coolstore   <all>                   None
+www       www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}             coolstore   <all>                   None
 ~~~
 
-My hostname is `www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours will be different**.
+My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours will be different**.
 
 **2. Open the openshift console for Cart - Applications - Routes at**
 
-`https://{{OPENSHIFT_MASTER}}/console/project/userXX-modern-coolstore/browse/routes`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-modern-coolstore/browse/routes`
 > Make sure to replace the name of the project with your user number.
 
 **3. Click on Create Route, and set**
@@ -1246,7 +1246,7 @@ Leave other values set to their defaults, and click **Save**
 
 **4. Test the route**
 
-Test the route by running `curl http://www-userXX-coolstore-dev.{{ROUTING_SUFFIX}}/services/cart/99999`
+Test the route by running `curl http://www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}/services/cart/99999`
 
 You should get a complete set of products, along with their inventory.
 
