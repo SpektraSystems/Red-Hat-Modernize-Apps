@@ -22,7 +22,7 @@ Another thing you will learn in this scenario is one of the techniques to aggreg
 
 ## Setup for Exercise
 
-Run the following commands to set up your environment for this scenario and start in the right directory:
+To start in the right directory, from the CodeReady Workspaces Terminal, run the following command:
 
 ~~~sh
 cd /projects/modernize-apps/catalog
@@ -116,20 +116,18 @@ Use the command palette to execute the ``run-spring-boot`` command to run the ap
 
 **3. Verify the application**
 
-To begin with, click on the **preview URL** link in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8081 on your client.
+In the codeready workspace open a new terminal and run the below command:
+```
+curl http://localhost:8081 
 
-<kbd>![](images/mono-to-micro-part-2/preview-spring.png)</kbd>
-
-You should now see an HTML page that looks like this:
-
-<kbd>![](images/mono-to-micro-part-2/web-page.png)</kbd>
+```
+You should now see an HTML code deployed.
 
 > **NOTE:** The service calls to get products from the catalog doesn't work yet. Be patient! We will work on it in the next steps.
 
 **4. Stop the application**
 
-Before moving on, close the `run spring-boot` tab to stop the running application.
-
+Before moving on, press CTRL-z on your terminal window to stop and send the running application to the background, then at the command prompt enter "kill %1" to kill the application.
 ## Congratulations
 
 You have now successfully executed the first step in this scenario. 
@@ -518,12 +516,6 @@ You should get a full JSON array consisting of all the products:
 ...
 ~~~
 
-Also click on the **preview URL**, which will open another tab or window of your browser pointing to the catalog app.
-
-You should now see an HTML page that looks like this:
-
-<kbd>![](images/mono-to-micro-part-2/web-page-products.png)</kbd>
-
 You have now successfully executed the third step in this scenario. 
 
 Now you've seen how to create REST application in Spring MVC and create a simple application that returns product. 
@@ -532,7 +524,7 @@ In the next scenario we will also call another service to enrich the endpoint re
 
 ### Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C` (or close the tab of the running command).
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
 
 ## Congratulations!
 
@@ -554,11 +546,11 @@ When redesigning our application to Microservices using domain driven design we 
 
 Our problem is that the user interface requires data from two services when calling the REST service on `/services/products`. There are multiple ways to solve this like:
 
-1. **Client Side integration** - We could extend our UI to first call `/services/products` and then for each product item call `/services/inventory/{prodId}` to get the inventory status and then combine the result in the web browser. This would be the least intrusive method, but it also means that if we have 100 of products the client will make 101 request to the server. If we have a slow internet connection this may cause issues. 
+1. **Client Side integration** - We could extend our UI to first call `/services/products` and then for each product item call `/services/inventory/{prodId}` to get the inventory status and then combine the result in the web browser. This would be the least intrusive method, but it also means that if we have 100 of products, the client will make 101 request to the server. If we have a slow internet connection this may cause issues. 
 2. **Microservices Gateway** - Creating a gateway in-front of the `Catalog Service` that first calls the Catalog Service and then based on the response calls the inventory is another option. This way we can avoid lots of calls from the client to the server. Apache Camel provides nice capabilities to do this and if you are interested to learn more about this, please checkout the Coolstore Microservices example [here](http://github.com/jbossdemocentral/coolstore-microservice)
 3. **Service-to-Service** - Depending on use-case and preferences another solution would be to do service-to-service calls instead. In our case means that the Catalog Service would call the Inventory service using REST to retrieve the inventory status and include that in the response.
 
-There are no right or wrong answers here, but since this is a workshop on application modernization using RHOAR runtimes we will not choose option 1 or 2 here. Instead we are going to use option 3 and extend our Catalog to call the Inventory service. 
+There are no right or wrong answers here, but since this is a workshop on application modernization using Red Hat Application Runtimes, we will not choose option 1 or 2 here. Instead we are going to use option 3 and extend our Catalog to call the Inventory service.
 
 ## Extending the test
 
@@ -843,15 +835,11 @@ Running locally using `spring-boot:run` will use an in-memory database with defa
 
 **3. Test the application**
 
-To test the running application, click on the **preview URL**. This will open another tab or window of your browser pointing to port 8081 on your client.
+To test the running application, navigate back to thecodeready workspace and run the following in a new terminal 
 
-You should now see a html page that looks like this
+curl http://localhost:8081
 
-<kbd>![](images/mono-to-micro-part-2/app-new.png)</kbd>
-
-This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
-
-You can also click the **Fetch Catalog** button to force it to refresh at any time.
+You should now see a html code deployed.
 
 To see the raw JSON output using `curl`, you can open an new terminal window by clicking on the plus (+) icon on the terminal toolbar and then choose **Terminal**. Enter the following command to run the test:
 
