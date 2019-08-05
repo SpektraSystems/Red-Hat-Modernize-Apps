@@ -11,7 +11,7 @@ To implement this, we are going to use the Spring Framework. The reason for usin
 
 The goal is to produce something like:
 
-![Greeting]({% image_path mono-to-micro-part-2/goal.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/goal.png)</kbd>
 
 ## What is Spring Framework?
 
@@ -36,7 +36,7 @@ Initially, the project is almost empty and doesn't do anything. Start by reviewi
 
 The output should look something like this
 
-![File explorer]({% image_path mono-to-micro-part-2/files.png %}){:width="50%"}
+<kbd>![](images/mono-to-micro-part-2/files.png)</kbd>
 
 As you can see, there are some files that we have prepared for you in the project. Under `src/main/resources/static/index.html` we have for example prepared a simple html-based UI file for you. Except for the `fabric8/` folder and `index.html`, this matches very well what you would get if you generated an empty project from the [Spring Initializr](https://start.spring.io) web page. For the moment you can ignore the content of the `fabric8/` folder (we will discuss this later).
 
@@ -118,11 +118,11 @@ Use the command palette to execute the ``run-spring-boot`` command to run the ap
 
 To begin with, click on the **preview URL** link in the console frame of this browser window, which will open another tab or window of your browser pointing to port 8081 on your client.
 
-![Local Web Browser Tab]({% image_path mono-to-micro-part-2/preview-spring.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/preview-spring.png)</kbd>
 
 You should now see an HTML page that looks like this:
 
-![Local Web Browser Tab]({% image_path mono-to-micro-part-2/web-page.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/web-page.png)</kbd>
 
 > **NOTE:** The service calls to get products from the catalog doesn't work yet. Be patient! We will work on it in the next steps.
 
@@ -522,7 +522,7 @@ Also click on the **preview URL**, which will open another tab or window of your
 
 You should now see an HTML page that looks like this:
 
-![Local Web Browser Tab]({% image_path mono-to-micro-part-2/web-page-products.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/web-page-products.png)</kbd>
 
 You have now successfully executed the third step in this scenario. 
 
@@ -847,7 +847,7 @@ To test the running application, click on the **preview URL**. This will open an
 
 You should now see a html page that looks like this
 
-![App]({% image_path mono-to-micro-part-2/app-new.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/app-new.png)</kbd>
 
 This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
 
@@ -957,7 +957,7 @@ route URL at
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-![Overview link]({% image_path mono-to-micro-part-2/routelink.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/routelink.png)</kbd> 
 
 The UI will refresh the catalog table every 2 seconds, as before.
 
@@ -973,7 +973,7 @@ So far we haven't started [strangling the monolith](https://www.martinfowler.com
 
 For the home page the product list is loaded via a REST call to *http://<monolith-hostname>/services/products*. At the moment calls to that URL will still hit product catalog in the monolith. By using a [path based route](https://docs.openshift.com/container-platform/3.7/architecture/networking/routes.html#path-based-routes) in OpenShift we can route these calls to our newly created catalog services instead and end up with something like:
 
-![Greeting]({% image_path mono-to-micro-part-2/goal.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/goal.png)</kbd> 
 
 Flow the steps below to create a path based route.
 
@@ -1003,7 +1003,7 @@ My hostname is `www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be d
 * **Path**: `/services/products`
 * **Service**: `catalog`
 
-![Greeting]({% image_path mono-to-micro-part-2/route-vals.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/route-vals.png)</kbd> 
 
 Leave other values set to their defaults, and click **Create**
 
@@ -1019,7 +1019,7 @@ Open the monolith UI at
 
 `http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` and observe that the new catalog is being used along with the monolith:
 
-![Greeting]({% image_path mono-to-micro-part-2/coolstore-web.png %}){:width="80%"}
+<kbd>![](images/mono-to-micro-part-2/coolstore-web.png)</kbd> 
 
 The screen will look the same, but notice that the earlier product *Atari 2600 Joystick* is now gone, as it has been removed in our new catalog microservice.
 
