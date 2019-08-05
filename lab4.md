@@ -362,10 +362,9 @@ In this step we will deploy our new Inventory microservice for our CoolStore app
 **1. Create project**
 
 From the CodeReady Workspaces Terminal window, create a new project for the inventory service by entering the following command:
-
-~~~sh
-oc new-project ocpuser0XX-modern-coolstore --display-name="CoolStore Microservice Application"
-~~~
+```
+oc new-project ocpuser0XX-inventory --display-name="CoolStore Inventory Microservice Application"
+```
 
 **3. Open the OpenShift Web Console**
 
@@ -429,7 +428,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://inventory-ocpuser0XX-modern-coolstore.{{ ROUTE_SUFFIX }}`
+`http://inventory-ocpuser0XX-inventory.{{ ROUTE_SUFFIX }}`
 to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
@@ -548,7 +547,7 @@ mvn fabric8:undeploy clean fabric8:deploy -Popenshift
 
 You should see a **BUILD SUCCESS** at the end of the build output.
 
-During build and deploy, you\'ll notice Thorntail adding in health checks for you:
+During build and deploy, you'll notice Thorntail adding in health checks for you:
 
 ~~~sh
 [INFO] F8: wildfly-swarm-health-check: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 10 seconds
