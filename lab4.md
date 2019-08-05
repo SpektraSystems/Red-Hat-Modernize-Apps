@@ -498,6 +498,7 @@ Methods in this new class will be annotated with both the JAX-RS annotations as 
 **2. Add logic**
 
 Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
+Copy the code fragment below into the newly created file to implement the logic.
 
 ~~~java
 package com.redhat.coolstore.rest;
