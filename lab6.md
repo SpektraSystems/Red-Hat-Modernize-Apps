@@ -25,7 +25,7 @@ The asynchronous behavior or reactive systems will also save resources. In synch
 
 ## What is Eclipse Vert.x?
 
-![Local Web Browser Tab]({% image_path reactive-microservices/vertx-logo.png %}){:width="40%"}
+<kbd>![](images/reactive-microservices/vertx-logo.png)</kbd>
 
 Eclipse Vert.x is a reactive toolkit for the Java Virtual Machine that is polyglot (e.g., supports multiple programming languages). In this session, we will focus on Java, but it is possible to build the same application in JavaScript, Groovy, Ruby, Ceylon, Scala, or Kotlin.
 
@@ -92,7 +92,7 @@ If you have used Maven and Java before this should look familiar. This is how a 
 
 The domain model consists of a ShoppingCart which has many ShoppingCartItems which has a one-to-one dependency to Product. The domain also consists of Different Promotions that uses the ShoppingCart state to see if it matches the criteria of the promotion.
 
-![Shopping Cart - Domain Model]({% image_path reactive-microservices/cart-model.png %}){:width="60%"}
+<kbd>![](images/reactive-microservices/cart-model.png)</kbd>
 
 ## Create a web server and a simple rest service
 
@@ -627,7 +627,7 @@ Click on the **preview URL** which will open another tab or window of your brows
 
 Now the default page should have an entry in the table matching the values for your JSON file above.
 
-![Local Web Browser Tab]({% image_path reactive-microservices/web-page-content.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/web-page-content.png)</kbd>
 
 ## Congratulations
 
@@ -639,11 +639,11 @@ In the next step we will implement another endpoint and this time it will also c
 
 In this step we will implement POST operation for adding a product. The UI in Coolstore Monolith uses a POST operation when a user clicks `Add to Cart`.
 
-![Add To Cart]({% image_path reactive-microservices/add-product.png %}){:width="50%"}
+<kbd>![](images/reactive-microservices/add-product.png)</kbd>
 
 The UI will then issue a POST request to `/services/cart/<cartId>/<prodId>/<quantity>`. However when adding a product to the ShoppingCartItem we need an actual `Product` object.
 
-![Add To Cart]({% image_path reactive-microservices/cart-model.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/cart-model.png)</kbd>
 
 So our implementation of this service needs to retrieve a Product object from the `CatalogService`. Let's get started with this implementation.
 
@@ -1111,7 +1111,7 @@ We have already deployed our coolstore monolith, inventory and catalog to OpenSh
 
 Make sure you are on the right OpenShift project :
 
-`oc project userXX-modern-coolstore`
+`oc project ocpuser0XX-modern-coolstore`
 
 **3. Open the OpenShift Web Console**
 
@@ -1200,7 +1200,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-![Overview link]({% image_path reactive-microservices/routelink.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/routelink.png)</kbd>
 
 ## Congratulations!
 
@@ -1240,7 +1240,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours wil
 * **Path**: `/services/cart`
 * **Service**: `cart`
 
-![Greeting]({% image_path reactive-microservices/route-vals.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/route-vals.png)</kbd>
 
 Leave other values set to their defaults, and click **Save**
 
@@ -1254,11 +1254,11 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI and observe that the new catalog is being used along with the monolith:
 
-![Greeting]({% image_path mono-to-micro-part-2/coolstore-web.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/coolstore-web.png)</kbd>
 
 Add some items to your cart, then visit the **Shopping Cart** tab to observe the new shipping fees we hard-coded earlier:
 
-![Greeting]({% image_path reactive-microservices/fees.png %}){:width="60%"}
+<kbd>![](images/reactive-microservices/fees.png)</kbd>
 
 The **Checkout** functionality is yet to be implemented, so won't work, but it's not too far away and if you have time after this workshop feel free to contribute the changes and make this workshop even better!
 
@@ -1274,6 +1274,6 @@ You created a new shopping cart microservice almost finalizing the migration fro
 
 Your final strangled monolith now looks like:
 
-![Greeting]({% image_path reactive-microservices/goal.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/goal.png)</kbd>
 
 In the next chapter, we will talk more about how to make these microservices more resilient.
