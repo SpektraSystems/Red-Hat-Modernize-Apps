@@ -244,8 +244,6 @@ Currently our verticle doesn't really do anything except logging some info. Let'
 mvn compile vertx:run
 ~~~ 
 
-or use ``build-vertx`` command in the command palette.
-
 You should see output that looks like this:
 
 ~~~sh
