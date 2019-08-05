@@ -364,7 +364,7 @@ In this step we will deploy our new Inventory microservice for our CoolStore app
 From the CodeReady Workspaces Terminal window, create a new project for the inventory service by entering the following command:
 
 ~~~sh
-oc new-project userXX-modern-coolstore --display-name="CoolStore Microservice Application"
+oc new-project ocpuser0XX-modern-coolstore --display-name="CoolStore Microservice Application"
 ~~~
 
 **3. Open the OpenShift Web Console**
@@ -429,7 +429,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://inventory-userXX-modern-coolstore.{{ ROUTE_SUFFIX }}`
+`http://inventory-ocpuser0XX-modern-coolstore.{{ ROUTE_SUFFIX }}`
 to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
