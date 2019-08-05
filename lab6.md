@@ -287,8 +287,6 @@ Now let's restart the application. Execute:
 mvn compile vertx:run
 ~~~~
 
-or use ``run-vertx`` command in the command palette.
-
 **3. Test the static router**
 
 Click on the **preview URL** link, which will open another tab or window of your browser pointing to cart application.
@@ -325,9 +323,7 @@ Restart the application by running the following in the terminal or in clicking 
 mvn compile vertx:run
 ~~~~
 
-or use ``run-vertx`` command in the command palette.
-
-After Vert.x is start execute a curl command in another terminal so like this. 
+After Vert.x is start execute a curl command in another terminal. 
 
 ~~~sh
 curl -X GET http://localhost:10080/hello; echo
@@ -484,8 +480,6 @@ Restart the application by running the following in the terminal or in clicking 
 mvn compile vertx:run
 ~~~~
 
-or use ``run-vertx`` command in the command palette.
-
 In the output you should now see that the server is starting on port `8082` and not `10080` like before.
 
 Click on the **preview URL** which will open another tab or window of your browser pointing to port `8082` on your client. 
@@ -585,8 +579,6 @@ Restart the application by running the following in the terminal or in clicking 
 ~~~sh
 mvn compile vertx:run
 ~~~~
-
-or use ``run-vertx`` command in the command palette.
 
 Now test the route with a curl command in the terminal like this:
 
@@ -761,7 +753,6 @@ Let's first test to update the quantity for a product that is already in the sho
 mvn compile vertx:run
 ~~~~
 
-or use ``run-vertx`` command in the command palette.
 
 Then execute this to test retrieving a specific cart and the quantity of item `329299` in the cart:
 
@@ -800,10 +791,6 @@ If that prints `< HTTP/1.1 200` then our service is responding correctly otherwi
 ~~~sh
 cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests
 ~~~~
-
-or use `run-spring-boot` command in the command palette.
-
-> /!\ When launching the `run-spring-boot` command you should have selected the catalog project in the project explorer
 
 Wait for it to complete. You should see `Started RestApplication in xxxxx seconds`.
 
@@ -875,7 +862,9 @@ router.delete("/services/cart/:cartId/:itemId/:quantity").handler(this::removeSh
 
 Let's first test to decreasing the quantity for a product that is already in the shopping cart
 
-Start the cart service ``mvn compile vertx:run`` or use ``run-vertx`` command in the command palette.
+Start the cart service by executing the following command in the CodeReady workspace terminal
+
+``mvn compile vertx:run`` 
 
 The run this to get the quantity of item `329299` in the cart:
 
