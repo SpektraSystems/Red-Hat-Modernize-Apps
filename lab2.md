@@ -218,7 +218,7 @@ using this method makes the code much more portable.
 **2. Open the file**
 
 Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
-`monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java`.Double click on the StartupListener.java" file to open it
+`modernize-apps/monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java`.Double click on the StartupListener.java" file to open it
 
 The first issue we will tackle is the one reporting the use of _Weblogic ApplicationLifecyleEvent_ and
 _Weblogic LifecycleListener_ in this file. Open the file to make these changes in the file.
@@ -287,7 +287,7 @@ We will use the standard Java Logging framework, a much more portable framework.
 **1. Open the file**
 
 Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
-`monolith/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java`
+`modernize-apps/monolith/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java`
 
 
 **2. Make the changes** Open the file to make these changes:
