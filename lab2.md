@@ -262,10 +262,6 @@ cd /projects/modernize-apps/monolith
 mvn clean package
 ~~~
 
-or use the command palette to build your apps
-
-> **Commands** are script-like instructions that are injected into the workspace machine for execution. Commands are saved in the configuration storage of your workspace and are part of any workspace export. **The command palette** allows to quickly select a command to be executed. To call the command palette from the keyboard hit `<shift+F10>`, or click on the burger icon on the top right of your browser and then use the cursor keys to navigate and enter to execute the command.
-
 If builds successfully (you will see `BUILD SUCCESS`), then let's move on to the next issue! If it does not compile,
 verify you made all the changes correctly and try the build again.
 
@@ -745,8 +741,6 @@ Build the project:
 mvn clean package -Popenshift
 ~~~
 
-or use the command called `build-eap-openshift` in the command palette
-
 Wait for the build to finish and the `BUILD SUCCESS` message!
 
 And finally, start the build process that will take the `.war` file and combine it with JBoss EAP and produce a Linux container image which will be automatically deployed into the project, thanks to the *DeploymentConfig* object created from the template:
@@ -754,8 +748,6 @@ And finally, start the build process that will take the `.war` file and combine 
 ~~~shell
 oc start-build coolstore --from-file=deployments/ROOT.war
 ~~~
-
-or use the command called `deploy-eap-openshift` in the command palette
 
 Check the OpenShift web console and you'll see the application being built:
 
