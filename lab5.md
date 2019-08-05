@@ -869,6 +869,13 @@ Create a new project for the catalog service:
 
 `oc new-project ocpuser0XX-catalog --display-name="CoolStore Catalog Microservice Application"`
 
+### 2. Give permission to call Inventory service
+Our OpenShift installation is using the mulitenancy pliugin for networking. This is a recommended security setting in OpenShift and when multitenancy plugin is used, it will by default disable communication between pods in different projects/namespaces. However, since our catalog application will need to communicate with the inventory application (that is in a different project/namespace) we need to tell OpenShift to allow this.
+
+`oc adm pod-network join-projects --to=ocpuser0XX-inventory ocpuser0XX-catalog`
+
+Next, we'll deploy your new microservice to OpenShift.
+
 ## Deploy to OpenShift
 
 We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application.
