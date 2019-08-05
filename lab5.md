@@ -831,7 +831,7 @@ Running locally using `spring-boot:run` will use an in-memory database with defa
 
 To test the running application, navigate back to thecodeready workspace and run the following in a new terminal 
 
-curl http://localhost:8081
+`curl http://localhost:8081`
 
 You should now see a html code deployed.
 
@@ -877,16 +877,6 @@ Our OpenShift installation is using the mulitenancy pliugin for networking. This
 Next, we'll deploy your new microservice to OpenShift.
 
 ## Deploy to OpenShift
-
-We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application.
-
-Make sure that you are on the right project
-
-~~~sh
-oc project ocpuser0XX-catalog
-~~~
-
-Next, we'll deploy your new microservice to OpenShift.
 
 Now that you've logged into OpenShift, let's deploy our new catalog microservice:
 
