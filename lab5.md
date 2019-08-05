@@ -866,7 +866,7 @@ We have already deployed our coolstore monolith and inventory to OpenShift. In t
 Make sure that you are on the right project
 
 ~~~sh
-oc project userXX-modern-coolstore
+oc project ocpuser0XX-modern-coolstore
 ~~~
 
 Next, we'll deploy your new microservice to OpenShift.
@@ -933,7 +933,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://catalog-userXX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI. 
+`http://catalog-ocpuser0XX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI. 
 
 > /!\ Don't forget to change the user number in your route.
 
@@ -961,7 +961,7 @@ Flow the steps below to create a path based route.
 
 **1. Obtain hostname of monolith UI from our Dev environment**
 
-`oc get route/www -n userXX-coolstore-dev`
+`oc get route/www -n ocpuser0XX-coolstore-dev`
 
 > /!\ Change the project name according to your user number
 
@@ -969,10 +969,10 @@ The output of this command shows us the hostname:
 
 ~~~sh
 NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   <all>                   None
+www       www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   <all>                   None
 ~~~
 
-My hostname is `www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
+My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
 
 **2. Open the openshift console for Catalog - Applications - Routes at** 
 
@@ -991,7 +991,7 @@ Leave other values set to their defaults, and click **Create**
 
 **4. Test the route**
 
-Test the route by running `curl http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}/services/products`
+Test the route by running `curl http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}/services/products`
 
 You should get a complete set of products, along with their inventory.
 
@@ -999,7 +999,7 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI at 
 
-`http://www-userXX-coolstore-dev.{{ROUTE_SUFFIX}}` and observe that the new catalog is being used along with the monolith:
+`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` and observe that the new catalog is being used along with the monolith:
 
 <kbd>![](images/mono-to-micro-part-2/coolstore-web.png)</kbd> 
 
