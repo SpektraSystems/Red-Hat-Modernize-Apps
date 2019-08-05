@@ -110,9 +110,11 @@ We will go ahead and add a bunch of other dependencies while we have the pom.xml
 
 As we develop the application, we might want to test and verify our change at different stages. We can do that locally, by using the `spring-boot` maven plugin.
 
-Use the command palette to execute the ``run-spring-boot`` command to run the application.
+Run the application by executing the below command:
 
-> Wait for it to complete startup and report `Started RestApplication in ***** seconds (JVM running for ******)`
+`mvn spring-boot:run`
+
+Wait for it to complete startup and report Started RestApplication in ***** seconds (JVM running for ******)
 
 **3. Verify the application**
 
@@ -127,7 +129,7 @@ You should now see an HTML code deployed.
 
 **4. Stop the application**
 
-Before moving on, press CTRL-z on your terminal window to stop and send the running application to the background, then at the command prompt enter "kill %1" to kill the application.
+Before moving on, press `CTRL-Z` on your terminal window to stop and send the running application to the background, then at the command prompt enter `kill %1` to kill the application.
 ## Congratulations
 
 You have now successfully executed the first step in this scenario. 
@@ -296,7 +298,6 @@ Now we are ready to run the test to verify that everything works. Because we cre
 mvn verify
 ~~~ 
 
-or to use the command ``test-spring-boot`` in the command palette.
 
 The test should be successful and you should see **BUILD SUCCESS**, which means that we can read that our repository class works as as expected.
 
@@ -493,7 +494,6 @@ Now you can run the `CatalogEndpointTest` and verify that it works.
 mvn verify -Dtest=CatalogEndpointTest
 ~~~ 
 
-or use ``test-spring-boot`` command in the command palette.
 
 Since we now have endpoints that returns the catalog we can also start the service and load the default page again, which should now return the products.
 
@@ -502,8 +502,6 @@ Start the application by running the following command:
 ~~~sh
 mvn spring-boot:run
 ~~~~
-
-or use ``run-spring-boot`` command in the command palette.
 
 Wait for the application to start. Then we can verify the endpoint by running the following command in a new terminal (Note the link below will execute in a second terminal)
 
@@ -570,9 +568,9 @@ And add it to the second test as well at the remaining `//TODO: Add check for Qu
 .returns(9999,Product::getQuantity)
 ~~~
 
-Now if we run the test it **should fail**!
+Now if we run the test it **should fail**!. Run the bfollowing command to test :
 
-``mvn verify`` or use ``test-spring-boot`` command in the command palette.
+``mvn verify`` 
 
 It failed:
 
@@ -683,8 +681,6 @@ We are now ready to test the service
 ~~~sh
 mvn verify
 ~~~ 
-
-or use ``test-spring-boot`` command in the command palette.
 
 So even if we don't have any inventory service running we can still run our test. However to actually run the service using `mvn spring-boot:run` we need to have an inventory service or the calls to `/services/products/` will fail. We will fix this in the next step
 
@@ -820,8 +816,6 @@ Execute the following command to run the new service locally:
 ~~~sh
 mvn spring-boot:run
 ~~~~
-
-or use `run-spring-boot` command in the command palette.
 
 > **INFO:** As an uber-jar, it could also be run with `java -jar target/catalog-1.0-SNAPSHOT-swarm.jar` but you don\'t need to do this now
 
