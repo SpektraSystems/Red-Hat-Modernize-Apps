@@ -406,14 +406,15 @@ You can see the Jenkinsfile definition of the pipeline in the output:
 
 **2. Update the pipeline with your project names**
 
-In Project ocpuser0XX-coolstore-prod, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "monolith-pipeline" but here's a quick link):
-•	Pipeline Config page at
-https://$OPENSHIFT_MASTER/ocpuser0XX-console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration
+In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "**monolith-pipeline**" but here's a quick link):
+
+`https://$OPENSHIFT_MASTER/ocpuser0XX-console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
+
 On this page you can see the pipeline definition. Click Actions -> Edit to edit the pipeline:
  
-Update the “namespace” and “destination namespace” to “ocpuser0XX-coolstore-dev” and “ocpuser0XX-coolstore-prod” respectively.
-stage 'Deploy to PROD'
+Update the “**namespace**” and “**destination namespace**” to `ocpuser0XX-coolstore-dev` and `ocpuser0XX-coolstore-prod` respectively.
 ```
+stage 'Deploy to PROD'
     openshiftTag(sourceStream: 'coolstore', sourceTag: 'latest', namespace: 'ocpuser0XX-coolstore-dev', destinationStream: 'coolstore', destinationTag: 'prod', destinationNamespace: 'ocpuser0XX-coolstore-prod')
     sleep 10
 ```
@@ -478,13 +479,13 @@ In this step, we'll add a final checkpoint to the pipeline which will require yo
 
 Ordinarily your pipeline definition would be checked into a source code management system like Git, and to change the pipeline you'd edit the _Jenkinsfile_ in the source base. For this workshop we'll just edit it directly to add the necessary changes. You can edit it with the `oc` command but we'll use the OpenShift Web Console.
 
-In Project ocpuser0XX-coolstore-prod, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "monolith-pipeline" but here's a quick link):
+In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "**monolith-pipeline**" but here's a quick link):
 
 * Pipeline Config page at 
 
 `https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
 
-On this page you can see the pipeline definition. Click _Actions -> Edit_ to edit the pipeline:
+On this page you can see the pipeline definition. Click **_Actions -> Edit_** to edit the pipeline:
 
 <kbd>![](images/developer-intro/pipe-edit.png)</kbd>
 
