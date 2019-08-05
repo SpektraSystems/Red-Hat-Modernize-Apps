@@ -851,13 +851,23 @@ The REST API returned a JSON object representing the inventory count for this pr
 
 **4. Stop the application**
 
-Before moving on, click in the first terminal window where the app is running and then press CTRL-C to stop the running application or close the command tab.
+Before moving on, be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
 
 ## Congratulations
 
 You have now successfully created your the Catalog service using Spring Boot and implemented basic REST API on top of the product catalog database. You have also learned how to deal with service failures. 
 
 In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
+
+## Create the OpenShift project
+
+We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
+
+### 1. Create project
+
+Create a new project for the catalog service:
+
+`oc new-project ocpuser0XX-catalog --display-name="CoolStore Catalog Microservice Application"`
 
 ## Deploy to OpenShift
 
@@ -866,7 +876,7 @@ We have already deployed our coolstore monolith and inventory to OpenShift. In t
 Make sure that you are on the right project
 
 ~~~sh
-oc project ocpuser0XX-modern-coolstore
+oc project ocpuser0XX-catalog
 ~~~
 
 Next, we'll deploy your new microservice to OpenShift.
@@ -933,7 +943,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://catalog-ocpuser0XX-modern-coolstore.{{ROUTE_SUFFIX}}` to access the sample UI. 
+`http://catalog-ocpuser0XX-catalog.{{ROUTE_SUFFIX}}` to access the sample UI. 
 
 > /!\ Don't forget to change the user number in your route.
 
