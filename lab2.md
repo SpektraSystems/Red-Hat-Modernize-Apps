@@ -140,7 +140,7 @@ migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP
 
 **3. View the results**
 
-Next, go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
+Next, go to the **project explorer > expand rhamt-report** on the left hand side. Right click on **index.html** and click on **preview** to view the landing page.
 
 You should see the landing page for the report:
 
@@ -512,7 +512,7 @@ ${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli \
 
 **2. View the results**
 
-Reload the report web page (right-click on the file `rhamt-reports/monolith/index.html` and then click preview) and verify that it now reports 0 Story Points:
+Reload the report web page (right-click on the file `rhamt-reports/monolith/index.html` and then click **preview**) and verify that it now reports 0 Story Points:
 Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
 You have successfully migrated this app to JBoss EAP, congratulations!
 
