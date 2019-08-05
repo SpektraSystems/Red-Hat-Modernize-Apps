@@ -68,7 +68,7 @@ Since our applications (like most) will be a web application, we need to use a s
 
 > **NOTE:** Undertow is another an open source project that is maintained by Red Hat and therefore Red Hat plans to add support for Undertow shortly.
 
-To add Apache Tomcat to our project all we have to do is to add the following lines in ``pom.xml``. Open the file to automatically add these lines at the `<!-- TODO: Add web (tomcat) dependency here -->` marker:
+To add Apache Tomcat to our project all we have to do is to add the following lines in ``modernize-apps/catalog/pom.xml``. Open the file to automatically add these lines at the `<!-- TODO: Add web (tomcat) dependency here -->` marker:
 
 ~~~xml
     <dependency>
@@ -144,7 +144,7 @@ In next step of this scenario, we will add the logic to be able to read a list o
 
 Before we create the database repository class to access the data it's good practice to create test cases for the different methods that we will use.
 
-Create the file ``src/test/java/com/redhat/coolstore/service/ProductRepositoryTest.java`` and then copy the below code into the file:
+Create the file ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/ProductRepositoryTest.java`` and then copy the below code into the file:
 
 ~~~java
 package com.redhat.coolstore.service;
@@ -182,7 +182,7 @@ Next, inject a handle to the future repository class which will provide access t
 ProductRepository repository;
 ~~~
 
-The `ProductRepository` should provide a method called `findById(String id)` that returns a product and collect that from the database. We test this by querying for a product with id "444434" which should have name "Pebble Smart Watch". The pre-loaded data comes from the `src/main/resources/schema.sql` file.
+The `ProductRepository` should provide a method called `findById(String id)` that returns a product and collect that from the database. We test this by querying for a product with id "444434" which should have name "Pebble Smart Watch". The pre-loaded data comes from the `modernize-apps/catalog/src/main/resources/schema.sql` file.
 
 Insert this code:
 
@@ -214,7 +214,7 @@ public void test_readAll() {
 
 We are now ready to implement the database repository.  
 
-Create the file ``src/main/java/com/redhat/coolstore/service/ProductRepository.java``.
+Create the file ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/ProductRepository.java``.
 
 Here is the base for the calls, insert the following code:
 
@@ -280,7 +280,7 @@ public Product findById(String id) {
 
 The `ProductRepository` should now have all the components, but we still need to tell spring how to connect to the database. For local development we will use the H2 in-memory database. When deploying this to OpenShift we are instead going to use the PostgreSQL database, which matches what we are using in production.
 
-The Spring Framework has a lot of sane defaults that can always seem magical sometimes, but basically all we have todo to setup the database driver is to provide some configuration values. Open ``src/main/resources/application-default.properties`` and add the following properties where the comment says "#TODO: Add database properties"
+The Spring Framework has a lot of sane defaults that can always seem magical sometimes, but basically all we have todo to setup the database driver is to provide some configuration values. Open ``modernize-apps/catalog/src/main/resources/application-default.properties`` and add the following properties where the comment says "#TODO: Add database properties"
 Add the following:
 
 ~~~java 
@@ -314,7 +314,7 @@ In next step of this scenario, we will add the logic to expose the database cont
 
 Now you are going to create a service class. Later on the service class will be the one that controls the interaction with the inventory service, but for now it's basically just a wrapper of the repository class. 
 
-Create a new class `CatalogService` with the following path ``src/main/java/com/redhat/coolstore/service/CatalogService.java``
+Create a new class `CatalogService` with the following path ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/CatalogService.java``
 
 And then Open the file to implement the new service:
 
@@ -366,7 +366,7 @@ As you can see there is a number of **TODO** in the code, and later we will use 
 
 Now we are ready to create the endpoints that will expose REST service. Let's again first start by creating a test case for our endpoint. We need to endpoints, one that exposes for GET calls to `/services/products` that will return all product in the catalog as JSON array, and the second one exposes GET calls to `/services/product/{prodId}` which will return a single Product as a JSON Object. Let's again start by creating a test case. 
 
-Create the test case by opening: ``src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java``
+Create the test case by opening: ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java``
 
 Add the following code to the test case and make sure to review it so that you understand how it works.
 
@@ -449,7 +449,7 @@ public class CatalogEndpointTest {
 
 Now we are ready to implement the `CatalogEndpoint`.
 
-Start by creating the file by opening: ``src/main/java/com/redhat/coolstore/service/CatalogEndpoint.java``
+Start by creating the file by opening: ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/CatalogEndpoint.java``
 
 Then add the following content: 
 
@@ -564,7 +564,7 @@ There are no right or wrong answers here, but since this is a workshop on applic
 
 In the [Test-Driven Development](https://en.wikipedia.org/wiki/Test-driven_development) style, let's first extend our test to test the Inventory functionality (which doesn't exist). 
 
-Open ``src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` again.
+Open ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` again.
 
 Now at the markers `//TODO: Add check for Quantity` add the following line:
 
@@ -614,7 +614,7 @@ Since we now have a nice way to test our service-to-service interaction we can n
 
 The inventory client will use a Netflix project called _Feign_, which provides a nice way to avoid having to write boilerplate code. Feign also integrate with Hystrix which gives us capability for circuit breaking. We will discuss this more later, but let's start with the implementation of the Inventory Client. Using Feign all we have to do is to create a interface that details which parameters and return type we expect, annotate it with `@RequestMapping` and provide some details and then annotate the interface with `@Feign` and provide it with a name.
 
-Create the Inventory client by clicking ``src/main/java/com/redhat/coolstore/client/InventoryClient.java``
+Create the Inventory client by clicking ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/client/InventoryClient.java``
 
 Add the followng small code to the file:
 
@@ -642,7 +642,7 @@ public interface InventoryClient {
 
 There is one more thing that we need to do which is to tell Feign where the inventory service is running. Before that notice that we are setting the `@FeignClient(name="inventory")`.
 
-Open ``src/main/resources/application-default.properties`` and add these properties below the `#TODO: Configure netflix libraries` marker:
+Open ``modernize-apps/catalog/src/main/resources/application-default.properties`` and add these properties below the `#TODO: Configure netflix libraries` marker:
 
 ~~~java
 inventory.ribbon.listOfServers=inventory:8080
@@ -654,7 +654,7 @@ By setting `inventory.ribbon.listOfServers` we are hard coding the actual URL of
 
 Now that we have a client we can make use of it in our `CatalogService`
 
-Open ``src/main/java/com/redhat/coolstore/service/CatalogService.java``
+Open ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/CatalogService.java``
 
 And autowire (e.g. inject) the client into it by inserting this at the `//TODO: Autowire Inventory Client` marker:
 
@@ -706,7 +706,7 @@ In the previous step we added a client to call the Inventory service. Services c
 
 In the previous step we used the Feign client from the Netflix cloud native libraries to avoid having to write boilerplate code for doing a REST call. However Feign also have another good property which is that we easily create fallback logic. In this case we will use static inner class since we want the logic for the fallback to be part of the Client and not in a separate class.
 
-Open: `src/main/java/com/redhat/coolstore/client/InventoryClient.java`
+Open: `modernize-apps/catalog/src/main/java/com/redhat/coolstore/client/InventoryClient.java`
 
 And paste this into it at the `//TODO: Add Fallback factory here` marker:
 
@@ -735,7 +735,7 @@ After creating the fallback factory all we have to do is to tell Feign to use th
 
 Now let's see if we can test the fallback. Optimally we should create a different test that fails the request and then verify the fallback value, however in because we are limited in time we are just going to change our test so that it returns a server error and then verify that the test fails. 
 
-Open ``src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and change the following lines:
+Open ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and change the following lines:
 
 ~~~java
 @ClassRule
@@ -792,7 +792,7 @@ Make sure the test works again by running ``mvn verify -Dtest=CatalogEndpointTes
 **Slow running services**
 Having fallbacks is good but that also requires that we can correctly detect when a dependent services isn't responding correctly. Besides from not responding a service can also respond slowly causing our services to also respond slow. This can lead to cascading issues that is hard to debug and pinpoint issues with. We should therefore also have sane defaults for our services. You can add defaults by adding it to the configuration.
 
-Open ``src/main/resources/application-default.properties``
+Open ``modernize-apps/catalog/src/main/resources/application-default.properties``
 
 And add this line to it at the `#TODO: Set timeout to for inventory to 500ms` marker:
 
@@ -800,7 +800,7 @@ And add this line to it at the `#TODO: Set timeout to for inventory to 500ms` ma
 hystrix.command.inventory.execution.isolation.thread.timeoutInMilliseconds=500
 ~~~
 
-Open ``src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and un-comment the `.andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")`
+Open ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and un-comment the `.andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")`
 
 Now if you run ``mvn verify -Dtest=CatalogEndpointTest`` the test will fail with the following error message:
 
@@ -904,7 +904,7 @@ oc new-app -e POSTGRESQL_USER=catalog \
              --name=catalog-database
 ~~~
 
-> **NOTE:** If you change the username and password you also need to update `src/main/fabric8/credential-secret.yml` which contains
+> **NOTE:** If you change the username and password you also need to update `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` which contains
 the credentials used when deploying to OpenShift.
 
 This will deploy the database to our new project. Wait for it to complete:
@@ -912,7 +912,7 @@ This will deploy the database to our new project. Wait for it to complete:
 `oc rollout status -w dc/catalog-database`
 
 **Update configuration**
-Create the file by clicking: `src/main/resources/application-openshift.properties`
+Create the file by clicking: `modernize-apps/catalog/src/main/resources/application-openshift.properties`
 
 Copy the following content to the file:
 
