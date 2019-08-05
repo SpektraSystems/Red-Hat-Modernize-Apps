@@ -337,7 +337,7 @@ The REST API returned a JSON object representing the inventory count for this pr
 
 **4. Stop the application**
 
-Before moving on, click in the first terminal window where Thorntail (ex-WildFly Swarm) is running and then press CTRL-z to stop the running application! This command will stop the running process and send it to the background. To terminate the process, you need to do a "kill %1" from the terminal window.
+Before moving on, click in the first terminal window where Thorntail (ex-WildFly Swarm) is running and then press `CTRL-Z` to stop the running application! This command will stop the running process and send it to the background. To terminate the process, you need to do a `kill %1` from the terminal window.
 
 You should see something like:
 
