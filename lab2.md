@@ -629,7 +629,7 @@ Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-nam
 
 ## Test the application
 
-Open another CodeReady Workspaces Terminal Window by clicking on the '+' sign next to it and selecting "Terminal". From the new Terminal window, access the application by running the below command:
+Open another CodeReady Workspaces Terminal Window by clicking on the '**+**' sign next to it and selecting **Terminal**. From the new Terminal window, access the application by running the below command:
 
 ```
 curl http://localhost:8080 
@@ -637,7 +637,7 @@ curl http://localhost:8080
 
 ## Shutdown the application
 
-Before moving on, in the Terminal window from which you started JBoss EAP, type CTRL-z to stop it. This command will stop the running process and send it to the background. To terminate the process, you need to do a "kill %1" from the terminal window.
+Before moving on, in the Terminal window from which you started JBoss EAP, type `CTRL-Z` to stop it. This command will stop the running process and send it to the background. To terminate the process, you need to do a `kill %1` from the terminal window.
 
 ## Deploy the monolith to OpenShift
 
@@ -645,7 +645,7 @@ We now have a fully migrated application that we tested locally. Let's deploy it
 
 **1. Add a OpenShift profile**
 
-Open the `pom.xml` file.
+Open the `modernize-apps/monolith/pom.xml` file.
 
 At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the following configuration to the pom.xml
 
@@ -768,7 +768,7 @@ When it's done you should see the application deployed successfully with blue ci
 
 Test the application by clicking on the Route link at 
 
-`http://www-coolstore-dev.{{ROUTE_SUFFIX}}`,
+`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
 <kbd>![](images/moving-existing-apps/route-link.png)</kbd>
