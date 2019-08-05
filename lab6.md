@@ -1227,7 +1227,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours wil
 
 **2. Open the openshift console for Cart - Applications - Routes at**
 
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-modern-coolstore/browse/routes`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-cart/browse/routes`
 > Make sure to replace the name of the project with your user number.
 
 **3. Click on Create Route, and set**
