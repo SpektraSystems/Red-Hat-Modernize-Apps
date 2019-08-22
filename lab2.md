@@ -746,7 +746,7 @@ Wait for the build to finish and the `BUILD SUCCESS` message!
 And finally, start the build process that will take the `.war` file and combine it with JBoss EAP and produce a Linux container image which will be automatically deployed into the project, thanks to the *DeploymentConfig* object created from the template:
 
 ~~~shell
-oc start-build coolstore --from-file=target/ROOT.war
+oc start-build coolstore --from-file=deployments/ROOT.war
 ~~~
 
 Check the OpenShift web console and you'll see the application being built:
