@@ -175,16 +175,14 @@ public class ProductRepositoryTest {
 }
 ~~~
 
-Next, inject a handle to the future repository class which will provide access to the underlying data repository. It is injected with Spring's `@Autowired` annotation which locates, instantiates, and injects runtime instances of classes automatically, and manages their lifecycle (much like Java EE and it's CDI feature). Click to create this code:
+Next, inject a handle to the future repository class which will provide access to the underlying data repository. It is injected with Spring's `@Autowired` annotation which locates, instantiates, and injects runtime instances of classes automatically, and manages their lifecycle (much like Java EE and it's CDI feature). Copy and paste the following code right below the comment `//TODO: Insert Catalog Component here`:
 
 ~~~java
 @Autowired
 ProductRepository repository;
 ~~~
 
-The `ProductRepository` should provide a method called `findById(String id)` that returns a product and collect that from the database. We test this by querying for a product with id "444434" which should have name "Pebble Smart Watch". The pre-loaded data comes from the `modernize-apps/catalog/src/main/resources/schema.sql` file.
-
-Insert this code:
+The `ProductRepository` should provide a method called `findById(String id)` that returns a product and collect that from the database. We test this by querying for a product with id "444434" which should have name "Pebble Smart Watch". The pre-loaded data comes from the `modernize-apps/catalog/src/main/resources/schema.sql` file. Copy and paste the following code right below the comment `//TODO: Insert test_readOne here`:
 
 ~~~java
 @Test
@@ -196,8 +194,7 @@ public void test_readOne() {
 }
 ~~~
 
-The `ProductRepository` should also provide a methods called `readAll()` that returns a list of all products in the catalog. We test this by making sure that the list contains a "Red Fedora", "Forge Laptop Sticker" and "Oculus Rift".
-Insert the code:
+The `ProductRepository` should also provide a methods called `readAll()` that returns a list of all products in the catalog. We test this by making sure that the list contains a "Red Fedora", "Forge Laptop Sticker" and "Oculus Rift".Again, copy and paste the following code below the comment `//TODO: Insert test_readAll here`:
 
 ~~~java
 @Test
@@ -245,7 +242,7 @@ public class ProductRepository {
 
 > NOTE: That the class is annotated with `@Repository`. This is a feature of Spring that makes it possible to avoid a lot of boiler plate code and only write the implementation details for this data repository. It also makes it very easy to switch to another data storage, like a NoSQL database.
 
-Spring Data provides a convenient way for us to access data without having to write a lot of boiler plate code. One way to do that is to use a `JdbcTemplate`. First we need to autowire that as a member to `ProductRepository`. Add the following:
+Spring Data provides a convenient way for us to access data without having to write a lot of boiler plate code. One way to do that is to use a `JdbcTemplate`. First we need to autowire that as a member to `ProductRepository`. Copy and paste the following code under the comment `//TODO: Autowire the jdbcTemplate here`:
 
 ~~~java
 @Autowired
@@ -253,6 +250,7 @@ private JdbcTemplate jdbcTemplate;
 ~~~
 
 The `JdbcTemplate` require that we provide a `RowMapper`so that it can map between rows in the query to Java Objects. We are going to define the `RowMapper` like this:
+The `JdbcTemplate` require that we provide a `RowMapper` so that it can map between rows in the query to Java Objects. We are going to define the `RowMapper` like this (copy and paste the following code under the comment `//TODO: Add row mapper here`):
 
 ~~~java
 private RowMapper<Product> rowMapper = (rs, rowNum) -> new Product(
@@ -262,7 +260,7 @@ private RowMapper<Product> rowMapper = (rs, rowNum) -> new Product(
         rs.getDouble("price"));
 ~~~
 
-Now we are ready to create the methods that are used in the test. Let\'s start with the `readAll()`. It should return a `List<Product>` and then we can write the query as `SELECT * FROM catalog` and use the rowMapper to map that into `Product` objects. Our method should look like this:
+Now we are ready to create the methods that are used in the test. Let's start with the `readAll()`. It should return a `List<Product>` and then we can write the query as `SELECT * FROM catalog` and use the rowMapper to map that into `Product` objects. Our method should look like this (copy and paste the following code under the comment `//TODO: Create a method for returning all products`):
 
 ~~~java
 public List<Product> readAll() {
@@ -270,7 +268,7 @@ public List<Product> readAll() {
 }
 ~~~
 
-The `ProductRepositoryTest` also used another method called `findById(String id)` that should return a Product. The implementation of that method using the `JdbcTemplate` and `RowMapper` looks like this:
+The `ProductRepositoryTest` also used another method called `findById(String id)` that should return a Product. The implementation of that method using the `JdbcTemplate` and `RowMapper` looks like this (copy and paste the following code under the comment `//TODO: Create a method for returning one product`):
 
 ~~~java
 public Product findById(String id) {
