@@ -186,7 +186,7 @@ Now that you have the RHAMT report available, let's get to work migrating the ap
 
 In order to use Maven we have to set up the following environment variable. Run the below command on the codeready workspace terminal before moving on.
 ```
-export MAVEN_OPTS='-Xmx1024m -XX:MaxPermSize=1024m'
+export MAVEN_OPTS='-Xmx2048m -XX:MaxPermSize=2048m'
 ```
 
 ## Migrate Application Startup Code
