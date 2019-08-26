@@ -340,6 +340,14 @@ Execute the following oc command to create a new project (ensure to replace ocpu
 
 This will create a new OpenShift project called `ocpuser0XX-coolstore-prod` from which our production application will run.
 
+Run the below commands to import all the required images and the production templates.
+
+```
+oc create -n ocpuser0XX-coolstore-prod -f https://raw.githubusercontent.com/openshift/openshift-ansible/release-3.9/roles/openshift_examples/files/examples/v3.9/image-streams/image-streams-rhel7.json
+
+oc create -n ocpuser0XX-coolstore-prod -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-prod1.json
+```
+
 **2. Add the production elements**
 
 In this case we'll use the production template to create the objects. Execute:
@@ -396,7 +404,7 @@ You can see the Jenkinsfile definition of the pipeline in the output:
     sleep 10
 
     stage 'Deploy to PROD'
-    openshiftTag(sourceStream: 'coolstore', sourceTag: 'latest', namespace: 'userXX-coolstore-dev', destinationStream: 'coolstore', destinationTag: 'prod', destinationNamespace: 'userXX-coolstore-prod')
+    openshiftTag(sourceStream: 'coolstore', sourceTag: 'latest', namespace: 'ocpuser0XX-coolstore-dev', destinationStream: 'coolstore', destinationTag: 'prod', destinationNamespace: 'ocpuser0XX-coolstore-prod')
     sleep 10
 
     stage 'Run Tests in PROD'
