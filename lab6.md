@@ -787,7 +787,7 @@ curl -v http://localhost:8081/services/products 2>&1 | grep "HTTP/1.1 200"
 If that prints `< HTTP/1.1 200` then our service is responding correctly otherwise we need to start the Catalog application in a separate terminal like this:
 
 ~~~sh
-cd ~/projects/catalog; mvn clean spring-boot:run -DskipTests
+cd ~/projects/modernize-apps/catalog; mvn clean spring-boot:run -DskipTests
 ~~~~
 
 Wait for it to complete. You should see `Started RestApplication in xxxxx seconds`.
