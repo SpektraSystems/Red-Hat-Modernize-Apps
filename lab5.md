@@ -910,9 +910,9 @@ spring.datasource.username=catalog
 spring.datasource.password=mysecretpassword
 spring.datasource.driver-class-name=org.postgresql.Driver
 
-inventory.ribbon.listOfServers=inventory:8080
+inventory.ribbon.listOfServers=ocpuser0XX-inventory:8080
 ~~~
-
+`Note : Make sure that you replace the user ID in the last line` 
 
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 
