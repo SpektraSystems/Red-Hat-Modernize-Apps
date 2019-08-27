@@ -1100,12 +1100,6 @@ Create a new project for the cart service:
 
 `oc new-project ocpuser0XX-cart --display-name="CoolStore Shopping Cart Microservice Application"`
 
-### 2. Give permission to call Catalog service
-
-Our OpenShift installation is using the mulitenancy pliugin for networking. This is a recommended security setting in OpenShift and when multitenancy plugin is used, it will by default disable communication between pods in different projects/namespaces. However, since our cart application will need to communicate with the catalog application (that is in a different project/namespace) we need to tell OpenShift to allow this.
-
-`oc adm pod-network join-projects --to=ocpuser0XX-catalog ocpuser0XX-cart`
-
 ### 3. Open the OpenShift Web Console
 
 Open a tab in your browser pointing to the OpenShift Web Console (You should be familiar with it by now!). Navigate to the new catalog project overview page, or use the following quick link: `https://$OPENSHIFT_MASTER/console/project/cart/`
