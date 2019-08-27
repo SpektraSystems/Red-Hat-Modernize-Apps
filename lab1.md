@@ -45,10 +45,7 @@ CodeReady Workspaces IDE running in your browser.
 
 <kbd>![](images/getting-started/codeready-workspace.png)</kbd>
 
-Now you can import the project skeletons into your workspace.
-
-
-The projects are already imported into your workspace and is visible in the project explorer.
+This would be the point at which you would import the project skeletons into your workspace. For this lab, the projects are already imported into your workspace and are visible in the project explorer
 
 Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. In order to 
 enable these capabilities, let's convert the imported project skeletons to a Maven projects. 
