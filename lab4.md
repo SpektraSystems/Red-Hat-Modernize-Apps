@@ -401,7 +401,7 @@ oc rollout status -w dc/inventory-database
 
 **2. Build and Deploy**
 
-Red Hat OpenShift Application Runtimes includes a powerful maven plugin that can take an existing Thorntail application and generate the necessary Kubernetes configuration. You can also add additional config, like ``src/main/fabric8/inventory-deployment.yml`` which defines the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
+Red Hat Runtimes includes a powerful maven plugin that can take an existing Thorntail application and generate the necessary Kubernetes configuration. You can also add additional config, like ``src/main/fabric8/inventory-deployment.yml`` which defines the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
@@ -541,7 +541,8 @@ With our new health check in place, we'll need to build and deploy the updated a
 With our health check in place, lets rebuild and redeploy using the same command as before:
 
 ~~~sh
-mvn fabric8:undeploy clean fabric8:deploy -Popenshift
+mvn fabric8:undeploy -Popenshift
+mvn clean fabric8:deploy -Popenshift
 ~~~~
 
 
