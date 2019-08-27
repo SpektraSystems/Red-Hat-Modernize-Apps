@@ -80,8 +80,8 @@ The RHAMT CLI is has been installed for you. To verify that the tool was properl
 You should see:
 
 ~~~shell
-Using RHAMT at /rhamt
-> Red Hat Application Migration Toolkit (RHAMT) CLI, version 4.2.0.Final.
+Using RHAMT at /home/jboss/rhamt-cli-4.0.0.Beta4
+> Red Hat Application Migration Toolkit (RHAMT) CLI, version 4.0.0.Beta4.
 ~~~
 
 **2. Inspect the project source code**
@@ -710,7 +710,7 @@ This will take you to the project overview. There's nothing there yet, but that'
 
 We'll use the CLI to deploy the components for our monolith. To deploy the monolith template using the CLI, execute the following commands:
 
-Switch to the dev project you created earlier:
+From the CodeReady Workspaces Terminal window, switch to the dev project you created earlier:
 
 `oc project ocpuser0XX-coolstore-dev`
 
@@ -745,7 +745,7 @@ In this development project we have selected to use a process called binary buil
 
 First, build the project once more using the `openshift` Maven profile, which will create a suitable binary for use with OpenShift (this is not a container image yet, but just the `.war` file). We will do this with the `oc` command line.
 
-Build the project:
+From the CodeReady Workspaces Terminal window, build the project:
 
 ~~~shell
 mvn clean package -Popenshift
