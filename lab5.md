@@ -602,7 +602,7 @@ Since we now have a nice way to test our service-to-service interaction we can n
 
 The inventory client will use a Netflix project called _Feign_, which provides a nice way to avoid having to write boilerplate code. Feign also integrate with Hystrix which gives us capability for circuit breaking. We will discuss this more later, but let's start with the implementation of the Inventory Client. Using Feign all we have to do is to create a interface that details which parameters and return type we expect, annotate it with `@RequestMapping` and provide some details and then annotate the interface with `@Feign` and provide it with a name.
 
-Create the Inventory client by clicking ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/client/InventoryClient.java``
+Create the file : ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/client/InventoryClient.java``
 
 Add the followng small code to the file:
 
@@ -711,7 +711,7 @@ static class InventoryClientFallbackFactory implements FallbackFactory<Inventory
 }
 ~~~
 
-After creating the fallback factory all we have to do is to tell Feign to use that fallback in case of an issue, by adding the fallbackFactory property to the `@FeignClient` annotation. Open the file to replace it for you at the `@FeignClient(name="inventory")` line:
+After creating the fallback factory all we have to do is to tell Feign to use that fallback in case of an issue, by adding the fallbackFactory property to the `@FeignClient` annotation. Open the file to replace it at the `@FeignClient(name="inventory")` line:
 
 ~~~java
 @FeignClient(name="inventory",fallbackFactory = InventoryClient.InventoryClientFallbackFactory.class)
@@ -899,7 +899,7 @@ This will deploy the database to our new project. Wait for it to complete:
 `oc rollout status -w dc/catalog-database`
 
 **Update configuration**
-Create the file by clicking: `modernize-apps/catalog/src/main/resources/application-openshift.properties`
+Create the file : `modernize-apps/catalog/src/main/resources/application-openshift.properties`
 
 Copy the following content to the file:
 
@@ -981,7 +981,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will 
 
 **2. Open the openshift console for Catalog - Applications - Routes at** 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/catalog/browse/routes`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-catalog/browse/routes`
 
 **3. Click on Create Route, and set**
 
