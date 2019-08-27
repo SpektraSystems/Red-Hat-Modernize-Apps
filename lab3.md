@@ -116,7 +116,7 @@ You should also be able to see both the CoolStore monolith and its database runn
 
 `oc get pods -l application=coolstore`
 
-The output should look like this:
+The output should look similar to this:
 
 ~~~sh
 NAME                           READY     STATUS    RESTARTS   AGE
@@ -228,9 +228,7 @@ For JBoss EAP applications you can sync individual files (such as HTML/CSS/JS fi
 
 For this workshop, we'll Live synchronize the entire WAR file.
 
-First, click on the Coolstore application link at 
-
-`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` to open the application in a browser tab so you can watch changes.
+First, open the web application by clicking on its Route link from the OpenShift console (refer to the last steps of the previous lab for detail instructions on this)
 
 **1. Turn on Live Sync**
 
@@ -266,7 +264,7 @@ mvn package -Popenshift
 ```
 This will update the ROOT.war file and cause the application to change.
 
-Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at : `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`
+Re-visit the app by reloading the Coolstore webpage.
 
 You should now see the red header:
 
@@ -292,9 +290,7 @@ mvn package -Popenshift
 
 This will update the ROOT.war file again and cause the application to change.
 
-Re-visit the app by reloading the Coolstore webpage (or clicking again on the Coolstore application link at 
-
-`http://www-ovpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}})`.
+Re-visit the app by reloading the Coolstore webpage.
 
 <kbd>![](images/developer-intro/nav-blue.png)</kbd>
 
@@ -414,9 +410,7 @@ You can see the Jenkinsfile definition of the pipeline in the output:
 
 **2. Update the pipeline with your project names**
 
-In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on "**monolith-pipeline**" but here's a quick link):
-
-`https://$OPENSHIFT_MASTER/ocpuser0XX-console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline?tab=configuration`
+In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on **monolith-pipeline**.
 
 On this page you can see the pipeline definition. Click Actions -> Edit to edit the pipeline:
  
@@ -431,7 +425,7 @@ The Pipeline syntax allows creating complex deployment scenarios with the possib
 
 To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the _dev_ environment to our _production_ environment using the above `openshiftTag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
 
-Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal,run: 
+Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal, run(ensure to replace ocpuser0XX with your assigned username): 
 
 ~~~sh
 oc policy add-role-to-user edit system:serviceaccount:ocpuser0XX-coolstore-prod:jenkins -n ocpuser0XX-coolstore-dev
@@ -439,11 +433,7 @@ oc policy add-role-to-user edit system:serviceaccount:ocpuser0XX-coolstore-prod:
 
 **3. Promote the dev image to production using the pipeline**
 
-You can use the oc command line to invoke the build pipeline, or the OpenShift Web Console. Let's use the OpenShift Web Console. Open the production project in the web console:
-
-* Web Console - Coolstore Monolith Prod at 
-
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod`
+You can use the oc command line to invoke the build pipeline, or the OpenShift Web Console. Let's use the OpenShift Web Console. Open the production project in the web console. Go to your OpenShift Web Console tab and ensure that you have the "Coolstore Monolith - Production" project opened.
 
 Next, navigate to _Builds -> Pipelines_ and click __Start Pipeline__ next to the `coolstore-monolith` pipeline:
 
@@ -454,10 +444,7 @@ take as much time as the Jenkins infrastructure will already be warmed up). You 
 
 <kbd>![](images/developer-intro/pipe-prog.png)</kbd>
 
-Once the pipeline completes, return to the Prod Project Overview at 
-
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod`
-and notice that the application is now deployed and running!
+Once the pipeline completes, return to the "Coolstore Monolith - Production" project Overview and notice that the application is now deployed and running!
 
 <kbd>![](images/developer-intro/pipe-done.png)</kbd>
 
@@ -536,7 +523,7 @@ And re-deploy it to the dev environment using a binary build just as we did befo
 oc start-build -n ocpuser0XX-coolstore-dev coolstore --from-file=deployments/ROOT.war
 ~~~~
 
-Once it completes, verify that the production application has the new change (original black header) - ensure to do a hard refresh on your browser window to see the update:
+Once it completes, verify that the application in "Coolstore Monolith - Dev" has the new change (original black header) - ensure to do a hard refresh on your browser window to see the update:
 
 * Coolstore - Dev at 
 
@@ -556,9 +543,7 @@ We're happy with this change in dev, so let's promote the new change to prod, us
 
 **3. Run the pipeline again**
 
-Invoke the pipeline once more by clicking **Start Pipeline** on the Pipeline Config page at 
-
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod/browse/pipelines/monolith-pipeline`
+Invoke the pipeline once more by clicking Start Pipeline on the Pipeline Config page for the "Coolstore Monolith - Production" project from the OpenShift Web Console.
 
 The same pipeline progress will be shown, however before deploying to prod, you will see a prompt in the pipeline:
 
