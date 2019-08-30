@@ -9,7 +9,7 @@ In this scenario, you will learn more about Reactive Microservices using [Eclips
 
 In this scenario you will create three different services that interact using an _EventBus_ which also does a REST call to the CatalogService we built in the previous steps.
 
-![Architecture]({% image_path reactive-microservices/reactive-ms-architecture.png %}){:width="80%"}
+<kbd>![](images/reactive-microservices/reactive-ms-architecture.png)</kbd>
 
 >**NOTE:** To simplify the deployment you will deploy all the services in a single Vert.x Server. However the code is 99% the same if we were to deploy these in separate services.
 
@@ -240,22 +240,6 @@ public class CartServiceVerticle extends AbstractVerticle {
 
 Currently our verticle doesn't really do anything except logging some info. Let's try it out. Execute:
 
-~~~sh
-mvn compile vertx:run
-~~~ 
-
-You should see output that looks like this:
-
-~~~sh
-[INFO] Launching Vert.x Application
-[INFO] jan 12, 2018 11:25:40 FM com.redhat.coolstore.CartServiceVerticle
-[INFO] INFO: Starting CartServiceVerticle
-[INFO] jan 12, 2018 11:25:40 FM com.redhat.coolstore.CartServiceVerticle
-[INFO] INFO: Starting the HTTP Server on port 10080
-[INFO] jan 12, 2018 11:25:40 FM io.vertx.core.impl.launcher.commands.VertxIsolatedDeployer
-[INFO] INFO: Succeeded in deploying verticle
-~~~
-
 **3. Add a router that can serve static content**
 Now let's add a Web server that can server static content, which only requires three lines of code at the `//TODO: Create Router` marker:
 
@@ -278,22 +262,6 @@ Create and start the web server listing to the port retrieved from the configura
 ~~~java
 vertx.createHttpServer().requestHandler(router::accept).listen(serverPort);
 ~~~
-
-Now let's restart the application. Execute:
-
-~~~sh
-mvn compile vertx:run
-~~~~
-
-**3. Test the static router**
-
-Click on the **preview URL** link, which will open another tab or window of your browser pointing to cart application.
-
-You should now see an HTML page that looks like this:
-
-![Local Web Browser Tab]({% image_path reactive-microservices/web-page.png %}){:width="80%"}
-
-> **NOTE:** The Fetch button doesn\'t work yet, but we will fix that later in this lab.
 
 **3. Add a simple REST Handler**
 
