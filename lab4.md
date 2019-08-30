@@ -353,26 +353,16 @@ You have now successfully created your first microservice using Thorntail and im
 
 In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
 
-## Create OpenShift Project
+## Navigate to OpenShift dev Project
 
 We have already deployed our coolstore monolith to OpenShift, but now we are working on re-architecting it to be microservices-based.
 
-In this step we will deploy our new Inventory microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith.
+In this step we will deploy our new Inventory microservice for our CoolStore application, so let's navigate back to `ocpuser0XX-coolstore-dev`
 
-**1. Create project**
-
-From the CodeReady Workspaces Terminal window, create a new project for the inventory service by entering the following command:
+From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-coolstore-dev` project by entering the following command:
 ```
-oc new-project ocpuser0XX-inventory --display-name="CoolStore Inventory Microservice Application"
+oc project ocpuser0XX-coolstore-dev
 ```
-
-**3. Open the OpenShift Web Console**
-
-You should be familiar with the OpenShift Web Console by now! Navigate to the new  project overview page
-
-<kbd>![](images/mono-to-micro-part-1/overview.png)</kbd>
-
-There's nothing there now, but that's about to change.
 
 ## Deploy to OpenShift
 
@@ -428,7 +418,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://inventory-ocpuser0XX-inventory.{{ ROUTE_SUFFIX }}`
+`http://inventory-ocpuser0XX-coolstore-dev.{{ ROUTE_SUFFIX }}`
 to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
@@ -603,7 +593,7 @@ And verify it's been changed (look at the `delay=` value for the Liveness probe)
 ~~~
 
 You can also edit health checks by navigating Applications > Deployments > inventory > #2 (latest) - ensure you select the version that says 'latest' - on the OpenShift Web Console, or click on this link at
-`https://$OPENSHIFT_MASTER/console/project/ocpuser0XX-inventory/edit/health-checks?kind=DeploymentConfig&name=inventory` to access the health check edit page for the Inventory deployment.
+`https://$OPENSHIFT_MASTER/console/project/ocpuser0XX-coolstore-dev/edit/health-checks?kind=DeploymentConfig&name=inventory` to access the health check edit page for the Inventory deployment.
 
 In the next step we'll exercise the probe and watch as it fails and OpenShift recovers the application.
 
