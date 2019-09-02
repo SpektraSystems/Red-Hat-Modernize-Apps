@@ -857,22 +857,15 @@ You have now successfully created your the Catalog service using Spring Boot and
 
 In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
 
-## Create the OpenShift project
+## Navigate to OpenShift dev Project
 
-We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
+We have already deployed our coolstore monolith and inventory to OpenShift. In this step we will deploy our new Catalog microservice for our CoolStore application
 
-### 1. Create project
+In this step we'll deploy your new microservice to OpenShift, so let's navigate back to `ocpuser0XX-coolstore-dev`
 
-Create a new project for the catalog service:
+From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-coolstore-dev` project by entering the following command:
 
-`oc new-project ocpuser0XX-catalog --display-name="CoolStore Catalog Microservice Application"`
-
-### 2. Give permission to call Inventory service
-Our OpenShift installation is using the mulitenancy pliugin for networking. This is a recommended security setting in OpenShift and when multitenancy plugin is used, it will by default disable communication between pods in different projects/namespaces. However, since our catalog application will need to communicate with the inventory application (that is in a different project/namespace) we need to tell OpenShift to allow this.
-
-`oc adm pod-network join-projects --to=ocpuser0XX-inventory ocpuser0XX-catalog`
-
-Next, we'll deploy your new microservice to OpenShift.
+`oc project ocpuser0XX-coolstore-dev`
 
 ## Deploy to OpenShift
 
@@ -910,7 +903,7 @@ spring.datasource.username=catalog
 spring.datasource.password=mysecretpassword
 spring.datasource.driver-class-name=org.postgresql.Driver
 
-inventory.ribbon.listOfServers=ocpuser0XX-inventory:8080
+inventory.ribbon.listOfServers=inventory:8080
 ~~~
 `Note : Make sure that you replace the user ID in the last line` 
 
@@ -938,7 +931,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at 
 
-`http://catalog-ocpuser0XX-catalog.{{ROUTE_SUFFIX}}` to access the sample UI. 
+`http://catalog-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` to access the sample UI. 
 
 > /!\ Don't forget to change the user number in your route.
 
@@ -981,7 +974,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will 
 
 **2. Open the openshift console for Catalog - Applications - Routes at** 
 
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-catalog/browse/routes`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/browse/routes`
 
 **3. Click on Create Route, and set**
 
