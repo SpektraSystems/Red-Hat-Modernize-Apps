@@ -1058,21 +1058,13 @@ This should now return a new shopping cart where one only instance of the produc
 
 > /!\ The CartService depends on the CatalogService and just like in the Spring Boot example we could have created mocks for calling the Catalog Service, however since our example is already complex, we will simply test it with the CatalogService running. 
 
-## Create an OpenShift Project for the Cart microservice
+## Navigate to OpenShift dev project
 
-We have already deployed our coolstore monolith, inventory and catalog to OpenShift. In this step we will deploy our new Shopping Cart microservice for our CoolStore application, so let's create a separate project to house it and keep it separate from our monolith and our other microservices.
+We have already deployed our coolstore monolith, inventory and catalog to OpenShift. In this step we will deploy our new Shopping Cart microservice for our CoolStore application.
 
-### 1. Create project
+From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-coolstore-dev` project by entering the following command:
 
-Create a new project for the cart service:
-
-`oc new-project ocpuser0XX-cart --display-name="CoolStore Shopping Cart Microservice Application"`
-
-### 3. Open the OpenShift Web Console
-
-Open a tab in your browser pointing to the OpenShift Web Console (You should be familiar with it by now!). Navigate to the new catalog project overview page, or use the following quick link: `https://$OPENSHIFT_MASTER/console/project/cart/`
- 
-There's nothing there now, but that's about to change.
+`oc project ocpuser0XX-coolstore-dev`
 
 ## Deploy Cart microservice to OpenShift
 
@@ -1153,7 +1145,7 @@ After the maven build finishes it will take less than a minute for the applicati
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the route URL at 
 
-`http://cart-ocpuser0XX-cart.{{ROUTE_SUFFIX}}` to access the sample UI.
+`http://cart-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
@@ -1187,7 +1179,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours wil
 
 **2. Open the openshift console for Cart - Applications - Routes at**
 
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-cart/browse/routes`
+`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/browse/routes`
 > Make sure to replace the name of the project with your user number.
 
 **3. Click on Create Route, and set**
