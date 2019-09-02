@@ -238,8 +238,6 @@ public class CartServiceVerticle extends AbstractVerticle {
 
 >**WARNING:** Don't remove the TODO markers. These will be used later to add new functionality. There are also some private method that we we will use later when we create our endpoints for the shopping cart.
 
-Currently our verticle doesn't really do anything except logging some info. Let's try it out. Execute:
-
 **3. Add a router that can serve static content**
 Now let's add a Web server that can server static content, which only requires three lines of code at the `//TODO: Create Router` marker:
 
@@ -265,7 +263,7 @@ vertx.createHttpServer().requestHandler(router::accept).listen(serverPort);
 
 **3. Add a simple REST Handler**
 
-Now let\'s add a simple rest service. Replace the `//TODO: Create hello router` marker with this code to
+Now let's add a simple rest service. Replace the `//TODO: Create hello router` marker with this code to
 create and start the web server listing to the port retrieved from the configuration:
 
 ~~~java
@@ -283,7 +281,7 @@ It's actually not necessary to set the status, since it will default to HTTP OK 
 
 **3. Test the REST service**
 
-Restart the application by running the following in the terminal or in clicking the execute button.
+From the CodeReady Workspace terminal, run the following command to start the application:
 
 ~~~sh
 mvn compile vertx:run
@@ -304,6 +302,10 @@ You have now successfully created a simple reactive rest service using Eclipse V
 It only took three lines of code to create an HTTP server that is capable of serving static content using the Vert.x Toolkit and a few lines to add a rest endpoint.
 
 In next step of this scenario, we will discuss a bit a about configuration in Vert.x.
+
+## Before moving on
+
+Be sure to stop the service by clicking on the first Terminal window and typing 'CTRL-Z' to stop and send the running application to the background. Then at the command line, enter 'pkill -9 java' to stop the application.
 
 ## Setup environment specific configuration
 
@@ -372,7 +374,7 @@ The reason that it doesn't work is that when we calling `setupConfiguration()` t
 
 One solution to this problem is to load our Verticle from another verticle and pass the configuration as a deployment option.
 
-Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Add a `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file and add the following content:
+Let's add a `MainVerticle` that will load the `CartServiceVerticle`. Create a `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file and add the following content:
 
 ~~~java
 package com.redhat.coolstore;
@@ -440,7 +442,7 @@ Then Change the `<vertx.verticle>com.redhat.coolstore.CartServiceVerticle</vertx
 
 **3. Test the default configuration**
 
-Restart the application by running the following in the terminal or in clicking the execute button.
+Restart the application by running the following in the CodeReady Workspace terminal:
 
 ~~~sh
 mvn compile vertx:run
@@ -448,17 +450,15 @@ mvn compile vertx:run
 
 In the output you should now see that the server is starting on port `8082` and not `10080` like before.
 
-Click on the **preview URL** which will open another tab or window of your browser pointing to port `8082` on your client. 
-
-Again you should now see an HTML page that looks like this:
-
-![Local Web Browser Tab]({% image_path reactive-microservices/web-page.png %}){:width="80%"}
-
 ## Congratulations
 
 You have now successfully implemented environment specific configuration. Please note that future version of Eclipse Vert.x will probably include a better way to solve this, but this should have helped you understand a bit of how programming in a reactive world is different then for example Java EE or Spring (Spring 5 now includes some reactive extensions as well).
 
 In next step of this scenario, we will start implementing our rest endpoints.
+
+## Before moving on
+
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `pkill -9 java` to stop the application.
 
 ## Create REST endpoints for retrieving carts
 
@@ -540,7 +540,7 @@ router.get("/services/carts").handler(rc -> {
 
 **4. Test the new Route**
 
-Restart the application by running the following in the terminal or in clicking the execute button.
+Restart the application by running the following in the terminal.
 
 ~~~sh
 mvn compile vertx:run
@@ -581,17 +581,15 @@ Also test getting a single cart curl like this:
 curl -X GET http://localhost:8082/services/cart/99999; echo
 ~~~
 
-Click on the **preview URL** which will open another tab or window of your browser pointing to port 8082 on your client. 
-
-Now the default page should have an entry in the table matching the values for your JSON file above.
-
-<kbd>![](images/reactive-microservices/web-page-content.png)</kbd>
-
 ## Congratulations
 
 You have now successfully implemented the first out of many endpoints that we need to continue to strangle the monolith. You have also learned that `<object>::<method>` is a convenient way to reference a lambda expression.
 
 In the next step we will implement another endpoint and this time it will also call out to an external service using rest.
+
+## Before moving on
+
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `pkill -9 java` to stop the application.
 
 ## Create REST endpoints for adding and deleting products
 
@@ -790,6 +788,10 @@ This should print the follow:
 }
 ~~~
 
+## Before moving on
+
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `ps aux` to find out the application `PID` and stop the application by running `kill -9 <PID>`.(Please replace <PID> with your actual process ID)
+
 **5. Add endpoint for deleting items**
 Since we are now so skilled in writing endpoints lets go ahead and also create the endpoint for removing a product. The only tricky part about removing is that the request might not remove all products in once. E.g. If we have 10 Red Hat Fedoras and the request just decreases 3 we should not remove the Shopping Cart item, but instead lower the quantity to 7. 
 
@@ -860,6 +862,10 @@ Wow! You have now successfully created a Reactive microservices that are calling
 
 However, looking at the output you can see that the discount and shippingFee is `0.0`, which also means that the orderValue (price after shipping and discount) and retailPrice (sum of all products prices) are equal. That is because we haven't implemented the Shipping and Promotional Services yet. That's what we are going to do in the next scenario.
 
+## Before moving on
+
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `ps aux` to find out the application `PID` and stop the application by running `kill -9 <PID>`.(Please replace <PID> with your actual process ID)
+    
 ## Using the Vert.x Event Bus for shipping services
 
 In the previous steps we have added more and more functionality to the cart service and when we define our microservices it's often done using a domain model approach. The cart service is central, but we probably do not want it to handle things like calculating shipping fees. In our example we do not have enough data to do a complex shipping service since we lack information about the users shipping address as well as weight of the products etc. It does however make sense to create the shipping service so that if when we have that information we can extend upon it.
