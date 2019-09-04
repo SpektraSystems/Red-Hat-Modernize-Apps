@@ -689,7 +689,7 @@ You will see the OpenShift landing page:
 
 <kbd>![](images/moving-existing-apps/openshift-landing.png)</kbd>
 
-Click **Create Project**, fill in the fields, and click **Create**:
+Click **Create Project**, fill in the fields, and click **Create** (make sure to replace XX with your assigned number):
 
 * Name: `ocpuser0XX-coolstore-dev`
 * Display Name: `Coolstore Monolith - Dev`
