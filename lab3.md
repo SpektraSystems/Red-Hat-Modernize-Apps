@@ -348,7 +348,7 @@ oc create -n ocpuser0XX-coolstore-prod -f https://raw.githubusercontent.com/fasa
 
 In this case we'll use the production template to create the objects. Execute:
 
-`oc new-app --template=coolstore-monolith-pipeline-build`
+`oc new-app --template=coolstore-monolith-pipeline-build -p IMAGE_STREAM_NAMESPACE=ocpuser0XX-coolstore-prod`
 
 This will use an OpenShift Template called `coolstore-monolith-pipeline-build` to construct the production application. As you probably guessed it will also include a Jenkins Pipeline to control the production application (more on this later!)
 
