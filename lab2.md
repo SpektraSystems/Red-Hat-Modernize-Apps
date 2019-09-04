@@ -726,7 +726,7 @@ oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasal
 
 And finally deploy template:
 
-`oc new-app coolstore-monolith-binary-build`
+`oc new-app coolstore-monolith-binary-build -p IMAGE_STREAM_NAMESPACE=ocpuser0XX-coolstore-dev`
 
 This will deploy both a PostgreSQL database and JBoss EAP, but it will not start a build for our application.
 
