@@ -7,7 +7,7 @@
 ## Intro
 In the previous scenarios, you learned how to take an existing monolithic app and refactor a single _inventory_ service using WildFly Swarm. Since WildFly Swarm is using Java EE much of the technology from the monolith can be reused directly, like JPA and JAX-RS. The previous scenario resulted in you creating an inventory service, but so far we haven't started _strangling_ the monolith. That is because the inventory service is never called directly by the UI. It's a backend service that is only used only by other backend services. In this scenario, you will create the catalog service and the catalog service will call the inventory service. When you are ready, you will change the route to tie the UI calls to new service.
 
-To implement this, we are going to use the Spring Framework. The reason for using Spring for this service is to introduce you to Spring Development, and how [Red Hat OpenShift Application Runtimes](https://developers.redhat.com/products/rhoar) helps to make Spring development on Kubernetes easy. In real life, the reason for choosing Spring vs. WF Swarm mostly depends on personal preferences, like existing knowledge, etc. At the core Spring and Java EE are very similar.
+To implement this, we are going to use the Spring Framework. The reason for using Spring for this service is to introduce you to Spring Development, and how [Red Hat OpenShift Runtimes](https://developers.redhat.com/products/rhoar) helps to make Spring development on Kubernetes easy. In real life, the reason for choosing Spring vs. WF Swarm mostly depends on personal preferences, like existing knowledge, etc. At the core Spring and Java EE are very similar.
 
 The goal is to produce something like:
 
@@ -546,7 +546,7 @@ Our problem is that the user interface requires data from two services when call
 2. **Microservices Gateway** - Creating a gateway in-front of the `Catalog Service` that first calls the Catalog Service and then based on the response calls the inventory is another option. This way we can avoid lots of calls from the client to the server. Apache Camel provides nice capabilities to do this and if you are interested to learn more about this, please checkout the Coolstore Microservices example [here](http://github.com/jbossdemocentral/coolstore-microservice)
 3. **Service-to-Service** - Depending on use-case and preferences another solution would be to do service-to-service calls instead. In our case means that the Catalog Service would call the Inventory service using REST to retrieve the inventory status and include that in the response.
 
-There are no right or wrong answers here, but since this is a workshop on application modernization using Red Hat Application Runtimes, we will not choose option 1 or 2 here. Instead we are going to use option 3 and extend our Catalog to call the Inventory service.
+There are no right or wrong answers here, but since this is a workshop on application modernization using Red Hat Runtimes, we will not choose option 1 or 2 here. Instead we are going to use option 3 and extend our Catalog to call the Inventory service.
 
 ## Extending the test
 
@@ -604,7 +604,7 @@ The inventory client will use a Netflix project called _Feign_, which provides a
 
 Create the file : ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/client/InventoryClient.java``
 
-Add the followng small code to the file:
+Add the following small code to the file:
 
 ~~~java
 package com.redhat.coolstore.client;
@@ -827,7 +827,7 @@ Running locally using `spring-boot:run` will use an in-memory database with defa
 
 **3. Test the application**
 
-To test the running application, navigate back to thecodeready workspace and run the following in a new terminal 
+To test the running application, navigate back to the CodeReady Workspaces and run the following in a new terminal:
 
 `curl http://localhost:8081`
 
@@ -904,8 +904,7 @@ spring.datasource.password=mysecretpassword
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 inventory.ribbon.listOfServers=inventory:8080
-~~~
-`Note : Make sure that you replace the user ID in the last line` 
+~~~ 
 
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 
@@ -972,7 +971,7 @@ www       www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   
 
 My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
 
-**2. Open the openshift console for Catalog - Applications - Routes at** 
+**2. Open the OpenShift Console for "Coolstore Monolith Dev" - Applications - Routes at** 
 
 `https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/browse/routes`
 
