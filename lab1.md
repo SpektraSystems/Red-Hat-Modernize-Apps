@@ -35,10 +35,10 @@ which you will use during these labs.
 
 Go to the [CodeReady Workspaces url]({{ ECLIPSE_CHE_URL }}) in order to configure your development workspace
 
-
-Log into CodeReady Workspaces with your user.
+Log into CodeReady Workspaces with your user account. 
 
 Click on **Open** to open the workspace and then on the **Start** button to start the workspace for use, if it hasn't started automatically.
+If you get the error message "Failed to load plugins", ignore that.
 
 It takes a little while for the workspace to be ready. When it's ready, you will see a fully functional 
 CodeReady Workspaces IDE running in your browser.
@@ -71,7 +71,7 @@ a command in a terminal, you can use the Codeready Workspaces **Terminal** windo
 In order to login, we will use the `oc` command and then specify the server that we
 want to authenticate to.
 
-Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**. This will copy the entire login command, including your login token, to your clipboard
+Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**. This will copy the entire login command, including your login token, to your clipboard.
 Then, go to the CodeReady Workspaces Terminal window and paste the login command you copied in the previous step, and press **enter**
 
 <kbd>![](images/getting-started/oc-login.jpg)</kbd>
