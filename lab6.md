@@ -305,7 +305,7 @@ In next step of this scenario, we will discuss a bit a about configuration in Ve
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing 'CTRL-Z' to stop and send the running application to the background. Then at the command line, enter 'pkill -9 java' to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
 
 ## Setup environment specific configuration
 
@@ -458,7 +458,7 @@ In next step of this scenario, we will start implementing our rest endpoints.
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `pkill -9 java` to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
 
 ## Create REST endpoints for retrieving carts
 
@@ -589,7 +589,7 @@ In the next step we will implement another endpoint and this time it will also c
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `pkill -9 java` to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
 
 ## Create REST endpoints for adding and deleting products
 
@@ -753,7 +753,7 @@ curl -v http://localhost:8081/services/products 2>&1 | grep "HTTP/1.1 200"
 If that prints `< HTTP/1.1 200` then our service is responding correctly otherwise we need to start the Catalog application in a separate terminal like this:
 
 ~~~sh
-cd ~/projects/modernize-apps/catalog; mvn clean spring-boot:run -DskipTests
+cd /projects/modernize-apps/catalog; mvn clean spring-boot:run -DskipTests
 ~~~~
 
 Wait for it to complete. You should see `Started RestApplication in xxxxx seconds`.
@@ -790,7 +790,7 @@ This should print the follow:
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `ps aux` to find out the application `PID` and stop the application by running `kill -9 <PID>`.(Please replace <PID> with your actual process ID)
+Be sure to stop the cart service. To do this, go to the Terminal window from which you started the cart services, press `CTRL-Z` to stop and send the running application to the background, and then enter `kill %1` to terminate the process. 
 
 **5. Add endpoint for deleting items**
 Since we are now so skilled in writing endpoints lets go ahead and also create the endpoint for removing a product. The only tricky part about removing is that the request might not remove all products in once. E.g. If we have 10 Red Hat Fedoras and the request just decreases 3 we should not remove the Shopping Cart item, but instead lower the quantity to 7. 
@@ -864,7 +864,7 @@ However, looking at the output you can see that the discount and shippingFee is 
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `ps aux` to find out the application `PID` and stop the application by running `kill -9 <PID>`.(Please replace <PID> with your actual process ID)
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background.Then at the command line, enter `kill %1` to stop the application.
     
 ## Using the Vert.x Event Bus for shipping services
 
@@ -1025,7 +1025,7 @@ this.getShippingFee(cart, message -> {
 });
 ~~~
 
-Since we have the special case of product already exists we need to update it twice.  Replace the line with `sendCart(cart, rc)` that you just added with another duplicate block:
+Since we have the special case of product already exists we need to update it twice. Click to add it at the `sendCart(cart,rc)`; `//TODO: update the shipping fee`, here as well marker replacing the existing `sendCart(cart, rc);` with an updated code block:
 
 ~~~java
 this.getShippingFee(cart, message -> {
@@ -1183,7 +1183,7 @@ www       www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}             coolstore 
 
 My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but **yours will be different**.
 
-**2. Open the openshift console for Cart - Applications - Routes at**
+**2. Open the openshift console for "Coolstore Monolith - Dev" - Applications - Routes at
 
 `https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/browse/routes`
 > Make sure to replace the name of the project with your user number.
