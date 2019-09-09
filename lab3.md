@@ -392,7 +392,7 @@ Our pipeline is somewhat simplified for the purposes of this Workshop. Inspect t
 You can see the Jenkinsfile definition of the pipeline in the output:
 
 ~~~groovy
-  node ('maven') {
+   node ('maven') {
     stage 'Build'
     sleep 5
 
@@ -400,8 +400,10 @@ You can see the Jenkinsfile definition of the pipeline in the output:
     sleep 10
 
     stage 'Deploy to PROD'
-    openshiftTag(sourceStream: 'coolstore', sourceTag: 'latest', namespace: 'ocpuser0XX-coolstore-dev', destinationStream: 'coolstore', destinationTag: 'prod', destinationNamespace: 'ocpuser0XX-coolstore-prod')
-    sleep 10
+   openshift.withCluster() {
+   openshift.tag('ocpuser0XX-coolstore-dev/coolstore:latest', 'ocpuser0XX-coolstore-prod/coolstore:prod')
+   }
+   sleep 10
 
     stage 'Run Tests in PROD'
     sleep 30
@@ -412,18 +414,20 @@ You can see the Jenkinsfile definition of the pipeline in the output:
 
 In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on **monolith-pipeline**.
 
-On this page you can see the pipeline definition. Click Actions -> Edit to edit the pipeline:
+On this page you can see the pipeline definition. Click **Actions** -> **Edit** to edit the pipeline:
  
-Update the “**namespace**” and “**destination namespace**” to `ocpuser0XX-coolstore-dev` and `ocpuser0XX-coolstore-prod` respectively.
+In the pipeline, update the ocpuser0XX with your assigned username.
 ```
-stage 'Deploy to PROD'
-    openshiftTag(sourceStream: 'coolstore', sourceTag: 'latest', namespace: 'ocpuser0XX-coolstore-dev', destinationStream: 'coolstore', destinationTag: 'prod', destinationNamespace: 'ocpuser0XX-coolstore-prod')
-    sleep 10
+    stage 'Deploy to PROD'
+   openshift.withCluster() {
+   openshift.tag('ocpuser0XX-coolstore-dev/coolstore:latest', 'ocpuser0XX-coolstore-prod/coolstore:prod')
+   }
+   sleep 10
 ```
 The Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using the large set of steps and plugins that Jenkins provides in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the OpenShift GitHub Repository.
 
 
-To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the _dev_ environment to our _production_ environment using the above `openshiftTag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
+To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the dev environment to our production environment using the above `openshift.tag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
 
 Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal, run(ensure to replace ocpuser0XX with your assigned username): 
 
@@ -482,7 +486,7 @@ In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration
 
 On this page you can see the pipeline definition. Click **_Actions -> Edit_** to edit the pipeline:
 
-<kbd>![](images/developer-intro/pipe-edit.png)</kbd>
+<kbd>![](images/developer-intro/newpipeline1.jpg)</kbd>
 
 In the pipeline definition editor, add a new stage to the pipeline, just before the `Deploy to PROD` step:
 
@@ -497,7 +501,7 @@ In the pipeline definition editor, add a new stage to the pipeline, just before 
 
 Your final pipeline should look like:
 
-<kbd>![](images/developer-intro/pipe-edit2.png)</kbd>
+<kbd>![](images/developer-intro/newpipeline2.jpg)</kbd>
 
 Click **Save**.
 
