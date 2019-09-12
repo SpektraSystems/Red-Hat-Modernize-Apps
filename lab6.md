@@ -458,7 +458,7 @@ In next step of this scenario, we will start implementing our rest endpoints.
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
+Be sure to stop the cart service by clicking on the first Terminal window and typing CTRL-Z to stop and send the running application to the background.Then at the command line, enter kill %1 to stop the application.
 
 ## Create REST endpoints for retrieving carts
 
@@ -944,7 +944,7 @@ The body of the message corresponds to the object that was sent or published. Th
 The headers of the message are available with headers.
 
 **1. Add a Shipping Verticle**
-Since RHOAR currently do not support using distributed event bus we will create the Verticle locally. For now our shipping service will only return a fixed ShippingFee of 37.0. RHOAR is planned to support distributes event bus early 2018. Since the Event Bus API is the same very little code changes (if any) will be required to move this to a separate service in OpenShift in the future.
+For the purposes of this lab, our shipping service will just return a fixed ShippingFee of 37.0.
 
 Add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/ShippingServiceVerticle.java` file:
 
@@ -1025,7 +1025,8 @@ this.getShippingFee(cart, message -> {
 });
 ~~~
 
-Since we have the special case of product already exists we need to update it twice. Click to add it at the `sendCart(cart,rc)`; `//TODO: update the shipping fee`, here as well marker replacing the existing `sendCart(cart, rc);` with an updated code block:
+
+Since we have the special case of product already exists we need to update it twice. Click to add it at the `sendCart(cart,rc); //TODO: update the shipping fee, here as well`  marker replacing the existing `sendCart(cart, rc);` with an updated code block:
 
 ~~~java
 this.getShippingFee(cart, message -> {
@@ -1058,11 +1059,16 @@ Let's also make sure that it works with a totally new shopping cart, which would
 curl -s -X POST http://localhost:8082/services/cart/88888/329299/1 | grep -A7  "\"itemId\" : \"329299\"" | grep quantity
 ~~~
 
+
 This should now return a new shopping cart where one only instance of the product is added, because of our grep commands you would see something like this:
 
 `"quantity" : 1`
 
-> /!\ The CartService depends on the CatalogService and just like in the Spring Boot example we could have created mocks for calling the Catalog Service, however since our example is already complex, we will simply test it with the CatalogService running. 
+> /!\ The CartService depends on the CatalogService and just like in the Spring Boot example we could have created mocks for calling the Catalog Service, however since our example is already complex, we will simply test it with the CatalogService running.
+
+## Before moving on
+
+Be sure to stop both, the cart service and the catalog service. Do this by clicking on the respective Terminal windows from which you started them and typing `CTRL-Z` to stop and send the respective running application to the background. Then at the command line, enter `kill %1` to stop each application.
 
 ## Navigate to OpenShift dev project
 
@@ -1231,4 +1237,4 @@ Your final strangled monolith now looks like:
 
 <kbd>![](images/reactive-microservices/goal.png)</kbd>
 
-In the next chapter, we will talk more about how to make these microservices more resilient.
+
