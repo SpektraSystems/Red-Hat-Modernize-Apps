@@ -17,7 +17,7 @@ ourselves are in love with CodeReady Workspaces and highly recommend it.
 
 OpenShift ships with a web-based console that will allow users to
 perform various tasks via a browser.  To get a feel for how the web console
-works, open your browser and go to the OpenShift Web Console url provided in the environment details page.
+works, open your browser and go to the ***OpenShift Web Console url** provided in the environment details page.
 
 The first screen you will see is the authentication screen. Enter your **Azure username** and **Azure password** and 
 then log in. 
@@ -33,9 +33,9 @@ programming languages. [CodeReady Workspaces](https://www.eclipse.org/che/) is t
 and gives you a full-featured IDE running in the cloud. You have an CodeReady Workspaces instance deployed on your OpenShift cluster
 which you will use during these labs.
 
-Go to the [CodeReady Workspaces url]({{ ECLIPSE_CHE_URL }}) in order to configure your development workspace
+Go to the **CodeReady Workspaces url** in order to configure your development workspace
 
-Log into CodeReady Workspaces with your user account. 
+Log into CodeReady Workspaces with your user account(you can find the username and password in the environment details page). 
 
 Click on **Open** to open the workspace and then on the **Start** button to start the workspace for use, if it hasn't started automatically.
 If you get the error message "Failed to load plugins", ignore that.
