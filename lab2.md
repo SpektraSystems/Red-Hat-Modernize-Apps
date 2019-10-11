@@ -528,11 +528,11 @@ plus Red Hat OpenShift bring to the table.
 Now that we migrated the application you are probably eager to test it. To test it we locally JBoss EAP has been already installed and configured.
 Run the following command in the terminal window.
 ~~~
-unzip -d $HOME $HOME/jboss-eap-7.1.0.zip
+unzip -d $HOME $HOME/jboss-eap-7.2.0.zip
 ~~~
 We should also set the JBOSS_HOME environment variable like this:
 ~~~
-export JBOSS_HOME=$HOME/jboss-eap-7.1
+export JBOSS_HOME=$HOME/jboss-eap-7.2
 ~~~
 Done! That is how easy it is to install JBoss EAP.
 
@@ -610,7 +610,7 @@ We are now ready to build and test the project
 Our application is at this stage pretty standards based, but it needs two things. One is the need to add the JMS Topic since our application depends on it. In the CodeReady Workspaces Terminal window, Run the following command
 
 ~~~shell
-export JBOSS_HOME=$HOME/jboss-eap-7.1 ; mvn wildfly:start wildfly:add-resource wildfly:shutdown
+export JBOSS_HOME=$HOME/jboss-eap-7.2 ; mvn wildfly:start wildfly:add-resource wildfly:shutdown
 ~~~
 
 Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the correct changes and try again!
@@ -622,7 +622,7 @@ Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the cor
 We are now ready to deploy the application. In the Codeready workspace terminal window, Run the following command:
 
 ~~~shell
-export JBOSS_HOME=$HOME/jboss-eap-7.1 ; mvn wildfly:run
+export JBOSS_HOME=$HOME/jboss-eap-7.2 ; mvn wildfly:run
 ~~~
 
 Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-name: "ROOT.war")`
