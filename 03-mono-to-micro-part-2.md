@@ -971,9 +971,7 @@ www       www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   
 
 My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
 
-**2. Open the OpenShift Console for "Coolstore Monolith Dev" - Applications - Routes at** 
-
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/browse/routes`
+**2. Open the OpenShift Console for "Coolstore Monolith Dev" and navigate to Applications -> Routes
 
 **3. Click on Create Route, and set**
 
