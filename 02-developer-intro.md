@@ -373,7 +373,7 @@ Continuous Delivery (CD) refers to a set of practices with the intention of auto
 
 OpenShift simplifies building CI/CD Pipelines by integrating the popular [Jenkins pipelines](https://jenkins.io/doc/book/pipeline/overview/) into the platform and enables defining truly complex workflows directly from within OpenShift.
 
-The first step for any deployment pipeline is to store all code and configurations in  a source code repository. In this workshop, the source code and configurations are stored in a GitHub repository we've been using at [https://github.com/clerixmaxime/modernize-apps-labs]. This repository has been copied locally to your environment and you've been using it ever since!
+The first step for any deployment pipeline is to store all code and configurations in  a source code repository. In this workshop, the source code and configurations are stored in a GitHub repository we've been using at [https://github.com/RedHat-Middleware-Workshops/modernize-apps-labs]. This repository has been copied locally to your environment and you've been using it ever since!
 
 #### Pipelines
 
