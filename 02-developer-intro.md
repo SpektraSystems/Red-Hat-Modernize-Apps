@@ -375,6 +375,7 @@ OpenShift simplifies building CI/CD Pipelines by integrating the popular [Jenkin
 
 The first step for any deployment pipeline is to store all code and configurations in  a source code repository. In this workshop, the source code and configurations are stored in a GitHub repository we've been using at https://github.com/RedHat-Middleware-Workshops/modernize-apps-labs. This repository has been copied locally to your environment and you've been using it ever since!
 
+
 #### Pipelines
 
 OpenShift has built-in support for CI/CD pipelines by allowing developers to define a [Jenkins pipeline](https://jenkins.io/solutions/pipeline/) for execution by a Jenkins automation engine, which is automatically provisioned on-demand by OpenShift when needed.

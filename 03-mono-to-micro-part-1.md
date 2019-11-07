@@ -9,7 +9,7 @@ In the previous scenarios you learned how to take an existing monolithic Java EE
 
 You will now begin the process of modernizing the application by breaking the application into multiple microservices using different technologies, with the eventual goal of re-architecting the entire application as a set of distributed microservices. Later on we'll explore how you can better manage and monitor the application after it is re-architected.
 
-In this scenario you will learn more about [Thorntail](https://thorntail.io/), one of the runtimes included in [Red Hat OpenShift Application Runtimes](https://developers.redhat.com/products/rhoar). Thorntail is a great place to start since our application is a Java EE application, and your skills as a Java EEdeveloper will naturally translate to the world of Thorntail.
+In this scenario you will learn more about [Thorntail](https://thorntail.io/), one of the runtimes included in [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes). Thorntail is a great place to start since our application is a Java EE application, and your skills as a Java EE developer will naturally translate to the world of Thorntail.
 
 You will implement one component of the monolith as a Thorntail microservice and modify it to address microservice concerns, understand its structure, deploy it to OpenShift and exercise the interfaces between Thorntail apps, microservices, and OpenShift/Kubernetes.
 
@@ -19,7 +19,7 @@ The goal is to deploy this new microservice alongside the existing monolith, and
 
 <kbd>![](images/mono-to-micro-part-1/goal.png)</kbd>
 
-## What is Thorntail? 
+## What is Thorntail?
 
 <kbd>![](images/mono-to-micro-part-1/thorntail.png)</kbd>
 
@@ -157,7 +157,7 @@ public class Inventory implements Serializable {
 
 Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
 
-Thorntail configuration is done to a large extent through detecting the intent of the developer and automatically adding the required dependencies configurations to make sure it can get out of the way and developers can be productive with their code rather than Googling for configuration snippets. As an example, configuration database access with JPA is done by adding the JPA fractionand a database driver to the pom.xml, and then configuring the database connection details in `modernize-apps/inventory/src/main/resources/project-stages.yml`.
+Thorntail configuration is done to a large extent through detecting the intent of the developer and automatically adding the required dependencies configurations to make sure it can get out of the way and developers can be productive with their code rather than Googling for configuration snippets. As an example, configuration database access with JPA is done by adding the JPA fraction and a database driver to the pom.xml, and then configuring the database connection details in `modernize-apps/inventory/src/main/resources/project-stages.yml`.
 
 Examine `modernize-apps/inventory/src/main/resources/META-INF/persistence.xml` to see the JPA datasource configuration for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
 
@@ -416,7 +416,7 @@ oc rollout status -w dc/inventory
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
-route URL at 
+route URL at
 
 `http://inventory-ocpuser0XX-coolstore-dev.{{ ROUTE_SUFFIX }}`
 to access the sample UI.
@@ -439,7 +439,7 @@ Notice OpenShift is warning you that the inventory application has no health che
 <kbd>![](images/mono-to-micro-part-1/warning.png)</kbd>
 
 In the next steps you will enhance OpenShift's ability to manage the application lifecycle by implementing a _health check pattern_. By default, without health checks (or health _probes_) OpenShift considers services to be ready to accept service requests even before the application is truly ready or if the application is hung or otherwise unable to service requests. OpenShift must be _taught_ how to recognize that our app is alive and ready
-to accept requests. 
+to accept requests.
 
 ## Add Health Check Fraction
 
@@ -644,4 +644,4 @@ You created a new Inventory microservice representing functionality previously i
 
 Thorntail brings in a number of concepts and APIs from the Java EE community, so your existing Java EE skills can be re-used to bring your applications into the modern world of containers, microservices and cloud deployments.
 
-Thorntail is one of many components of Red Hat OpenShift Application Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
+Thorntail is one of many components of Red Hat Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
