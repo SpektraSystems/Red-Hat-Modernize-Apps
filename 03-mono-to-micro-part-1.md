@@ -644,4 +644,4 @@ You created a new Inventory microservice representing functionality previously i
 
 Thorntail brings in a number of concepts and APIs from the Java EE community, so your existing Java EE skills can be re-used to bring your applications into the modern world of containers, microservices and cloud deployments.
 
-Thorntail is one of many components of Red Hat OpenShift Application Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
+Thorntail is one of many components of Red Hat Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
