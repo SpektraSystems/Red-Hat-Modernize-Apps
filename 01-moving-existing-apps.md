@@ -1,6 +1,6 @@
 # SCENARIO 1: Moving existing apps to the cloud
 
-* Purpose: 
+* Purpose:
 * Difficulty: `intermediate`
 * Time: `45 minutes`
 
@@ -140,7 +140,7 @@ migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP
 
 **3. View the results**
 
-Next, go to the **project explorer > expand rhamt-report** on the left hand side. Right click on **index.html** and click on **preview** to view the landing page.
+Next, go to the **project explorer**. Expand `rhamt-report/monolith` on the left-hand side. Right click on `index.html` and click on **preview** to view the landing page.
 
 You should see the landing page for the report:
 
@@ -184,7 +184,7 @@ Now that you have the RHAMT report available, let's get to work migrating the ap
 
 ## Set Maven environment variables
 
-In order to use Maven we have to set up the following environment variable. Run the below command on the codeready workspace terminal before moving on.
+In order to use Maven we have to set up the following environment variable. Run the below command on the CodeReady workspace terminal before moving on.
 ```
 export MAVEN_OPTS='-Xmx2048m -XX:MaxPermSize=2048m'
 ```
@@ -525,7 +525,8 @@ plus Red Hat OpenShift bring to the table.
 
 ## Migrate and run the project
 
-Now that we migrated the application you are probably eager to test it. To test it we locally JBoss EAP has been already installed and configured.
+Now that we migrated the application you are probably eager to test it. To test it locally, JBoss EAP 7.2 has already been downloaded. We just need to install it.
+
 Run the following command in the terminal window.
 ~~~
 unzip -d $HOME $HOME/jboss-eap-7.2.0.zip
@@ -605,7 +606,7 @@ Since our application is using a JMS Topic we are also need to add the configura
 
 We are now ready to build and test the project
 
-## Configuring the JBoss EAP 
+## Configuring JBoss EAP
 
 Our application is at this stage pretty standards based, but it needs two things. One is the need to add the JMS Topic since our application depends on it. In the CodeReady Workspaces Terminal window, Run the following command
 
@@ -632,7 +633,7 @@ Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-nam
 Open another CodeReady Workspaces Terminal Window by clicking on the '**+**' sign next to it and selecting **Terminal**. From the new Terminal window, access the application by running the below command:
 
 ```
-curl http://localhost:8080 
+curl http://localhost:8080
 ```
 
 ## Shutdown the application
@@ -730,7 +731,7 @@ And finally deploy template:
 
 This will deploy both a PostgreSQL database and JBoss EAP, but it will not start a build for our application.
 
-Then open up the Monolith Overview page at 
+Then open up the Monolith Overview page at
 
 `https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/`
 and verify the monolith template items are created:
@@ -776,7 +777,7 @@ When it's done you should see the application deployed successfully with blue ci
 
 <kbd>![](images/moving-existing-apps/build-done.png)</kbd>
 
-Test the application by clicking on the Route link at 
+Test the application by clicking on the Route link at
 
 `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
@@ -793,7 +794,7 @@ In the next step you'll explore more of the developer features of OpenShift in p
 
 ## Summary
 
-Now that you have migrating an existing Java EE app to the cloud 
+Now that you have migrating an existing Java EE app to the cloud
 with JBoss and OpenShift, you are ready to start modernizing the
 application by breaking the monolith into smaller microservices in
 incremental steps, and employing modern techniques to ensure the
