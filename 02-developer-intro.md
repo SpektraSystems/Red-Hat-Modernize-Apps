@@ -203,7 +203,7 @@ version.txt
 sent 30 bytes  received 65 bytes  62,566.00 bytes/sec
 total size is 65 speedup is 1.00
 ```
-Now you can open the file locally using this link: version.txt and inspect its contents.
+Now you can inspect the file locally from the terminal by running `cat version.txt`.
 This is useful for verifying that the contents of files in your applications are what you expect.
 You can also upload files using the same oc rsync command but unlike when copying from the container to the local machine, there is no form for copying a single file. To copy selected files only, you will need to use the --exclude and --include options to filter what is and isn't copied from a specified directory. We will use this in the next step.
 Manually copying is cool, but what about automatic live copying on change? That's in the next step too!
@@ -330,7 +330,7 @@ We will create and initialize the new production environment using another templ
 
 **1. Initialize production project environment**
 
-Execute the following oc command to create a new project (ensure to replace ocpuser0XX by your designated OCP username):
+Execute the following oc command to create a new project (ensure to replace `ocpuser0XX` by your designated OCP username):
 
 `oc new-project ocpuser0XX-coolstore-prod --display-name='Coolstore Monolith - Production'`
 
@@ -339,16 +339,14 @@ This will create a new OpenShift project called `ocpuser0XX-coolstore-prod` from
 Run the below commands to import all the required images and the production templates.
 
 ```
-oc create -n ocpuser0XX-coolstore-prod -f https://raw.githubusercontent.com/openshift/openshift-ansible/release-3.9/roles/openshift_examples/files/examples/v3.9/image-streams/image-streams-rhel7.json
-
-oc create -n ocpuser0XX-coolstore-prod -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-prod1.json
+oc create -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-prod1.json
 ```
 
 **2. Add the production elements**
 
 In this case we'll use the production template to create the objects. Execute:
 
-`oc new-app --template=coolstore-monolith-pipeline-build -p IMAGE_STREAM_NAMESPACE=ocpuser0XX-coolstore-prod`
+`oc new-app --template=coolstore-monolith-pipeline-build`
 
 This will use an OpenShift Template called `coolstore-monolith-pipeline-build` to construct the production application. As you probably guessed it will also include a Jenkins Pipeline to control the production application (more on this later!)
 
@@ -362,6 +360,8 @@ Navigate to the Web Console to see your new app and the components using this li
 
 You can see the production database, and an application called _Jenkins_ which OpenShift uses to manage CI/CD pipeline deployments. There is no running production app just yet. The only running app is back in the _dev_ environment, where you used a binary build to run the app previously.
 
+   > NOTE: It may take a couple of minutes for the Jenkins application to become fully available.
+
 In the next step, we'll _promote_ the app from the _dev_ environment to the _production_ environment using an OpenShift pipeline build. Let's get going!
 
 ## Promoting Apps Across Environments with Pipelines
@@ -373,7 +373,8 @@ Continuous Delivery (CD) refers to a set of practices with the intention of auto
 
 OpenShift simplifies building CI/CD Pipelines by integrating the popular [Jenkins pipelines](https://jenkins.io/doc/book/pipeline/overview/) into the platform and enables defining truly complex workflows directly from within OpenShift.
 
-The first step for any deployment pipeline is to store all code and configurations in  a source code repository. In this workshop, the source code and configurations are stored in a GitHub repository we've been using at [https://github.com/RedHat-Middleware-Workshops/modernize-apps-labs]. This repository has been copied locally to your environment and you've been using it ever since!
+The first step for any deployment pipeline is to store all code and configurations in  a source code repository. In this workshop, the source code and configurations are stored in a GitHub repository we've been using at https://github.com/RedHat-Middleware-Workshops/modernize-apps-labs. This repository has been copied locally to your environment and you've been using it ever since!
+
 
 #### Pipelines
 
@@ -426,10 +427,11 @@ In the pipeline, update the ocpuser0XX with your assigned username.
 ```
 The Pipeline syntax allows creating complex deployment scenarios with the possibility of defining checkpoint for manual interaction and approval process using the large set of steps and plugins that Jenkins provides in order to adapt the pipeline to the process used in your team. You can see a few examples of advanced pipelines in the OpenShift GitHub Repository.
 
+Once done editing, click **Save**.
 
 To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the dev environment to our production environment using the above `openshift.tag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
 
-Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal, run(ensure to replace ocpuser0XX with your assigned username): 
+Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal, run(ensure to replace `ocpuser0XX` with your assigned username): 
 
 ~~~sh
 oc policy add-role-to-user edit system:serviceaccount:ocpuser0XX-coolstore-prod:jenkins -n ocpuser0XX-coolstore-dev
