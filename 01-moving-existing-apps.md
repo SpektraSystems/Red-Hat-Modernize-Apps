@@ -718,16 +718,12 @@ From the CodeReady Workspaces Terminal window, switch to the dev project you cre
 Run the below commands one by one to import all the required images and the template in to our namespace.
 
 ```
-oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/openshift/openshift-ansible/release-3.9/roles/openshift_examples/files/examples/v3.9/image-streams/image-streams-rhel7.json
-
-oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/openshift/openshift-ansible/release-3.9/roles/openshift_examples/files/examples/v3.9/xpaas-streams/eap70-image-stream.json
-
 oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary1.json
 ```
 
 And finally deploy template:
 
-`oc new-app coolstore-monolith-binary-build -p IMAGE_STREAM_NAMESPACE=ocpuser0XX-coolstore-dev`
+`oc new-app coolstore-monolith-binary-build`
 
 This will deploy both a PostgreSQL database and JBoss EAP, but it will not start a build for our application.
 
