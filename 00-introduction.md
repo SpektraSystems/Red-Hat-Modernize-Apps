@@ -1,16 +1,16 @@
 ## Getting Started with OpenShift
 
-In this lab you will get familiar with the OpenShift CLI and OpenShift Web Console 
+In this lab you will get familiar with the OpenShift CLI and OpenShift Web Console
 and get ready for the Application Modernization labs.
 
-For completing the following labs, you can either use your own workstation or as an 
-alternative, CodeReady Workspaces web IDE. The advantage of your own workstation is that you use the 
-environment that you are familiar with while the advantage of CodeReady Workspaces is that all 
-tools needed (Maven, Git, OpenShift CLI, etc ) are pre-installed in it (not on your workstation!) and all interactions 
-takes place within the browser which removes possible internet speed issues and version incompatibilities 
+For completing the following labs, you can either use your own workstation or as an
+alternative, CodeReady Workspaces web IDE. The advantage of your own workstation is that you use the
+environment that you are familiar with while the advantage of CodeReady Workspaces is that all
+tools needed (Maven, Git, OpenShift CLI, etc ) are pre-installed in it (not on your workstation!) and all interactions
+takes place within the browser which removes possible internet speed issues and version incompatibilities
 on your workstation.
 
-The choice is yours but whatever you pick, like most things in life, stick with it for all the labs. We 
+The choice is yours but whatever you pick, like most things in life, stick with it for all the labs. We
 ourselves are in love with CodeReady Workspaces and highly recommend it.
 
 ## Login to OpenShift web console
@@ -19,14 +19,14 @@ OpenShift ships with a web-based console that will allow users to
 perform various tasks via a browser.  To get a feel for how the web console
 works, open your browser and go to the ***OpenShift Web Console url** provided in the environment details page.
 
-The first screen you will see is the authentication screen. Enter your **Azure username** and **Azure password** and 
-then log in. 
+The first screen you will see is the authentication screen. Enter your **Azure username** and **Azure password** and
+then log in.
 
 This is the OpenShift console, your visual point of access and management to your OpenShift cluster. CodeReady Workspaces and your deployment environment, both, run on this OpenShift cluster.
 
 ## Setup Your Workspace on CodeReady Workspaces
 
-Follow these instructions to setup the development environment on CodeReady Workspaces. 
+Follow these instructions to setup the development environment on CodeReady Workspaces.
 
 You might be familiar with the Eclipse IDE which is one of the most popular IDEs for Java and other
 programming languages. [CodeReady Workspaces](https://www.eclipse.org/che/) is the next-generation Eclipse IDE which is web-based
@@ -35,20 +35,21 @@ which you will use during these labs.
 
 Go to the **CodeReady Workspaces url** in order to configure your development workspace
 
-Log into CodeReady Workspaces with your user account(you can find the username and password in the environment details page). 
+Log into CodeReady Workspaces with your user account (you can find the username and password in the environment details page).
 
-Click on **Open** to open the workspace and then on the **Start** button to start the workspace for use, if it hasn't started automatically.
-If you get the error message "Failed to load plugins", ignore that.
+   > If you get the error message "Failed to load plugins", ignore that.
 
-It takes a little while for the workspace to be ready. When it's ready, you will see a fully functional 
+Click on the workspace shown in the **Recent Workspaces** section. Once there, click the **Open** button in the top right corner.
+
+It takes a little while for the workspace to be ready. When it's ready, you will see a fully functional
 CodeReady Workspaces IDE running in your browser.
 
 <kbd>![](images/getting-started/codeready-workspace.png)</kbd>
 
 This would be the point at which you would import the project skeletons into your workspace. For this lab, the projects are already imported into your workspace and are visible in the project explorer
 
-Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. In order to 
-enable these capabilities, let's convert the imported project skeletons to a Maven projects. 
+Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. In order to
+enable these capabilities, let's convert the imported project skeletons to a Maven projects.
 
 In the project explorer, right-click on **monolith** and then click on **Convert to Project**.
 
@@ -60,7 +61,7 @@ Choose **Maven** from the project configurations and then click on **Save**
 
 Repeat the above for **cart**, **catalog**, **inventory** projects.
 
-Note the **Terminal** window in Codeready Workspaces. For the rest of these labs, anytime you need to run 
+Note the **Terminal** window in Codeready Workspaces. For the rest of these labs, anytime you need to run
 a command in a terminal, you can use the Codeready Workspaces **Terminal** window.
 
 <kbd>![](images/getting-started/codeready-terminal.png)</kbd>
