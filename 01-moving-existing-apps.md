@@ -182,13 +182,6 @@ There are several other sub-pages accessible by the menu near the top. Click on 
 
 Now that you have the RHAMT report available, let's get to work migrating the app!
 
-## Set Maven environment variables
-
-In order to use Maven we have to set up the following environment variable. Run the below command on the CodeReady workspace terminal before moving on.
-```
-export MAVEN_OPTS='-Xmx2048m -XX:MaxPermSize=2048m'
-```
-
 ## Migrate Application Startup Code
 
 In this step we will migrate some Weblogic-specific code in the app to use standard Java EE interfaces.
