@@ -641,7 +641,7 @@ We now have a fully migrated application that we tested locally. Let's deploy it
 
 Open the `modernize-apps/monolith/pom.xml` file.
 
-At the `<!-- TODO: Add OpenShift profile here -->` we are going to add a the following configuration to the pom.xml
+At the `<!-- TODO: Add OpenShift profile here -->` we are going to add the following configuration to the pom.xml
 
 ~~~xml
 <profile>
