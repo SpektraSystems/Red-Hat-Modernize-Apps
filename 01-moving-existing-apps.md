@@ -140,7 +140,7 @@ migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP
 
 **3. View the results**
 
-Next, go to the **project explorer**. Expand `rhamt-report/monolith` on the left-hand side. Right click on `index.html` and click on **preview** to view the landing page.
+Next, go to the **project explorer**. Expand `rhamt-reports/monolith` on the left-hand side. Right click on `index.html` and click on **preview** to view the landing page.
 
 You should see the landing page for the report:
 
