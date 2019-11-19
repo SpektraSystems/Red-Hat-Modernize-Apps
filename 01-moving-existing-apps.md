@@ -568,7 +568,7 @@ EE, since it defaults to use the Java EE Web Profile. This is done by adding a `
 </configuration>
 ~~~
 
-Since our application is using a Database we also configuration that by adding the following at the `<-- TODO: Add Datasource definition here -->` comment
+Since our application is using a Database we also configure that by adding the following at the `<-- TODO: Add Datasource definition here -->` comment
 
 ~~~xml
 <resource>
