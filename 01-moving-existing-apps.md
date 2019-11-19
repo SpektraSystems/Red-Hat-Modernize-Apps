@@ -586,7 +586,7 @@ Since our application is using a Database we also configure that by adding the f
 </resource>
 ~~~
 
-Since our application is using a JMS Topic we are also need to add the configuration for that by adding the following at the `<-- TODO: Add JMS Topic here -->` comment
+Since our application is using a JMS Topic we also need to add the configuration for that by adding the following at the `<-- TODO: Add JMS Topic here -->` comment
 
 ~~~xml
 <resource>
@@ -597,7 +597,7 @@ Since our application is using a JMS Topic we are also need to add the configura
 </resource>
 ~~~
 
-We are now ready to build and test the project
+We are now ready to build and test the project.
 
 ## Configuring JBoss EAP
 
