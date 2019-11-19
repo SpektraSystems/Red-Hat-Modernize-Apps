@@ -169,7 +169,7 @@ Build and package the Inventory service using Maven to make sure you code compil
 mvn clean package
 ~~~~
 
-If builds successfully, continue to the next step to create a new service.
+If it builds successfully, continue to the next step to create a new service.
 
 ## Create Inventory Service
 
