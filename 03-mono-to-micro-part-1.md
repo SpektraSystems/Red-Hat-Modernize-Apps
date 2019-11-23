@@ -163,7 +163,7 @@ Examine `modernize-apps/inventory/src/main/resources/META-INF/persistence.xml` t
 
 Examine `modernize-apps/inventory/src/main/resources/project-stages.yml` to see the database connection details. An in-memory H2 database is used in this scenario for local development and in the following steps will be replaced with a PostgreSQL database with credentials coming from an OpenShift _secret_. Be patient! More on that later.
 
-Build and package the Inventory service using Maven to make sure you code compiles:
+Build and package the Inventory service using Maven to make sure your code compiles:
 
 ~~~sh
 mvn clean package
