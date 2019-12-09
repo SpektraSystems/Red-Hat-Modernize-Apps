@@ -48,18 +48,7 @@ CodeReady Workspaces IDE running in your browser.
 
 This would be the point at which you would import the project skeletons into your workspace. For this lab, the projects are already imported into your workspace and are visible in the project explorer
 
-Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. In order to
-enable these capabilities, let's convert the imported project skeletons to a Maven projects.
-
-In the project explorer, right-click on **monolith** and then click on **Convert to Project**.
-
-<kbd>![](images/getting-started/codeready-convert.png)</kbd>
-
-Choose **Maven** from the project configurations and then click on **Save**
-
-<kbd>![](images/getting-started/codeready-convert2.png)</kbd>
-
-Repeat the above for **cart**, **catalog**, **inventory** projects.
+Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. 
 
 Note the **Terminal** window in Codeready Workspaces. For the rest of these labs, anytime you need to run
 a command in a terminal, you can use the Codeready Workspaces **Terminal** window.
