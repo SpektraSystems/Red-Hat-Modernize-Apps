@@ -75,13 +75,13 @@ For this scenario, we will use the CLI as you are the only one that will run RHA
 
 The RHAMT CLI is has been installed for you. To verify that the tool was properly installed, run:
 
-``${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli --version``
+``${HOME}/rhamt-cli-4.3.0.Final/bin/rhamt-cli --version``
 
 You should see:
 
 ~~~shell
-Using RHAMT at /home/jboss/rhamt-cli-4.0.0.Beta4
-> Red Hat Application Migration Toolkit (RHAMT) CLI, version 4.0.0.Beta4.
+Using RHAMT at /home/jboss/rhamt-cli-4.3.0.Final
+> Red Hat Application Migration Toolkit (RHAMT) CLI, version 4.3.0.Final.
 ~~~
 
 **2. Inspect the project source code**
@@ -122,7 +122,7 @@ The RHAMT CLI has a number of options to control how it runs. Run the below comm
 to execute the RHAMT CLI and analyze the existing project:
 
 ~~~shell
-  ${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli \
+  ${HOME}/rhamt-cli-4.3.0.Final/bin/rhamt-cli \
   --sourceMode \
   --input /projects/modernize-apps/monolith \
   --output /projects/rhamt-reports/monolith \
