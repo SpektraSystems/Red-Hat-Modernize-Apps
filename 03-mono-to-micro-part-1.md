@@ -152,7 +152,6 @@ public class Inventory implements Serializable {
         return "Inventory [itemId=" + itemId + ", availability=" + quantity + "/" + location + " link=" + link + "]";
     }
 }
-
 ~~~
 
 Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
@@ -178,38 +177,35 @@ In this step we will mirror the abstraction of a service so that we can inject t
 ~~~java
 package com.redhat.coolstore.service;
 
-
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import com.redhat.coolstore.model.Inventory;
-
-import java.util.Collection;
 import java.util.List;
 
-@Stateless
+import javax.inject.Inject;
+import javax.enterprise.context.Dependent;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+@Dependent
 public class InventoryService {
 
-    @PersistenceContext
-    private EntityManager em;
-
+    @Inject
+    EntityManager entityManager;
+   
     public InventoryService() {
 
     }
 
     public boolean isAlive() {
-        return em.createQuery("select 1 from Inventory i")
+        return entityManager.createQuery("select 1 from Inventory i")
                 .setMaxResults(1)
                 .getResultList().size() == 1;
     }
     public Inventory getInventory(String itemId) {
-        return em.find(Inventory.class, itemId);
+        return entityManager.find(Inventory.class, itemId);
     }
 
     public List<Inventory> getAllInventory() {
-        Query query = em.createQuery("SELECT i FROM Inventory i");
+        Query query = entityManager.createQuery("SELECT i FROM Inventory i");
         return query.getResultList();
     }
 }
@@ -245,7 +241,7 @@ package com.redhat.coolstore.rest;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -255,15 +251,15 @@ import javax.ws.rs.core.MediaType;
 
 import com.redhat.coolstore.model.Inventory;
 import com.redhat.coolstore.service.InventoryService;
-
-@RequestScoped
+        
+@ApplicationScoped
 @Path("/inventory")
 public class InventoryEndpoint implements Serializable {
 
     private static final long serialVersionUID = -7227732980791688773L;
 
     @Inject
-    private InventoryService inventoryService;
+    InventoryService inventoryService;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
