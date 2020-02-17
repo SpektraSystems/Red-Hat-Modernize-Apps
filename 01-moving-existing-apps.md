@@ -491,7 +491,7 @@ Run the below command to clean the old build artifacts and re-execute the RHAMT 
 
 ~~~shell
 mvn clean && \
-${HOME}/rhamt-cli-4.0.0.Beta4/bin/rhamt-cli \
+${HOME}/rhamt-cli-4.3.0.Final/bin/rhamt-cli \
   --sourceMode \
   --input /projects/modernize-apps/monolith \
   --output /projects/rhamt-reports/monolith \
