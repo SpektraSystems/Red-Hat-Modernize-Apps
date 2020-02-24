@@ -9,7 +9,7 @@ In the previous scenarios you learned how to take an existing monolithic Java EE
 
 You will now begin the process of modernizing the application by breaking the application into multiple microservices using different technologies, with the eventual goal of re-architecting the entire application as a set of distributed microservices. Later on we'll explore how you can better manage and monitor the application after it is re-architected.
 
-In this scenario you will learn more about [Thorntail](https://thorntail.io/), one of the runtimes included in [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes). Thorntail is a great place to start since our application is a Java EE application, and your skills as a Java EE developer will naturally translate to the world of Thorntail.
+In this scenario you will learn more about [Quarkus](https://quarkus.io/), one of the runtimes included in [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes). Thorntail is a great place to start since our application is a Java EE application, and your skills as a Java EE developer will naturally translate to the world of Quarkus.
 
 You will implement one component of the monolith as a Thorntail microservice and modify it to address microservice concerns, understand its structure, deploy it to OpenShift and exercise the interfaces between Thorntail apps, microservices, and OpenShift/Kubernetes.
 
@@ -19,17 +19,15 @@ The goal is to deploy this new microservice alongside the existing monolith, and
 
 <kbd>![](images/mono-to-micro-part-1/goal.png)</kbd>
 
-## What is Thorntail?
+## What is Quarkus
 
-<kbd>![](images/mono-to-micro-part-1/thorntail.png)</kbd>
+Quarkus is a full-stack, Kubernetes-native Java framework made for Java virtual machines (JVMs) and native compilation, optimizing Java specifically for containers and enabling it to become an effective platform for serverless, cloud, and Kubernetes environments.
 
-Java EE applications are traditionally created as an **ear** or **war** archive including all  dependencies and deployed in an application server. Multiple Java EE applications can and  were typically deployed in the same application server. This model is well understood in the development teams and has been used over the past several years.
+Quarkus is designed to work with popular Java standards, frameworks, and libraries like Eclipse MicroProfile, Apache Kafka, RESTEasy (JAX-RS), Hibernate ORM (JPA), Spring, Infinispan, Camel, and many more. 
 
-[Thorntail](http://wildfly-swarm.io) offers an innovative approach to packaging and  running Java EE applications by packaging them with just enough of the Java EE server runtime to be able to run them directly on the JVM using **java -jar** For more details on various approaches to packaging Java applications, read [this blog post](https://developers.redhat.com/blog/2017/08/24/the-skinny-on-fat-thin-hollow-and-uber).
+Quarkus’ dependency injection solution is based on CDI (contexts and dependency injection) and includes an extension framework to expand functionality and to configure, boot, and integrate a framework into your application. Adding an extension is as easy as adding a dependency, or you can use Quarkus tooling.
 
-Thorntail is based on WildFly and it's compatible with [Eclipse MicroProfile](https://microprofile.io), which is a community effort to standardized the subset of Java EE standards such as JAX-RS, CDI and JSON-P that are useful for building microservices applications.
-
-Since Thorntail is based on Java EE standards, it significantly simplifies refactoring existing Java EE application to microservices and allows much of existing code-base to be reused in the new services.
+It also provides the correct information to GraalVM (a universal virtual machine for running apps written in a number of languages, including Java and JavaScript) for native compilation of your application.
 
 ## Setup for Exercise
 
@@ -296,7 +294,7 @@ You should see a **BUILD SUCCESS** in the build logs.
 
 Using the Thorntail (ex-WildFly Swarm) maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
 ~~~sh
-mvn wildfly-swarm:run
+mvn quarkus:dev
 ~~~
 
 > As an uber-jar, it could also be run with `java -jar target/inventory-1.0-SNAPSHOT-swarm.jar` but you don't need to do this now
