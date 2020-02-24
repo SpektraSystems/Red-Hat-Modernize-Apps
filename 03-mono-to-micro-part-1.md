@@ -9,9 +9,9 @@ In the previous scenarios you learned how to take an existing monolithic Java EE
 
 You will now begin the process of modernizing the application by breaking the application into multiple microservices using different technologies, with the eventual goal of re-architecting the entire application as a set of distributed microservices. Later on we'll explore how you can better manage and monitor the application after it is re-architected.
 
-In this scenario you will learn more about [Quarkus](https://quarkus.io/), one of the runtimes included in [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes). Thorntail is a great place to start since our application is a Java EE application, and your skills as a Java EE developer will naturally translate to the world of Quarkus.
+In this scenario you will learn more about [Quarkus](https://quarkus.io/), one of the runtimes included in [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes). Quarkus is a great place to start since our application is a Java EE application, and your skills as a Java EE developer will naturally translate to the world of Quarkus.
 
-You will implement one component of the monolith as a Thorntail microservice and modify it to address microservice concerns, understand its structure, deploy it to OpenShift and exercise the interfaces between Thorntail apps, microservices, and OpenShift/Kubernetes.
+You will implement one component of the monolith as a Qurkus microservice and modify it to address microservice concerns, understand its structure, deploy it to OpenShift and exercise the interfaces between Quarkus apps, microservices, and OpenShift/Kubernetes.
 
 ## Goals of this scenario
 
@@ -38,7 +38,7 @@ cd /projects/modernize-apps/inventory
 
 ## Examine the sample project
 
-The sample project shows the components of a basic Thorntail project laid out in different subdirectories according to Maven best practices.
+The sample project shows the components of a basic Quarkus project laid out in different subdirectories according to Maven best practices.
 
 **1. Examine the Maven project structure.**
 
