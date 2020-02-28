@@ -38,7 +38,7 @@ cd /projects/modernize-apps/inventory
 
 ## Examine the sample project
 
-The sample project shows the components of a basic Quarkus project laid out in different subdirectories according to Maven best practices.
+The sample project shows the components of a basic Quarkus project laid out in different subdirectories.
 
 **1. Examine the Maven project structure.**
 
@@ -60,9 +60,9 @@ Once built, the resulting *jar* is located in the **target** directory:
 
 `ls target/*.jar`
 
-The listed jar archive, **inventory-1.0.0-SNAPSHOT-swarm.jar** , is an uber-jar with all the dependencies required packaged in the *jar* to enable running the application with **java -jar**. Thorntail also creates a *war* packaging as a standard Java EE web app that could be deployed to any Java EE app server (for example, JBoss EAP, or its upstream WildFly project).
+The listed jar archive, **inventory-1.0.0-SNAPSHOT-runner.jar** , is an uber-jar with all the dependencies required packaged in the *jar* to enable running the application with **java -jar**. Quarkus also creates a *war* packaging as a standard Java EE web app that could be deployed to any Java EE app server.
 
-Now let\'s write some code and create a domain model, service interface and a RESTful endpoint to access inventory:
+Now let's write some code and create a domain model, service interface and a RESTful endpoint to access inventory:
 
 <kbd>![](images/mono-to-micro-part-1/wfswarm-inventory-arch.png)</kbd>
 
@@ -302,10 +302,10 @@ mvn quarkus:dev
 Once the application is done initializing you should see:
 
 ~~~sh
-INFO  [org.wildfly.swarm] (main) WFSWARM99999: Wildfly-Swarm is Ready
+INFO  [io.quarkus] (main) inventory 1.0.0 (running on Quarkus 1.2.0.Final) started in 8.811s. Listening on: http://0.0.0.0:8080
 ~~~
 
-Running locally using `wildfly-swarm:run` will use an in-memory database with default credentials. In a production application you will use an external source for credentials using an OpenShift _secret_ in later steps, but for now this will work for development and testing.
+Running locally using `quarkus:dev` will use the Azure PostgreSQL database. 
 
 **3. Test the application**
 
@@ -336,14 +336,85 @@ Before moving on, click in the first terminal window where Thorntail (ex-WildFly
 You should see something like:
 
 ~~~sh
-WFLYSRV0028: Stopped deployment inventory-1.0.0-SNAPSHOT.war (runtime-name: inventory-1.0.0-SNAPSHOT.war) in 70ms
+INFO  [io.quarkus] (Quarkus Shutdown Thread) Quarkus stopped in 0.007s
 ~~~
 
 This indicates the application is stopped.
 
+## Add Health Check Fraction
+
+## What is a Fraction?
+
+Thorntail is defined by an unbounded set of capabilities. Each piece of functionality is called a fraction. Some fractions provide only access to APIs, such as JAX-RS or CDI; other fractions provide higher-level capabilities, such as integration with RHSSO (Keycloak).
+
+The typical method for consuming Thorntail fractions is through Maven coordinates, which you add to the pom.xml file in your application. The functionality the fraction provides is then packaged with your application into an _Uberjar_.  An uberjar is a single Java .jar file that includes everything you need to execute your application. This includes both the runtime components you have selected, along with the application logic.
+
+## What is a Health Check?
+
+A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
+
+Once an application is running, there are no guarantees that it will continue to operate with full functionality. Numerous factors including out of memory errors or a hanging process can cause the application to enter an invalid state. While a _readiness_ probe is only responsible for determining whether an application is in a state where it should begin to receive incoming traffic, a _liveness_ probe is used to determine whether an application is still in an acceptable state. If the liveness probe fails, OpenShift will destroy the pod and replace it with a new one.
+
+In our case we will implement the health check logic in a REST endpoint and let Thorntail publish that logic on the `/health` endpoint for use with OpenShift.
+
+**Add `monitor` fraction**
+
+First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
+
+Thorntail includes the `monitor` fraction which automatically adds health check infrastructure to your
+application when it is included as a fraction in the project. Open the file to insert the new dependencies
+into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
+
+~~~xml
+<dependency>
+    <groupId>org.wildfly.swarm</groupId>
+    <artifactId>monitor</artifactId>
+</dependency>
+~~~
+
+By adding the `monitor` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
+
+## Define Health Check Endpoint
+
+We are now ready to define the logic of our health check endpoint.
+
+**1. Create empty Java class**
+
+The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
+
+Methods in this new class will be annotated with both the JAX-RS annotations as well as [Thorntail's `@Health` annotation](https://wildfly-swarm.gitbooks.io/wildfly-swarm-users-guide/content/advanced/monitoring.html), indicating it should be used as a health check endpoint.
+
+**2. Add logic**
+
+Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
+Copy the code fragment below into the newly created file to implement the logic.
+
+~~~java
+package com.redhat.coolstore.rest;
+
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.Liveness;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@Liveness
+@ApplicationScoped
+
+public class HealthChecks implements HealthCheck {
+
+    @Override
+    public HealthCheckResponse call() {
+        return HealthCheckResponse.up("Simple health check");
+    }
+}
+~~~
+
+The `check()` method exposes an HTTP GET endpoint which will return the status of the service. The logic of this check does a simple query to the underlying database to ensure the connection to it is stable and available. The method is also annotated with Thorntail's `@Health` annotation, which directs Thorntail to expose this endpoint as a health check at `/health`.
+
 ## Congratulations
 
-You have now successfully created your first microservice using Thorntail and implemented a basic RESTful API on top of the Inventory database. Most of the code is the same as was found in the monolith, demonstrating how easy it is to migrate existing monolithic Java EE applications to microservices using Thorntail.
+You have now successfully created your first microservice using Quarkus and implemented a basic RESTful API on top of the database. Most of the code is the same as was found in the monolith, demonstrating how easy it is to migrate existing monolithic Java EE applications to microservices using Quarkus.
 
 In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
 
@@ -419,132 +490,6 @@ to access the sample UI.
 
 <kbd>![](images/mono-to-micro-part-1/routelink.png)</kbd>
 
-> **NOTE**: If you get a '404 Not Found' error, just reload the page a few times until the Inventory UI appears. This
-is due to a lack of health check which you are about to fix!
-
-The UI will refresh the inventory table every 2 seconds, as before.
-
-Back on the OpenShift console, Navigate to _Applications_ -> _Deployments_ -> `inventory` and then click on the top-most `(latest)` deployment in the listing (most likely `#1` or `#2`):
-
-<kbd>![](images/mono-to-micro-part-1/deployment-list.png)</kbd>
-
-Notice OpenShift is warning you that the inventory application has no health checks:
-
-<kbd>![](images/mono-to-micro-part-1/warning.png)</kbd>
-
-In the next steps you will enhance OpenShift's ability to manage the application lifecycle by implementing a _health check pattern_. By default, without health checks (or health _probes_) OpenShift considers services to be ready to accept service requests even before the application is truly ready or if the application is hung or otherwise unable to service requests. OpenShift must be _taught_ how to recognize that our app is alive and ready
-to accept requests.
-
-## Add Health Check Fraction
-
-## What is a Fraction?
-
-Thorntail is defined by an unbounded set of capabilities. Each piece of functionality is called a fraction. Some fractions provide only access to APIs, such as JAX-RS or CDI; other fractions provide higher-level capabilities, such as integration with RHSSO (Keycloak).
-
-The typical method for consuming Thorntail fractions is through Maven coordinates, which you add to the pom.xml file in your application. The functionality the fraction provides is then packaged with your application into an _Uberjar_.  An uberjar is a single Java .jar file that includes everything you need to execute your application. This includes both the runtime components you have selected, along with the application logic.
-
-## What is a Health Check?
-
-A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
-
-Once an application is running, there are no guarantees that it will continue to operate with full functionality. Numerous factors including out of memory errors or a hanging process can cause the application to enter an invalid state. While a _readiness_ probe is only responsible for determining whether an application is in a state where it should begin to receive incoming traffic, a _liveness_ probe is used to determine whether an application is still in an acceptable state. If the liveness probe fails, OpenShift will destroy the pod and replace it with a new one.
-
-In our case we will implement the health check logic in a REST endpoint and let Thorntail publish that logic on the `/health` endpoint for use with OpenShift.
-
-**Add `monitor` fraction**
-
-First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
-
-Thorntail includes the `monitor` fraction which automatically adds health check infrastructure to your
-application when it is included as a fraction in the project. Open the file to insert the new dependencies
-into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
-
-~~~xml
-<dependency>
-    <groupId>org.wildfly.swarm</groupId>
-    <artifactId>monitor</artifactId>
-</dependency>
-~~~
-
-By adding the `monitor` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
-
-## Define Health Check Endpoint
-
-We are now ready to define the logic of our health check endpoint.
-
-**1. Create empty Java class**
-
-The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
-
-Methods in this new class will be annotated with both the JAX-RS annotations as well as [Thorntail's `@Health` annotation](https://wildfly-swarm.gitbooks.io/wildfly-swarm-users-guide/content/advanced/monitoring.html), indicating it should be used as a health check endpoint.
-
-**2. Add logic**
-
-Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
-Copy the code fragment below into the newly created file to implement the logic.
-
-~~~java
-package com.redhat.coolstore.rest;
-
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
-import com.redhat.coolstore.service.InventoryService;
-import org.wildfly.swarm.health.Health;
-import org.wildfly.swarm.health.HealthStatus;
-
-@Path("/infra")
-public class HealthChecks {
-
-    @Inject
-    private InventoryService inventoryService;
-
-    @GET
-    @Health
-    @Path("/health")
-    public HealthStatus check() {
-
-        if (inventoryService.isAlive()) {
-            return HealthStatus.named("service-state").up();
-        } else {
-            return HealthStatus.named("service-state").down();
-        }
-    }
-}
-~~~
-
-The `check()` method exposes an HTTP GET endpoint which will return the status of the service. The logic of this check does a simple query to the underlying database to ensure the connection to it is stable and available. The method is also annotated with Thorntail's `@Health` annotation, which directs Thorntail to expose this endpoint as a health check at `/health`.
-
-With our new health check in place, we'll need to build and deploy the updated application in the next step.
-
-## Re-Deploy to OpenShift
-
-**1. Rebuild and re-deploy**
-
-With our health check in place, lets rebuild and redeploy using the same command as before:
-
-~~~sh
-mvn fabric8:undeploy -Popenshift
-mvn clean fabric8:deploy -Popenshift
-~~~~
-
-
-You should see a **BUILD SUCCESS** at the end of the build output.
-
-During build and deploy, you'll notice Thorntail adding in health checks for you:
-
-~~~sh
-[INFO] F8: wildfly-swarm-health-check: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 10 seconds
-[INFO] F8: wildfly-swarm-health-check: Adding liveness probe on port 8080, path='/health', scheme='HTTP', with initial delay 180 seconds
-~~~
-
-To verify that everything is started, run the following command and wait for it report `replication controller "inventory-xxxx" successfully rolled out`
-
-~~~sh
-oc rollout status -w dc/inventory
-~~~
-
 Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Replace {{INVENTORY_ROUTE_HOST}} with the inventory route host.
 
 ``curl http://{{INVENTORY_ROUTE_HOST}}/health``
@@ -553,11 +498,16 @@ You should see a JSON response like:
 
 ~~~json
 {
+    "status": "UP",
     "checks": [
-        {"id":"service-state","result":"UP"}
-    ],
-    "outcome": "UP"
-}
+        {
+            "name": "Simple health check",
+            "status": "UP"
+        },
+        {
+            "name": "Database connections health check",
+            "status": "UP"
+        }
 ~~~
 
 You can see the definition of the health check from the perspective of OpenShift:
@@ -567,8 +517,8 @@ You can see the definition of the health check from the perspective of OpenShift
 You should see:
 
 ~~~sh
-    Liveness:	http-get http://:8080/health delay=180s timeout=1s period=10s #success=1 #failure=3
-    Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
+    Liveness:   http-get http://:8080/health delay=5s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8080/health delay=5s timeout=1s period=10s #success=1 #failure=3
 ~~~
 
 **2. Adjust probe timeout**
@@ -582,8 +532,8 @@ And verify it's been changed (look at the `delay=` value for the Liveness probe)
 `oc describe dc/inventory | egrep 'Readiness|Liveness'`
 
 ~~~sh
-    Liveness:	http-get http://:8080/health delay=30s timeout=1s period=10s #success=1 #failure=3
-    Readiness:	http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
+    Liveness:   http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8080/health delay=5s timeout=1s period=10s #success=1 #failure=3
 ~~~
 
 You can also edit health checks by navigating Applications > Deployments > inventory > #2 (latest) - ensure you select the version that says 'latest' - on the OpenShift Web Console, or click on this link at
