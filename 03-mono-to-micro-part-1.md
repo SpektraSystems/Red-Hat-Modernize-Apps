@@ -290,14 +290,97 @@ mvn clean package
 
 You should see a **BUILD SUCCESS** in the build logs.
 
+## Add Health Check Fraction
+
+## What is a Fraction?
+
+Thorntail is defined by an unbounded set of capabilities. Each piece of functionality is called a fraction. Some fractions provide only access to APIs, such as JAX-RS or CDI; other fractions provide higher-level capabilities, such as integration with RHSSO (Keycloak).
+
+The typical method for consuming Thorntail fractions is through Maven coordinates, which you add to the pom.xml file in your application. The functionality the fraction provides is then packaged with your application into an _Uberjar_.  An uberjar is a single Java .jar file that includes everything you need to execute your application. This includes both the runtime components you have selected, along with the application logic.
+
+## What is a Health Check?
+
+A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
+
+Once an application is running, there are no guarantees that it will continue to operate with full functionality. Numerous factors including out of memory errors or a hanging process can cause the application to enter an invalid state. While a _readiness_ probe is only responsible for determining whether an application is in a state where it should begin to receive incoming traffic, a _liveness_ probe is used to determine whether an application is still in an acceptable state. If the liveness probe fails, OpenShift will destroy the pod and replace it with a new one.
+
+In our case we will implement the health check logic in a REST endpoint and let Thorntail publish that logic on the `/health` endpoint for use with OpenShift.
+
+**Add `quarkus-smallrye-health` fraction**
+
+First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
+
+Quarkus includes the `smallrye-health` fraction which automatically adds health check infrastructure to your
+application when it is included as a fraction in the project. Open the file to insert the new dependencies
+into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
+
+~~~xml
+  <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+  </dependency> 
+~~~
+
+By adding the `quarkus-smallrye-health` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
+
+## Define Health Check Endpoint
+
+We are now ready to define the logic of our health check endpoint.
+
+**1. Create empty Java class**
+
+The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
+
+**2. Add logic**
+
+Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
+Copy the code fragment below into the newly created file to implement the logic.
+
+~~~java
+package com.redhat.coolstore.rest;
+
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.Liveness;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@Liveness
+@ApplicationScoped
+
+public class HealthChecks implements HealthCheck {
+
+    @Override
+    public HealthCheckResponse call() {
+        return HealthCheckResponse.up("Simple health check");
+    }
+}
+~~~
+
+As you can see health check procedures are defined as implementations of the HealthCheck interface which are defined as CDI beans with the one of the following CDI qualifiers:
+
+@Liveness - the liveness check accessible at /health/live
+
+@Readiness - the readiness check accessible at /health/ready
+
+HealthCheck is a functional interface whose single method call returns a HealthCheckResponse object which can be easily constructed by the fluent builder API shown in the example.
+
+Build and package the Inventory service again using Maven:
+
+~~~sh
+mvn clean package
+~~~~
+
+You should see a **BUILD SUCCESS** in the build logs.
+
 ## Test Locally
 
-Using the Thorntail (ex-WildFly Swarm) maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
+Using the Quarkus maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
 ~~~sh
 mvn quarkus:dev
 ~~~
 
-> As an uber-jar, it could also be run with `java -jar target/inventory-1.0-SNAPSHOT-swarm.jar` but you don't need to do this now
+> As an uber-jar, it could also be run with `java -jar target/inventory-1.0.0-runner.jar` but you don't need to do this now
 
 Once the application is done initializing you should see:
 
@@ -341,82 +424,12 @@ INFO  [io.quarkus] (Quarkus Shutdown Thread) Quarkus stopped in 0.007s
 
 This indicates the application is stopped.
 
-## Add Health Check Fraction
-
-## What is a Fraction?
-
-Thorntail is defined by an unbounded set of capabilities. Each piece of functionality is called a fraction. Some fractions provide only access to APIs, such as JAX-RS or CDI; other fractions provide higher-level capabilities, such as integration with RHSSO (Keycloak).
-
-The typical method for consuming Thorntail fractions is through Maven coordinates, which you add to the pom.xml file in your application. The functionality the fraction provides is then packaged with your application into an _Uberjar_.  An uberjar is a single Java .jar file that includes everything you need to execute your application. This includes both the runtime components you have selected, along with the application logic.
-
-## What is a Health Check?
-
-A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
-
-Once an application is running, there are no guarantees that it will continue to operate with full functionality. Numerous factors including out of memory errors or a hanging process can cause the application to enter an invalid state. While a _readiness_ probe is only responsible for determining whether an application is in a state where it should begin to receive incoming traffic, a _liveness_ probe is used to determine whether an application is still in an acceptable state. If the liveness probe fails, OpenShift will destroy the pod and replace it with a new one.
-
-In our case we will implement the health check logic in a REST endpoint and let Thorntail publish that logic on the `/health` endpoint for use with OpenShift.
-
-**Add `monitor` fraction**
-
-First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
-
-Thorntail includes the `monitor` fraction which automatically adds health check infrastructure to your
-application when it is included as a fraction in the project. Open the file to insert the new dependencies
-into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
-
-~~~xml
-<dependency>
-    <groupId>org.wildfly.swarm</groupId>
-    <artifactId>monitor</artifactId>
-</dependency>
-~~~
-
-By adding the `monitor` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
-
-## Define Health Check Endpoint
-
-We are now ready to define the logic of our health check endpoint.
-
-**1. Create empty Java class**
-
-The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
-
-Methods in this new class will be annotated with both the JAX-RS annotations as well as [Thorntail's `@Health` annotation](https://wildfly-swarm.gitbooks.io/wildfly-swarm-users-guide/content/advanced/monitoring.html), indicating it should be used as a health check endpoint.
-
-**2. Add logic**
-
-Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
-Copy the code fragment below into the newly created file to implement the logic.
-
-~~~java
-package com.redhat.coolstore.rest;
-
-import org.eclipse.microprofile.health.HealthCheck;
-import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.Liveness;
-
-import javax.enterprise.context.ApplicationScoped;
-
-@Liveness
-@ApplicationScoped
-
-public class HealthChecks implements HealthCheck {
-
-    @Override
-    public HealthCheckResponse call() {
-        return HealthCheckResponse.up("Simple health check");
-    }
-}
-~~~
-
-The `check()` method exposes an HTTP GET endpoint which will return the status of the service. The logic of this check does a simple query to the underlying database to ensure the connection to it is stable and available. The method is also annotated with Thorntail's `@Health` annotation, which directs Thorntail to expose this endpoint as a health check at `/health`.
-
 ## Congratulations
 
 You have now successfully created your first microservice using Quarkus and implemented a basic RESTful API on top of the database. Most of the code is the same as was found in the monolith, demonstrating how easy it is to migrate existing monolithic Java EE applications to microservices using Quarkus.
 
 In next steps of this scenario we will deploy our application to OpenShift Container Platform and then start adding additional features to take care of various aspects of cloud native microservice development.
+
 
 ## Navigate to OpenShift dev Project
 
@@ -582,10 +595,10 @@ Return to the same sample app UI (without reloading the page) and notice that th
 
 ## Summary
 
-In this scenario you learned a bit more about what Thorntail is, and how it can be used to create modern Java microservice-oriented applications.
+In this scenario you learned a bit more about what Quarkus is, and how it can be used to create modern Java microservice-oriented applications.
 
 You created a new Inventory microservice representing functionality previously implmented in the monolithic CoolStore application. For now this new microservice is completely disconnected from our monolith and is not very useful on its own. In future steps you will link this and other microservices into the monolith to begin the process of [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html).
 
-Thorntail brings in a number of concepts and APIs from the Java EE community, so your existing Java EE skills can be re-used to bring your applications into the modern world of containers, microservices and cloud deployments.
+Quarkus brings in a number of concepts and APIs from the Java EE community, so your existing Java EE skills can be re-used to bring your applications into the modern world of containers, microservices and cloud deployments.
 
-Thorntail is one of many components of Red Hat Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
+Quarkus is one of many components of Red Hat Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
