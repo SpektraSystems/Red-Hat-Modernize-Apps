@@ -446,36 +446,15 @@ oc project ocpuser0XX-coolstore-dev
 
 Let's deploy our new inventory microservice to OpenShift!
 
-**1. Deploy the Database**
+**1. Build and Deploy**
 
-Our production inventory microservice will use an external database (PostgreSQL) to house inventory data.
-First, deploy a new instance of PostgreSQL by executing:
-
-~~~sh
-oc new-app -e POSTGRESQL_USER=inventory \
-           -e POSTGRESQL_PASSWORD=mysecretpassword \
-           -e POSTGRESQL_DATABASE=inventory \
-           openshift/postgresql:latest \
-           --name=inventory-database
-~~~
-
-> **NOTE:** If you change the username and password you also need to update `src/main/fabric8/credential-secret.yml` which contains the credentials used when deploying to OpenShift.
-
-This will deploy the database to our new project. Wait for it to complete:
-
-~~~sh
-oc rollout status -w dc/inventory-database
-~~~
-
-**2. Build and Deploy**
-
-Red Hat Runtimes includes a powerful maven plugin that can take an existing Thorntail application and generate the necessary Kubernetes configuration. You can also add additional config, like ``src/main/fabric8/inventory-deployment.yml`` which defines the deployment characteristics of the app (in this case we declare a few environment variables which map our credentials stored in the secrets file to the application), but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
+Red Hat Runtimes includes a powerful maven plugin that can take an existing Quarkus application and generate the necessary Kubernetes configuration. You can also add additional config, like ``src/main/fabric8/inventory-deployment.yml`` which defines the deployment characteristics of the app , but OpenShift supports a wide range of [Deployment configuration options](https://docs.openshift.org/latest/architecture/core_concepts/deployments.html) for apps).
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
 ~~~sh
 cd /projects/modernize-apps/inventory
-mvn clean fabric8:deploy -Popenshift
+mvn fabric8:deploy -Popenshift
 ~~~
 
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
@@ -488,15 +467,13 @@ After the maven build finishes it will take less than a minute for the applicati
 oc rollout status -w dc/inventory
 ~~~
 
->**NOTE:** Even if the rollout command reports success the application may not be ready yet and the reason for that is that we currently don't have any liveness check configured, but we will add that in the next steps.
-
 **3. Access the application running on OpenShift**
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at
 
-`http://inventory-ocpuser0XX-coolstore-dev.{{ ROUTE_SUFFIX }}`
+`http://inventory-ocpuser0XX-coolstore-dev.{{ ROUTE_SUFFIX }}/services/inventory`
 to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
@@ -523,7 +500,7 @@ You should see a JSON response like:
         }
 ~~~
 
-You can see the definition of the health check from the perspective of OpenShift:
+You can see the definition of the health check from the perspective of OpenShift. Run the below command in the CodeReady Workspace Terminal:
 
 `oc describe dc/inventory | egrep 'Readiness|Liveness'`
 
