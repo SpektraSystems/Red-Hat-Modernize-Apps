@@ -290,82 +290,6 @@ mvn clean package
 
 You should see a **BUILD SUCCESS** in the build logs.
 
-## Add Health Check Fraction
-### What is a Health Check?
-
-A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
-
-Once an application is running, there are no guarantees that it will continue to operate with full functionality. Numerous factors including out of memory errors or a hanging process can cause the application to enter an invalid state. While a _readiness_ probe is only responsible for determining whether an application is in a state where it should begin to receive incoming traffic, a _liveness_ probe is used to determine whether an application is still in an acceptable state. If the liveness probe fails, OpenShift will destroy the pod and replace it with a new one.
-
-In our case we will implement the health check logic in a REST endpoint and let Quarkus publish that logic on the `/health` endpoint for use with OpenShift.
-
-**Add `quarkus-smallrye-health` fraction**
-
-First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
-
-Quarkus includes the `smallrye-health` fraction which automatically adds health check infrastructure to your
-application when it is included as a fraction in the project. Open the file to insert the new dependencies
-into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
-
-~~~xml
-  <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-health</artifactId>
-  </dependency> 
-~~~
-
-By adding the `quarkus-smallrye-health` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
-
-## Define Health Check Endpoint
-
-We are now ready to define the logic of our health check endpoint.
-
-**1. Create empty Java class**
-
-The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
-
-**2. Add logic**
-
-Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
-Copy the code fragment below into the newly created file to implement the logic.
-
-~~~java
-package com.redhat.coolstore.rest;
-
-import org.eclipse.microprofile.health.HealthCheck;
-import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.Liveness;
-
-import javax.enterprise.context.ApplicationScoped;
-
-@Liveness
-@ApplicationScoped
-
-public class HealthChecks implements HealthCheck {
-
-    @Override
-    public HealthCheckResponse call() {
-        return HealthCheckResponse.up("Simple health check");
-    }
-}
-~~~
-
-As you can see health check procedures are defined as implementations of the HealthCheck interface which are defined as CDI beans with the one of the following CDI qualifiers:
-
-@Liveness - the liveness check accessible at /health/live
-
-@Readiness - the readiness check accessible at /health/ready
-
-HealthCheck is a functional interface whose single method call returns a HealthCheckResponse object which can be easily constructed by the fluent builder API shown in the example.
-
-Build and package the Inventory service again using Maven:
-
-~~~sh
-mvn clean package
-~~~~
-
-You should see a **BUILD SUCCESS** in the build logs.
-
 ## Test Locally
 
 Using the Quarkus maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
@@ -471,7 +395,122 @@ to access the sample UI.
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-<kbd>![](images/mono-to-micro-part-1/routelink.png)</kbd>
+> **NOTE**: If you get a '404 Not Found' error, just reload the page a few times until the Inventory UI appears. This
+is due to a lack of health check which you are about to fix!
+
+The UI will refresh the inventory table every 2 seconds, as before.
+
+Back on the OpenShift console, Navigate to _Applications_ -> _Deployments_ -> `inventory` and then click on the top-most `(latest)` deployment in the listing (most likely `#1` or `#2`):
+
+<kbd>![](images/mono-to-micro-part-1/deployment-list.png)</kbd>
+
+Notice OpenShift is warning you that the inventory application has no health checks:
+
+<kbd>![](images/mono-to-micro-part-1/warning.png)</kbd>
+
+In the next steps you will enhance OpenShift's ability to manage the application lifecycle by implementing a _health check pattern_. By default, without health checks (or health _probes_) OpenShift considers services to be ready to accept service requests even before the application is truly ready or if the application is hung or otherwise unable to service requests. OpenShift must be _taught_ how to recognize that our app is alive and ready to accept requests.
+
+## Add Health Check Fraction
+### What is a Health Check?
+
+A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
+
+Once an application is running, there are no guarantees that it will continue to operate with full functionality. Numerous factors including out of memory errors or a hanging process can cause the application to enter an invalid state. While a _readiness_ probe is only responsible for determining whether an application is in a state where it should begin to receive incoming traffic, a _liveness_ probe is used to determine whether an application is still in an acceptable state. If the liveness probe fails, OpenShift will destroy the pod and replace it with a new one.
+
+In our case we will implement the health check logic in a REST endpoint and let Quarkus publish that logic on the `/health` endpoint for use with OpenShift.
+
+**Add `quarkus-smallrye-health` fraction**
+
+First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
+
+Quarkus includes the `smallrye-health` fraction which automatically adds health check infrastructure to your
+application when it is included as a fraction in the project. Open the file to insert the new dependencies
+into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
+
+~~~xml
+  <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+  </dependency> 
+~~~
+
+By adding the `quarkus-smallrye-health` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
+
+## Define Health Check Endpoint
+
+We are now ready to define the logic of our health check endpoint.
+
+**1. Create empty Java class**
+
+The logic will be put into a new Java class. Create a file `modernize-apps/Inventory/src/main/java/com/redhat/coolstore/rest/HealthChecks.java`
+
+**2. Add logic**
+
+Next, let's fill in the class by creating a new RESTful endpoint which will be used by OpenShift to probe our services.
+Copy the code fragment below into the newly created file to implement the logic.
+
+~~~java
+package com.redhat.coolstore.rest;
+
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.Liveness;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@Liveness
+@ApplicationScoped
+
+public class HealthChecks implements HealthCheck {
+
+    @Override
+    public HealthCheckResponse call() {
+        return HealthCheckResponse.up("Simple health check");
+    }
+}
+~~~
+
+As you can see health check procedures are defined as implementations of the HealthCheck interface which are defined as CDI beans with the one of the following CDI qualifiers:
+
+@Liveness - the liveness check accessible at /health/live
+
+@Readiness - the readiness check accessible at /health/ready
+
+HealthCheck is a functional interface whose single method call returns a HealthCheckResponse object which can be easily constructed by the fluent builder API shown in the example.
+
+Build and package the Inventory service again using Maven:
+
+~~~sh
+mvn clean package
+~~~~
+
+You should see a **BUILD SUCCESS** in the build logs.
+
+## Re-Deploy to OpenShift
+
+**1. Rebuild and re-deploy**
+
+With our health check in place, lets rebuild and redeploy using the same command as before:
+
+~~~sh
+mvn fabric8:deploy -Popenshift
+~~~~
+
+
+You should see a **BUILD SUCCESS** at the end of the build output.
+
+During build and deploy, you'll notice Thorntail adding in health checks for you:
+
+~~~sh
+[INFO] F8: f8-healthcheck-quarkus: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 5 seconds
+[INFO] F8: f8-healthcheck-quarkus: Adding liveness probe on port 8080, path='/health', scheme='HTTP', with initial delay 10 seconds
+~~~
+
+To verify that everything is started, run the following command and wait for it report `replication controller "inventory-xxxx" successfully rolled out`
+
+~~~sh
+oc rollout status -w dc/inventory
+~~~
 
 Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Replace {{INVENTORY_ROUTE_HOST}} with the inventory route host.
 
