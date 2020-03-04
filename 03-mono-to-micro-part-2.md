@@ -142,72 +142,6 @@ In next step of this scenario, we will add the logic to be able to read a list o
 
 ## Create Domain Objects
 
-### Creating a test.
-
-Before we create the database repository class to access the data it's good practice to create test cases for the different methods that we will use.
-
-Create the file ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/ProductRepositoryTest.java`` and then copy the below code into the file:
-
-~~~java
-package com.redhat.coolstore.service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.redhat.coolstore.model.Product;
-
-
-@RunWith(SpringRunner.class)
-@SpringBootTest()
-public class ProductRepositoryTest {
-
-//TODO: Insert Catalog Component here
-
-//TODO: Insert test_readOne here
-
-//TODO: Insert test_readAll here
-
-}
-~~~
-
-Next, inject a handle to the future repository class which will provide access to the underlying data repository. It is injected with Spring's `@Autowired` annotation which locates, instantiates, and injects runtime instances of classes automatically, and manages their lifecycle (much like Java EE and it's CDI feature). Copy and paste the following code right below the comment `//TODO: Insert Catalog Component here`:
-
-~~~java
-@Autowired
-private ProductRepository repository;
-~~~
-
-The `ProductRepository` should provide a method called `findById(String id)` that returns a product and collect that from the database. We test this by querying for a product with id "444434" which should have name "Pebble Smart Watch". The pre-loaded data comes from the `modernize-apps/catalog/src/main/resources/schema.sql` file. Copy and paste the following code right below the comment `//TODO: Insert test_readOne here`:
-
-~~~java
-@Test
-public void test_readOne() {
-    Product product = repository.findById("444434");
-    assertThat(product).isNotNull();
-    assertThat(product.getName()).as("Verify product name").isEqualTo("Pebble Smart Watch");
-    assertThat(product.getQuantity()).as("Quantity should be ZERO").isEqualTo(0);
-}
-~~~
-
-The `ProductRepository` should also provide a methods called `readAll()` that returns a list of all products in the catalog. We test this by making sure that the list contains a "Red Fedora", "Forge Laptop Sticker" and "Oculus Rift".Again, copy and paste the following code below the comment `//TODO: Insert test_readAll here`:
-
-~~~java
-@Test
-public void test_readAll() {
-    List<Product> productList = repository.readAll();
-    assertThat(productList).isNotNull();
-    assertThat(productList).isNotEmpty();
-    List<String> names = productList.stream().map(Product::getName).collect(Collectors.toList());
-    assertThat(names).contains("Red Fedora","Forge Laptop Sticker","Oculus Rift");
-}
-~~~
 
 ## Implement the database repository
 
@@ -292,21 +226,6 @@ spring.datasource.driver-class-name=org.h2.Driver
 
 The Spring Data framework will automatically see if there is a schema.sql in the class path and run that when initializing.
 
-Now we are ready to run the test to verify that everything works. Because we created the `ProductRepositoryTest.java` all we have todo is to run:
-
-~~~sh
-mvn verify
-~~~
-
-
-The test should be successful and you should see **BUILD SUCCESS**, which means that we can read that our repository class works as as expected.
-
-## Congratulations
-
-You have now successfully executed the second step in this scenario.
-
-Now you've seen how to use Spring Data to collect data from the database and how to use a local H2 database for development and testing.
-
 In next step of this scenario, we will add the logic to expose the database content from REST endpoints using JSON format.
 
 ## Create Catalog Service
@@ -355,89 +274,6 @@ public class CatalogService {
 
 As you can see there is a number of **TODO** in the code, and later we will use these placeholders to add logic for calling the Inventory Client to get the quantity. However for the moment we will ignore these placeholders.
 
-Now we are ready to create the endpoints that will expose REST service. Let's again first start by creating a test case for our endpoint. We need to endpoints, one that exposes for GET calls to `/services/products` that will return all product in the catalog as JSON array, and the second one exposes GET calls to `/services/product/{prodId}` which will return a single Product as a JSON Object. Let's again start by creating a test case.
-
-Create the test case by opening: `modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`
-
-Add the following code to the test case and make sure to review it so that you understand how it works.
-
-~~~java
-package com.redhat.coolstore.service;
-
-import com.redhat.coolstore.model.Inventory;
-import com.redhat.coolstore.model.Product;
-import io.specto.hoverfly.junit.rule.HoverflyRule;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static io.specto.hoverfly.junit.dsl.HttpBodyConverter.json;
-import static io.specto.hoverfly.junit.dsl.ResponseCreators.success;
-import static io.specto.hoverfly.junit.dsl.ResponseCreators.serverError;
-import static io.specto.hoverfly.junit.dsl.matchers.HoverflyMatchers.startsWith;
-import static org.assertj.core.api.Assertions.assertThat;
-import static io.specto.hoverfly.junit.core.SimulationSource.dsl;
-import static io.specto.hoverfly.junit.dsl.HoverflyDsl.service;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CatalogEndpointTest {
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-//TODO: Add ClassRule for HoverFly Inventory simulation
-
-    @Test
-    public void test_retriving_one_proudct() {
-        ResponseEntity<Product> response
-                = restTemplate.getForEntity("/services/product/329199", Product.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody())
-                .returns("329199",Product::getItemId)
-                .returns("Forge Laptop Sticker",Product::getName)
-//TODO: Add check for Quantity
-                .returns(8.50,Product::getPrice);
-    }
-
-
-    @Test
-    public void check_that_endpoint_returns_a_correct_list() {
-
-        ResponseEntity<List<Product>> rateResponse =
-                restTemplate.exchange("/services/products",
-                        HttpMethod.GET, null, new ParameterizedTypeReference<List<Product>>() {
-                        });
-
-        List<Product> productList = rateResponse.getBody();
-        assertThat(productList).isNotNull();
-        assertThat(productList).isNotEmpty();
-        List<String> names = productList.stream().map(Product::getName).collect(Collectors.toList());
-        assertThat(names).contains("Red Fedora","Forge Laptop Sticker","Oculus Rift");
-
-        Product fedora = productList.stream().filter( p -> p.getItemId().equals("329299")).findAny().get();
-        assertThat(fedora)
-                .returns("329299",Product::getItemId)
-                .returns("Red Fedora", Product::getName)
-//TODO: Add check for Quantity
-                .returns(34.99,Product::getPrice);
-    }
-
-}
-~~~
-
 Now we are ready to implement the `CatalogEndpoint`.
 
 Start by creating the file by opening: ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/CatalogEndpoint.java``
@@ -478,13 +314,6 @@ public class CatalogEndpoint {
 ~~~
 
 The Spring MVC Framework uses Jackson by default to serialize or map Java objects to JSON and vice versa. Because Jackson extends upon JAXB and can automatically parse simple Java structures and parse them into JSON and vice verse and since our `Product.java` is very simple and only contains basic attributes we do not need to tell Jackson how to parse between object and JSON.
-
-Now you can run the `CatalogEndpointTest` and verify that it works.
-
-~~~sh
-mvn verify -Dtest=CatalogEndpointTest
-~~~
-
 
 Since we now have endpoints that returns the catalog we can also start the service and load the default page again, which should now return the products.
 
@@ -541,55 +370,6 @@ Our problem is that the user interface requires data from two services when call
 3. **Service-to-Service** - Depending on use-case and preferences another solution would be to do service-to-service calls instead. In our case means that the Catalog Service would call the Inventory service using REST to retrieve the inventory status and include that in the response.
 
 There are no right or wrong answers here, but since this is a workshop on application modernization using Red Hat Runtimes, we will not choose option 1 or 2 here. Instead we are going to use option 3 and extend our Catalog to call the Inventory service.
-
-## Extending the test
-
-In the [Test-Driven Development](https://en.wikipedia.org/wiki/Test-driven_development) style, let's first extend our test to test the Inventory functionality (which doesn't exist).
-
-Open ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` again.
-
-Now at the markers `//TODO: Add check for Quantity` add the following line:
-
-~~~java
-.returns(9999,Product::getQuantity)
-~~~
-
-And add it to the second test as well at the remaining `//TODO: Add check for Quantity` marker:
-
-~~~java
-.returns(9999,Product::getQuantity)
-~~~
-
-Now if we run the test it **should fail**!. Run the bfollowing command to test :
-
-``mvn verify``
-
-It should fail:
-
-~~~sh
-Tests run: 4, Failures: 2, Errors: 0, Skipped: 0
-
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-~~~
-
-Again the test fails because we are trying to call the Inventory service which is not running. We will soon implement the code to call the inventory service, but first we need a way to test this service without having the inventory service to be up an running. For that we are going to use an API Simulator called [HoverFly](http://hoverfly.io) and particular it's capability to simulate remote APIs. HoverFly is very convenient to use with Unit test and all we have to do is to add a `ClassRule` that will simulate all calls to inventory. Open the file to insert the code at the `//TODO: Add ClassRule for HoverFly Inventory simulation` marker:
-
-~~~java
-@ClassRule
-public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(dsl(
-        service("inventory:8080")
-//                    .andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")
-                .get(startsWith("/services/inventory"))
-//                    .willReturn(serverError())
-                .willReturn(success(json(new Inventory("9999",9999))))
-
-));
-~~~
-
-This `ClassRule` means that if our tests are trying to call our inventory url Howeverfly will intercept this and respond with our hard coded response instead.
-
 **Implementing the Inventory Client**
 
 Since we now have a nice way to test our service-to-service interaction we can now create the client that calls the Inventory. Netflix has provided some nice extensions to the Spring Framework that are mostly captured in the Spring Cloud project, however Spring Cloud is mainly focused on Pivotal Cloud Foundry and because of that Red Hat and others have contributed Spring Cloud Kubernetes to the Spring Cloud project, which enables the same functionallity for Kubernetes based platforms like OpenShift.
@@ -665,20 +445,7 @@ productList.parallelStream()
             });
 ~~~
 
->**NOTE:** The lambda expression to update the product list uses a `parallelStream`, which means that it will process the inventory calls asynchronously, which will be much faster than using synchronous calls. Optionally when we run the test you can test with both `parallelStream()` and `stream()` just to see the difference in how long the test takes to run.
-
-We are now ready to test the service
-
-~~~sh
-mvn verify
-~~~
-
-So even if we don't have any inventory service running we can still run our test. However to actually run the service using `mvn spring-boot:run` we need to have an inventory service or the calls to `/services/products/` will fail. We will fix this in the next step
-
-## Congratulations
-You now have the framework for retrieving products from the product catalog and enriching the data with inventory data from
-an external service. But what if that external inventory service does not respond? That's the topic for the next step.
-
+>**NOTE:** The lambda expression to update the product list uses a `parallelStream`, which means that it will process the inventory calls asynchronously, which will be much faster than using synchronous calls. 
 ## Create a fallback for inventory
 
 In the previous step we added a client to call the Inventory service. Services calling services is a common practice in Microservices Architecture, but as we add more and more services the likelihood of a problem increases dramatically. Even if each service has 99.9% update, if we have 100 of services our estimated up time will only be ~90%. We therefor need to plan for failures to happen and our application logic has to consider that dependent services are not responding.
@@ -705,64 +472,6 @@ After creating the fallback factory all we have to do is to tell Feign to use th
 @FeignClient(name="inventory",fallbackFactory = InventoryClient.InventoryClientFallbackFactory.class)
 ~~~
 
-**Test the Fallback**
-
-Now let's see if we can test the fallback. Optimally we should create a different test that fails the request and then verify the fallback value, however in because we are limited in time we are just going to change our test so that it returns a server error and then verify that the test fails.
-
-Open ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and change the following lines:
-
-~~~java
-@ClassRule
-public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(dsl(
-        service("inventory:8080")
-//                    .andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")
-                .get(startsWith("/services/inventory"))
-//                    .willReturn(serverError())
-                .willReturn(success(json(new Inventory("9999",9999))))
-
-));
-~~~
-
-TO
-
-~~~java
-@ClassRule
-public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(dsl(
-        service("inventory:8080")
-//                    .andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")
-                .get(startsWith("/services/inventory"))
-                .willReturn(serverError())
-//                    .willReturn(success(json(new Inventory("9999",9999))))
-
-));
-~~~
-
-Notice that the Hoverfly Rule will now return serverError for all request to inventory.
-
-Now if you run ``mvn verify -Dtest=CatalogEndpointTest`` the test will fail with the following error message:
-
-~~~sh
-Failed tests:   test_retriving_one_proudct(com.redhat.coolstore.service.CatalogEndpointTest): expected:<[9999]> but was:<[-1]>
-~~~
-
-So since even if our inventory service fails we are still returning inventory quantity -1. The test fails because we are expecting the quantity to be 9999.
-
-Change back the class rule by re-commenting out the `.willReturn(serverError())` line so that we don't fail the tests like this:
-
-~~~java
-@ClassRule
-public static HoverflyRule hoverflyRule = HoverflyRule.inSimulationMode(dsl(
-        service("inventory:8080")
-//                    .andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")
-                .get(startsWith("/services/inventory"))
-//                    .willReturn(serverError())
-                .willReturn(success(json(new Inventory("9999",9999))))
-
-));
-~~~
-
-Make sure the test works again by running ``mvn verify -Dtest=CatalogEndpointTest``
-
 **Slow running services**
 Having fallbacks is good but that also requires that we can correctly detect when a dependent services isn't responding correctly. Besides from not responding a service can also respond slowly causing our services to also respond slow. This can lead to cascading issues that is hard to debug and pinpoint issues with. We should therefore also have sane defaults for our services. You can add defaults by adding it to the configuration.
 
@@ -774,22 +483,6 @@ And add this line to it at the `#TODO: Set timeout to for inventory to 500ms` ma
 hystrix.command.inventory.execution.isolation.thread.timeoutInMilliseconds=500
 ~~~
 
-Open ``modernize-apps/catalog/src/test/java/com/redhat/coolstore/service/CatalogEndpointTest.java`` and un-comment the `.andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")`
-
-Now if you run ``mvn verify -Dtest=CatalogEndpointTest`` the test will fail with the following error message:
-
-~~~sh
-Failed tests:   test_retriving_one_proudct(com.redhat.coolstore.service.CatalogEndpointTest): expected:<[9999]> but was:<[-1]>
-~~~
-
-This shows that the timeout works nicely. However, since we want our test to be successful **you should now comment out** `.andDelay(2500, TimeUnit.MILLISECONDS).forMethod("GET")` again and then verify that the test works by executing:
-
-``mvn verify -Dtest=CatalogEndpointTest``
-
-## Congratulations
-You have now successfully executed the fifth step in this scenario.
-
-In this step you've learned how to add Fallback logic to your class and how to add timeout to service calls.
 
 In the next step we now test our service locally before we deploy it to OpenShift.
 
