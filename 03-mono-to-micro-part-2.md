@@ -196,7 +196,7 @@ private RowMapper<Product> rowMapper = (rs, rowNum) -> new Product(
         rs.getDouble("price"));
 ~~~
 
-Now we are ready to create the methods that are used in the test. Let's start with the `readAll()`. It should return a `List<Product>` and then we can write the query as `SELECT * FROM catalog` and use the rowMapper to map that into `Product` objects. Our method should look like this (copy and paste the following code under the comment `//TODO: Create a method for returning all products`):
+Now we are ready to create the methods. Let's start with the `readAll()`. It should return a `List<Product>` and then we can write the query as `SELECT * FROM catalog` and use the rowMapper to map that into `Product` objects. Our method should look like this (copy and paste the following code under the comment `//TODO: Create a method for returning all products`):
 
 ~~~java
 public List<Product> readAll() {
@@ -204,7 +204,7 @@ public List<Product> readAll() {
 }
 ~~~
 
-The `ProductRepositoryTest` also used another method called `findById(String id)` that should return a Product. The implementation of that method using the `JdbcTemplate` and `RowMapper` looks like this (copy and paste the following code under the comment `//TODO: Create a method for returning one product`):
+The implementation of the method using the `JdbcTemplate` and `RowMapper` return the Product (copy and paste the following code under the comment `//TODO: Create a method for returning one product`):
 
 ~~~java
 public Product findById(String id) {
@@ -589,7 +589,7 @@ inventory.ribbon.listOfServers=inventory:8080
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
-`mvn package fabric8:deploy -Popenshift -DskipTests`
+`mvn package fabric8:deploy -Popenshift`
 
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the
 end of the build output.
