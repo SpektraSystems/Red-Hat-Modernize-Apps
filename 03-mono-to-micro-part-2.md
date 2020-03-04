@@ -552,36 +552,22 @@ From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-cool
 
 Now that you've logged into OpenShift, let's deploy our new catalog microservice:
 
-**Deploy the Database**
-
-Our production catalog microservice will use an external database (PostgreSQL) to house inventory data.
-First, deploy a new instance of PostgreSQL by executing:
-
-~~~sh
-oc new-app -e POSTGRESQL_USER=catalog \
-             -e POSTGRESQL_PASSWORD=mysecretpassword \
-             -e POSTGRESQL_DATABASE=catalog \
-             openshift/postgresql:latest \
-             --name=catalog-database
-~~~
-
 > **NOTE:** If you change the username and password you also need to update `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` which contains
 the credentials used when deploying to OpenShift.
 
-This will deploy the database to our new project. Wait for it to complete:
 
-`oc rollout status -w dc/catalog-database`
-
-**Update configuration**
+**Update the Azure PostgreSQL database details**
 Create the file : `modernize-apps/catalog/src/main/resources/application-openshift.properties`
 
-Copy the following content to the file:
+Copy the following content to the file and replace {Azure PostgreSQL Hostname} with the value provided in the environment details page:
 
 ~~~java
-spring.datasource.url=jdbc:postgresql://${project.artifactId}-database:5432/catalog
+spring.datasource.url=jdbc:postgresql://{Azure PostgreSQL HostName}:5432/catalog?ssl=true&sslmode=require
 spring.datasource.initialization-mode=always
 inventory.ribbon.listOfServers=inventory:8080
 ~~~
+
+Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the username and password with the Azure PostgreSQL username and password provided in the environment details page.
 
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 
