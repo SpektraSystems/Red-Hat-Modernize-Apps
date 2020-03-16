@@ -154,7 +154,6 @@ public class Inventory implements Serializable {
 
 Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
 
-Examine `modernize-apps/inventory/src/main/resources/application.properties` to see  the database connection details for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
 When using Hibernate ORM in Quarkus, you don’t need to have a `persistence.xml` resource to configure it.
 
 Using such a classic configuration file is an option, but unnecessary unless you have specific advanced needs; so we’ll see first how Hibernate ORM can be configured without a `persistence.xml` resource.
@@ -163,6 +162,8 @@ In Quarkus, you just need to:
 
 add your configuration settings in `application.properties`.
 An Azure PostgreSQL database is used in this scenario for local development and the openshift deployment.
+
+Examine `modernize-apps/inventory/src/main/resources/application.properties` to see  the database connection details for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
 
 Open `modernize-apps/inventory/src/main/resources/application.properties` and update it with your `Azure PostgreSQL Host Name`, `Your User ID (ocpuser0XX)`, `PostgreSQL Username` and `Password`.
 
