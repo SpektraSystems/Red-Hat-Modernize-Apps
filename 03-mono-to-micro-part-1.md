@@ -70,7 +70,7 @@ Now let's write some code and create a domain model, service interface and a RES
 
 With our skeleton project in place, let's get to work defining the business logic.
 
-The first step is to define the model (definition) of an Inventory object. Since Thorntail uses JPA, we can re-use the same model definition from our monolithic application - no need to re-write or re-architect!
+The first step is to define the model (definition) of an Inventory object. 
 
 Using the CodeReady Workspaces File Explorer interface, create a new file named `Inventory.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/model` for the Inventory Java class in package `com.redhat.coolstore.model` with the following code, identical to the monolith code:
 
@@ -152,7 +152,7 @@ public class Inventory implements Serializable {
 }
 ~~~
 
-Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
+Review the **Inventory** domain model. annotate your entities with **@Entity** and any other mapping annotation as usual, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
 
 When using Hibernate ORM in Quarkus, you don’t need to have a `persistence.xml` resource to configure it.
 
@@ -509,7 +509,7 @@ mvn fabric8:deploy -Popenshift
 
 You should see a **BUILD SUCCESS** at the end of the build output.
 
-During build and deploy, you'll notice Thorntail adding in health checks for you:
+During build and deploy, you'll notice Quarkus adding in health checks for you:
 
 ~~~sh
 [INFO] F8: f8-healthcheck-quarkus: Adding readiness probe on port 8080, path='/health', scheme='HTTP', with initial delay 5 seconds
