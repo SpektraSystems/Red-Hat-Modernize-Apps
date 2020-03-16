@@ -68,7 +68,7 @@ Now let's write some code and create a domain model, service interface and a RES
 
 ## Create Inventory Domain
 
-With our skeleton project in place, let\'s get to work defining the business logic.
+With our skeleton project in place, let's get to work defining the business logic.
 
 The first step is to define the model (definition) of an Inventory object. Since Thorntail uses JPA, we can re-use the same model definition from our monolithic application - no need to re-write or re-architect!
 
@@ -154,11 +154,17 @@ public class Inventory implements Serializable {
 
 Review the **Inventory** domain model and note the JPA annotations on this class. **@Entity** marks the class as a JPA entity, **@Table** customizes the table creation process by defining a table name and database constraint and **@Id** marks the primary key for the table.
 
-Thorntail configuration is done to a large extent through detecting the intent of the developer and automatically adding the required dependencies configurations to make sure it can get out of the way and developers can be productive with their code rather than Googling for configuration snippets. As an example, configuration database access with JPA is done by adding the JPA fraction and a database driver to the pom.xml, and then configuring the database connection details in `modernize-apps/inventory/src/main/resources/project-stages.yml`.
+Examine `modernize-apps/inventory/src/main/resources/application.properties` to see  the database connection details for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
+When using Hibernate ORM in Quarkus, you don’t need to have a `persistence.xml` resource to configure it.
 
-Examine `modernize-apps/inventory/src/main/resources/META-INF/persistence.xml` to see the JPA datasource configuration for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
+Using such a classic configuration file is an option, but unnecessary unless you have specific advanced needs; so we’ll see first how Hibernate ORM can be configured without a `persistence.xml` resource.
 
-Examine `modernize-apps/inventory/src/main/resources/project-stages.yml` to see the database connection details. An in-memory H2 database is used in this scenario for local development and in the following steps will be replaced with a PostgreSQL database with credentials coming from an OpenShift _secret_. Be patient! More on that later.
+In Quarkus, you just need to:
+
+add your configuration settings in `application.properties`.
+An Azure PostgreSQL database is used in this scenario for local development and the openshift deployment.
+
+Open `modernize-apps/inventory/src/main/resources/application.properties` and update it with your `Azure PostgreSQL Host Name`, `Your User ID (ocpuser0XX)`, `PostgreSQL Username` and `Password`.
 
 Build and package the Inventory service using Maven to make sure your code compiles:
 
@@ -209,18 +215,9 @@ public class InventoryService {
 }
 ~~~
 
-Review the **InventoryService** class and note the EJB and JPA annotations on this class:
+Review the **InventoryService** class and note the JPA annotations on this class:
 
-* **@Stateless** marks the class as a _Stateless EJB_, and its name suggests, means that instances of the class do not maintain state, which means they can be created and destroyed at will by the management system, and be re-used by multiple clients without instantiating multiple copies of the bean. Because they can support multiple clients, stateless EJBs can offer better scalability for applications that require large numbers of clients.
-
-* **@PersistenceContext** objects are created by the Java EE server based on the JPA definition in `persistence.xml` that we examined earlier, so to use it at runtime it is injected by this annotation and can be used to issue queries against the underlying database backing the **Inventory** entities.
-
-This service class exposes a few APIs that we'll use later:
-
-* **isAlive()** - A simple health check to determine if this service class is ready to accept requests. We will use this later on when defining OpenShift health checks.
-
-* **getInventory()** and **getAllInventory()** are APIs used to query for one or all of the stored **Inventory* entities. We'll use this later on when implementing a RESTful endpoint.
-
+Hibernate ORM is the de facto standard JPA implementation and offers you the full breadth of an Object Relational Mapper. It works beautifully in Quarkus.
 Re-Build and package the Inventory service using Maven to make sure your code compiles:
 
 ~~~sh
@@ -231,7 +228,9 @@ You should see a **BUILD SUCCESS** in the build logs. If builds successfully, co
 
 ## Create RESTful Endpoints
 
-Thorntail (ex-WildFly Swarm) uses JAX-RS standard for building REST services. Create a new file named `InventoryEndpoint.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/rest` for the InventoryEndpoint Java class in `package com.redhat.coolstore.rest` with the following content:
+Dependency injection in Quarkus is based on ArC which is a CDI-based dependency injection solution tailored for Quarkus' architecture. You can learn more about it in the Contexts and Dependency Injection guide.
+
+ArC comes as a dependency of quarkus-resteasy so you already have it handy. Create a new file named `InventoryEndpoint.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/rest` for the InventoryEndpoint Java class in `package com.redhat.coolstore.rest` with the following content:
 
 ~~~java
 package com.redhat.coolstore.rest;
