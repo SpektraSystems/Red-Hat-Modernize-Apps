@@ -163,9 +163,19 @@ In Quarkus, you just need to:
 add your configuration settings in `application.properties`.
 An Azure PostgreSQL database is used in this scenario for local development and the openshift deployment.
 
-Examine `modernize-apps/inventory/src/main/resources/application.properties` to see  the database connection details for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/META-INF/load.sql` to import initial data into the database.
+Examine `modernize-apps/inventory/src/main/resources/application.properties` to see  the database connection details for this project. Also note that the configurations uses `modernize-apps/inventory/src/main/resources/load.sql` to import initial data into the database.
 
 Open `modernize-apps/inventory/src/main/resources/application.properties` and update it with your `Azure PostgreSQL Host Name`, `Your User ID (ocpuser0XX)`, `PostgreSQL Username` and `Password`.
+
+```
+quarkus.datasource.url = jdbc:postgresql://{Azure PostgreSQL Host Name}:5432/{ocpuser0XX}?ssl=true&sslmode=require
+quarkus.datasource.driver = org.postgresql.Driver
+quarkus.datasource.username ={PostgreSQL Username}
+quarkus.datasource.password = {PostgreSQL Password}
+
+quarkus.hibernate-orm.database.generation=drop-and-create
+quarkus.hibernate-orm.sql-load-script=load.sql
+```
 
 Build and package the Inventory service using Maven to make sure your code compiles:
 
