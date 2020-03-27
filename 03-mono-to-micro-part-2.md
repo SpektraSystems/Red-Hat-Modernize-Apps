@@ -567,8 +567,19 @@ spring.datasource.initialization-mode=always
 inventory.ribbon.listOfServers=inventory:8080
 ~~~
 
-Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the username and password with the Azure PostgreSQL username and password provided in the environment details page.
+Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the `username` and `password` with the `Azure PostgreSQL username and password` provided in the environment details page.
 
+~~~
+apiVersion: "v1"
+kind: "Secret"
+metadata:
+  name: "catalog-database-secret"
+stringData:
+  #Update the value with Azure PostgreSQL username.
+  user: ""
+  #Update the value with Azure PostgreSQL password.
+  password: ""
+~~~
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 
 **Build and Deploy**
