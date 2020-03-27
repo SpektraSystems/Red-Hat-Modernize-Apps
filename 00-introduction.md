@@ -17,7 +17,7 @@ ourselves are in love with CodeReady Workspaces and highly recommend it.
 
 OpenShift ships with a web-based console that will allow users to
 perform various tasks via a browser.  To get a feel for how the web console
-works, open your browser and go to the ***OpenShift Web Console url** provided in the environment details page.
+works, open your browser and go to the **OpenShift Web Console url** provided in the environment details page.
 
 The first screen you will see is the authentication screen. Enter your **Azure username** and **Azure password** and
 then log in.
