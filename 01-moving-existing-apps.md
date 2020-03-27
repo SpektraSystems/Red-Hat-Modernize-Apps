@@ -702,7 +702,7 @@ This will take you to the project overview. There's nothing there yet, but that'
 
 **3. Deploy the monolith**
 
-We'll use the CLI to deploy the components for our monolith. To deploy the monolith template using the CLI, execute the following commands:
+We'll use the CLI to deploy the components for our monolith. We will enter the CLI commands from the CodeReady Workspaces Terminal window. Before issuing these CLI commands, remember to log in to the OpenShift cluster by following the instructions from the "Introduction" lab you completed earlier. To deploy the monolith template using the CLI, execute the following commands:
 
 From the CodeReady Workspaces Terminal window, switch to the dev project you created earlier:
 
