@@ -11,7 +11,7 @@ To implement this, we are going to use the Spring Framework. The reason for usin
 
 The goal is to produce something like:
 
-<kbd>![](images/mono-to-micro-part-2/goal.png)</kbd>
+<kbd>![](images/AROLatestImages/ImageCatalog.JPG)</kbd>
 
 ## What is Spring Framework?
 
@@ -119,23 +119,20 @@ Run the application by executing the below command:
 Wait for it to complete startup and report Started RestApplication in ***** seconds (JVM running for ******)
 
 **3. Verify the application**
+Once the application is live, you will get a pop-up in the bottom-right corner of the terminal. Click on **Yes** button to get the link of the application
 
-Once the application is live, you will get a pop-up in the bottom right corner of the terminal. Click on **yes** button to get the link to open the application.
+<kbd>![](images/AROLatestImages/cataloglinkyes.jpg)</kbd>
 
+Then, click on **Open Link** to open the application
 
-
-In the next pop-up click on Open Link to open the application.
-
-cataloglinkyes.jpg
+<kbd>![](images/AROLatestImages/catalogopenlink.jpg)</kbd>
 
 In the CodeReady workspace open a new terminal and run the below command:
 ```
 curl http://localhost:8081
 
 ```
-You should now see the HTML code.
-
-
+You should now see the html page HTML.
 
 > **NOTE:** The service calls to get products from the catalog doesn't work yet. Be patient! We will work on it in the next steps.
 
@@ -620,7 +617,7 @@ route URL at
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-<kbd>![](images/mono-to-micro-part-2/routelink.png)</kbd>
+<kbd>![](images/AROLatestImages/catalogpod.jpg)</kbd>
 
 The UI will refresh the catalog table every 2 seconds, as before.
 
@@ -636,7 +633,7 @@ So far we haven't started [strangling the monolith](https://www.martinfowler.com
 
 For the home page the product list is loaded via a REST call to *http://<monolith-hostname>/services/products*. At the moment calls to that URL will still hit product catalog in the monolith. By using a [path based route](https://docs.openshift.com/container-platform/3.7/architecture/networking/routes.html#path-based-routes) in OpenShift we can route these calls to our newly created catalog services instead and end up with something like:
 
-<kbd>![](images/mono-to-micro-part-2/goal.png)</kbd>
+<kbd>![](images/AROLatestImages/ImageCatalog.JPG)</kbd>
 
 Flow the steps below to create a path based route.
 
@@ -655,7 +652,9 @@ www       www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   
 
 My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
 
-**2. Open the OpenShift Console for "Coolstore Monolith Dev" and navigate to Applications -> Routes
+**2. Open the OpenShift Console for "Coolstore Monolith Dev" and navigate to Networking -> Routes
+
+<kbd>![](images/AROLatestImages/catalogroute.jpg)</kbd>
 
 **3. Click on Create Route, and set**
 
@@ -664,7 +663,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will 
 * **Path**: `/services/products`
 * **Service**: `catalog`
 
-<kbd>![](images/mono-to-micro-part-2/route-vals.png)</kbd>
+<kbd>![](images/AROLatestImages/catalogredirect.jpg)</kbd>
 
 Leave other values set to their defaults, and click **Create**
 
