@@ -74,21 +74,6 @@ Copy the entire login command, including your login token, to your clipboard.
 
 Then, go to the CodeReady Workspaces Terminal window and paste the login command you copied in the previous step, and press **enter**
 
-You may see the following output:
-
-~~~shell
-The server uses a certificate signed by an unknown authority.
-You can bypass the certificate check, but any data you send to the server could be intercepted by others.
-Use insecure connections? (y/n):
-~~~
-
-Enter in `Y` to use a potentially insecure connection.  The reason you received
-this message is because we are using a self-signed certificate for this
-workshop, but we did not provide you with the CA certificate that was generated
-by OpenShift. In a real-world scenario, either OpenShift's certificate would be
-signed by a standard CA (eg: Thawte, Verisign, StartSSL, etc.) or signed by a
-corporate-standard CA that you already have installed on your system.
-
 Congratulations, you are now authenticated to the OpenShift server.
 
 Now you are ready to get started with the labs!
