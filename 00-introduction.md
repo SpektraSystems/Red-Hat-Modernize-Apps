@@ -58,13 +58,21 @@ For the rest of these labs, anytime you need to run a command in a terminal, you
 
 ## Explore OpenShift with OpenShift CLI
 
-In order to login, we will use the `oc` command and then specify the server that we
-want to authenticate to.
+In order to login, we will use the `oc` command. We can get the login command from OpenShift Console.
 
-Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**. This will copy the entire login command, including your login token, to your clipboard.
+Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**. 
+
+<kbd>![](images/AROLatestImages/copylogin.jpg)</kbd>
+
+Then, it will open a new browser tab with a Display Token button. You can click on this button to get the login command.
+
+<kbd>![](images/AROLatestImages/displaytoken.jpg)</kbd>
+
+Copy the entire login command, including your login token, to your clipboard.
+
+<kbd>![](images/AROLatestImages/copytoken.jpg)</kbd>
+
 Then, go to the CodeReady Workspaces Terminal window and paste the login command you copied in the previous step, and press **enter**
-
-<kbd>![](images/getting-started/oc-login.jpg)</kbd>
 
 You may see the following output:
 
