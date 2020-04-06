@@ -119,13 +119,6 @@ Run the application by executing the below command:
 Wait for it to complete startup and report Started RestApplication in ***** seconds (JVM running for ******)
 
 **3. Verify the application**
-Once the application is live, you will get a pop-up in the bottom-right corner of the terminal. Click on **Yes** button to get the link of the application
-
-<kbd>![](images/AROLatestImages/cataloglinkyes.jpg)</kbd>
-
-Then, click on **Open Link** to open the application
-
-<kbd>![](images/AROLatestImages/catalogopenlink.jpg)</kbd>
 
 In the CodeReady workspace open a new terminal and run the below command:
 ```
@@ -330,7 +323,16 @@ Start the application by running the following command:
 mvn spring-boot:run
 ~~~~
 
-Wait for the application to start. Then we can verify the endpoint by running the following command in a new terminal (Note the link below will execute in a second terminal)
+Once the application is live, you will get a pop-up in the bottom-right corner of the terminal. Click on **Yes** button to get the link of the application
+
+<kbd>![](images/AROLatestImages/cataloglinkyes.jpg)</kbd>
+
+Then, click on **Open Link** to open the application
+
+<kbd>![](images/AROLatestImages/catalogopenlink.jpg)</kbd>
+
+
+Or, we can verify the endpoint by running the following command in a new terminal (Note the link below will execute in a second terminal)
 
 ``curl http://localhost:8081/services/products ; echo``
 
