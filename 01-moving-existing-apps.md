@@ -140,17 +140,19 @@ migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP
 
 **3. View the results**
 
-Next, go to the **project explorer**. Expand `rhamt-reports/monolith` on the left-hand side. Right click on `index.html` and click on **preview** to view the landing page.
+Next, go to the **project explorer**. Expand `rhamt-reports/monolith` on the left-hand side. Right click on `index.html` and click on **Open with** and then select **preview** to view the landing page.
+
+<kbd>![](images/AROLatestImages/reportpreview.jpg)</kbd>
 
 You should see the landing page for the report:
 
-<kbd>![](images/moving-existing-apps/landingpage.png)</kbd>
+<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
 
 The main landing page of the report lists the applications that were processed. Each row contains a high-level overview of the story points, number of incidents, and technologies encountered in that application.
 
 Click on the `monolith` link to access details for the project:
 
-<kbd>![](images/moving-existing-apps/project-overview.png)</kbd>
+<kbd>![](images/AROLatestImages/monolithgraph.jpg)</kbd>
 
 ## Understanding the report
 
@@ -190,7 +192,7 @@ In this step we will migrate some Weblogic-specific code in the app to use stand
 
 Open the Issues report
 
-<kbd>![](images/moving-existing-apps/project-issues.png)</kbd>
+<kbd>![](images/AROLatestImages/issues.jpg)</kbd>
 
 RHAMT provides helpful links to understand the issue deeper and offer guidance for the migration.
 
@@ -509,7 +511,7 @@ Reload the report web page (right-click on the file `rhamt-reports/monolith/inde
 Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
 You have successfully migrated this app to JBoss EAP, congratulations!
 
-<kbd>![](images/moving-existing-apps/project-issues-story.png)</kbd>
+<kbd>![](images/moving-existing-apps/storypoint0.jpg)</kbd>
 
 ## Migration Complete!
 
@@ -681,7 +683,7 @@ Login using:
 
 You will see the OpenShift landing page:
 
-<kbd>![](images/moving-existing-apps/openshift-landing.png)</kbd>
+<kbd>![](images/moving-existing-apps/createproject.jpg)</kbd>
 
 Click **Create Project**, fill in the fields, and click **Create** (make sure to replace XX with your assigned number):
 
@@ -692,11 +694,13 @@ Click **Create Project**, fill in the fields, and click **Create** (make sure to
 > **NOTE**: YOU **MUST** USE `ocpuser0XX-coolstore-dev` AS THE PROJECT NAME, as this name is referenced later
 on and you will experience failures if you do not name it `ocpuser0XX-coolstore-dev`!
 
-<kbd>![](images/moving-existing-apps/create-dialog.png)</kbd>
+<kbd>![](images/AROLatestImages/createproject.jpg)</kbd>
+<kbd>![](images/AROLatestImages/projectdetails.jpg)</kbd>
 
 Click on the name of the newly-created project:
 
 <kbd>![](images/moving-existing-apps/create-new.png)</kbd>
+<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
 
 This will take you to the project overview. There's nothing there yet, but that's about to change.
 
@@ -725,7 +729,7 @@ Then open up the Monolith Overview page at
 `https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/`
 and verify the monolith template items are created:
 
-<kbd>![](images/moving-existing-apps/no-deployments.png)</kbd>
+<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
 
 You can see the components being deployed on the Project Overview, but notice the **No deployments for Coolstore**. You have not yet deployed the container image built in previous steps, but you'll do that next.
 
@@ -751,7 +755,7 @@ oc start-build coolstore --from-file=deployments/ROOT.war
 
 Check the OpenShift web console and you'll see the application being built:
 
-<kbd>![](images/moving-existing-apps/building.png)</kbd>
+<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
 
 Wait for the build and deploy to complete:
 
@@ -764,14 +768,14 @@ You should eventually see `replication controller "coolstore-1" successfully rol
 
 When it's done you should see the application deployed successfully with blue circles for the database and the monolith:
 
-<kbd>![](images/moving-existing-apps/build-done.png)</kbd>
+<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
 
 Test the application by clicking on the Route link at
 
 `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
-<kbd>![](images/moving-existing-apps/route-link.png)</kbd>
+<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
 
 ## Congratulations!
 
