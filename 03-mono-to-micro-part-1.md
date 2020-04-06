@@ -17,7 +17,7 @@ You will implement one component of the monolith as a Qurkus microservice and mo
 
 The goal is to deploy this new microservice alongside the existing monolith, and then later on we'll tie them together. But after this scenario, you should end up with something like:
 
-<kbd>![](images/AROLatestImages/imageInventory.JPG)</kbd>
+<kbd>![](images/AROLatestImages/imageinventory.jpg)</kbd>
 
 ## What is Quarkus
 
