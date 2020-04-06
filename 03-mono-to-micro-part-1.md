@@ -400,27 +400,14 @@ oc rollout status -w dc/inventory
 **3. Access the application running on OpenShift**
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same
-UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
-route URL at
+UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Go to inventory and open the route URL to see inventory webpage.
 
-`http://inventory-ocpuser0XX-coolstore-dev.{{ ROUTE_SUFFIX }}/services/inventory`
-to access the sample UI.
-
-> You can also access the application through the link on the OpenShift Web Console Overview page.
+<kbd>![](images/AROLatestImages/inventory.JPG)</kbd>
 
 > **NOTE**: If you get a '404 Not Found' error, just reload the page a few times until the Inventory UI appears. This
 is due to a lack of health check which you are about to fix!
 
 The UI will refresh the inventory table every 2 seconds, as before.
-
-Back on the OpenShift console, Navigate to _Applications_ -> _Deployments_ -> `inventory` and then click on the top-most `(latest)` deployment in the listing (most likely `#1` or `#2`):
-
-<kbd>![](images/mono-to-micro-part-1/deployment-list.png)</kbd>
-<kbd>![](images/AROLatestImages/imageInventory.JPG)</kbd>
-
-Notice OpenShift is warning you that the inventory application has no health checks:
-
-<kbd>![](images/mono-to-micro-part-1/warning.png)</kbd>
 
 In the next steps you will enhance OpenShift's ability to manage the application lifecycle by implementing a _health check pattern_. By default, without health checks (or health _probes_) OpenShift considers services to be ready to accept service requests even before the application is truly ready or if the application is hung or otherwise unable to service requests. OpenShift must be _taught_ how to recognize that our app is alive and ready to accept requests.
 
