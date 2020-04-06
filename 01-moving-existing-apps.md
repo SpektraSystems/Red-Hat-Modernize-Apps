@@ -511,7 +511,8 @@ Reload the report web page (right-click on the file `rhamt-reports/monolith/inde
 Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
 You have successfully migrated this app to JBoss EAP, congratulations!
 
-<kbd>![](images/moving-existing-apps/storypoint0.jpg)</kbd>
+<kbd>![](images/AROLatestImages/storypoint0.jpg)</kbd>
+
 
 ## Migration Complete!
 
@@ -697,12 +698,11 @@ on and you will experience failures if you do not name it `ocpuser0XX-coolstore-
 <kbd>![](images/AROLatestImages/createproject.jpg)</kbd>
 <kbd>![](images/AROLatestImages/projectdetails.jpg)</kbd>
 
-Click on the name of the newly-created project:
+Click on the name of the newly-created project. The project Dashboard will look like this : 
 
-<kbd>![](images/moving-existing-apps/create-new.png)</kbd>
-<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
+<kbd>![](images/AROLatestImages/projectdash.jpg)</kbd>
 
-This will take you to the project overview. There's nothing there yet, but that's about to change.
+There's nothing there yet, but that's about to change.
 
 **3. Deploy the monolith**
 
@@ -715,23 +715,18 @@ From the CodeReady Workspaces Terminal window, switch to the dev project you cre
 Run the below commands one by one to import all the required images and the template in to our namespace.
 
 ```
-oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary1.json
+oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
 ```
 
 And finally deploy template:
 
 `oc new-app coolstore-monolith-binary-build`
 
-This will deploy both a PostgreSQL database and JBoss EAP, but it will not start a build for our application.
+This will deploy both PostgreSQL database and JBoss EAP, but it will not start a build for our application.
 
-Then open up the Monolith Overview page at
+You can see the components being deployed on the workloads section, but note that **coolstore** has 0 pods. You have not yet deployed the container image built in previous steps, but you'll do that next.
 
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-dev/`
-and verify the monolith template items are created:
-
-<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
-
-You can see the components being deployed on the Project Overview, but notice the **No deployments for Coolstore**. You have not yet deployed the container image built in previous steps, but you'll do that next.
+<kbd>![](images/AROLatestImages/workload.jpg)</kbd>
 
 **4. Deploy application using Binary build**
 
@@ -755,7 +750,7 @@ oc start-build coolstore --from-file=deployments/ROOT.war
 
 Check the OpenShift web console and you'll see the application being built:
 
-<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
+<kbd>![](images/AROLatestImages/coolstorebuild.jpg)</kbd>
 
 Wait for the build and deploy to complete:
 
@@ -766,16 +761,16 @@ You should eventually see `replication controller "coolstore-1" successfully rol
 
 > If the above command reports `Error from server (ServerTimeout)` then simply re-run the command until it reports success!
 
-When it's done you should see the application deployed successfully with blue circles for the database and the monolith:
+When it's done you should see the status changed to **1 0f 1 pods** for the database and the monolith:
 
-<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
+<kbd>![](images/AROLatestImages/1of1.jpg)</kbd>
 
-Test the application by clicking on the Route link at
+To test the application, Click on Coolstore, select Resources tab and click on the Route link 
 
 `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
-<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
+<kbd>![](images/AROLatestImages/coolstoreroute.jpg)</kbd>
 
 ## Congratulations!
 
