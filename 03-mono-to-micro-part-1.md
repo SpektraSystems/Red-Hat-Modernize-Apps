@@ -572,7 +572,7 @@ From the OpenShift Web Console overview page, click on the route link to open th
 
 This will open up the sample application UI in a new browser tab:
 
-<kbd>![](images/AROLatestImages/inventory.JPG)</kbd>
+<kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
 
 The app will begin polling the inventory as before and report success:
 
@@ -592,16 +592,13 @@ unhealthy.
 
 <kbd>![](images/mono-to-micro-part-1/inventory-fail.png)</kbd>
 
-At this point, return to the OpenShift web console and click on the _Overview_ tab for the project. Notice that the dark blue circle has now gone light blue, indicating the application is failing its _liveness probe_:
-
-<kbd>![](images/mono-to-micro-part-1/notready.png)</kbd>
-<kbd>![](images/AROLatestImages/imageInventory.JPG)</kbd>
+At this point, return to the OpenShift web console and click on the _Overview_ tab for the project. Notice that the dark blue circle has now gone light blue, indicating the application is failing its _liveness probe
 
 After too many liveness probe failures, OpenShift will forcibly kill the pod and container running the service, and spin up a new one to take its place. Once this occurs, the light blue circle should return to dark blue. This should take about 30 seconds.
 
 Return to the same sample app UI (without reloading the page) and notice that the UI has automatically re-connected to the new service and successfully accessed the inventory once again:
 
-<kbd>![](images/AROLatestImages/inventory.JPG)</kbd>
+<kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
 
 
 ## Summary
