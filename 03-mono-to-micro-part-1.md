@@ -17,7 +17,7 @@ You will implement one component of the monolith as a Qurkus microservice and mo
 
 The goal is to deploy this new microservice alongside the existing monolith, and then later on we'll tie them together. But after this scenario, you should end up with something like:
 
-<kbd>![](images/mono-to-micro-part-1/goal.png)</kbd>
+<kbd>![](images/AROLatestImages/imageInventory.JPG)</kbd>
 
 ## What is Quarkus
 
@@ -60,11 +60,9 @@ Once built, the resulting *jar* is located in the **target** directory:
 
 `ls target/*.jar`
 
-The listed jar archive, **inventory-1.0.0-runner.jar** , is an uber-jar with all the dependencies required packaged in the *jar* to enable running the application with **java -jar**. Quarkus also creates a *war* packaging as a standard Java EE web app that could be deployed to any Java EE app server.
+The listed jar archive, **inventory-1.0.0-runner.jar** , is an uber-jar with all the dependencies required packaged in the *jar* to enable running the application with **java -jar**.
 
-Now let's write some code and create a domain model, service interface and a RESTful endpoint to access inventory:
-
-<kbd>![](images/mono-to-micro-part-1/wfswarm-inventory-arch.png)</kbd>
+Now let's write some code and create a domain model, service interface and a RESTful endpoint to access inventory.
 
 ## Create Inventory Domain
 
@@ -319,11 +317,16 @@ Running locally using `quarkus:dev` will use the Azure PostgreSQL database.
 
 **3. Test the application**
 
-Open a second CodeReady Workspaces Terminal window (if a second one is not already open), Navigate to it and run the below command to see the html code deployed.
+Once you run the application a pop will appear. Click on the Open Link button in that pop-up to open the application.
+
+<kbd>![](images/AROLatestImages/inventoryopenlink.jpg)</kbd>
+
+Or open a second CodeReady Workspaces Terminal window (if a second one is not already open) by clicking on New terminal button, Navigate to it and run the below command to see the html code deployed.
 
 ```
 curl http://localhost:8080
 ```
+
 
 This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
 
@@ -413,6 +416,7 @@ The UI will refresh the inventory table every 2 seconds, as before.
 Back on the OpenShift console, Navigate to _Applications_ -> _Deployments_ -> `inventory` and then click on the top-most `(latest)` deployment in the listing (most likely `#1` or `#2`):
 
 <kbd>![](images/mono-to-micro-part-1/deployment-list.png)</kbd>
+<kbd>![](images/AROLatestImages/imageInventory.JPG)</kbd>
 
 Notice OpenShift is warning you that the inventory application has no health checks:
 
