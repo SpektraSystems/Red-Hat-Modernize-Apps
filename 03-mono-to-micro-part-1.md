@@ -402,7 +402,7 @@ oc rollout status -w dc/inventory
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Go to inventory and open the route URL to see inventory webpage.
 
-<kbd>![](images/AROLatestImages/inventory.JPG)</kbd>
+<kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
 
 > **NOTE**: If you get a '404 Not Found' error, just reload the page a few times until the Inventory UI appears. This
 is due to a lack of health check which you are about to fix!
@@ -568,7 +568,7 @@ In the next step we'll exercise the probe and watch as it fails and OpenShift re
 
 From the OpenShift Web Console overview page, click on the route link to open the sample application UI:
 
-<kbd>![](images/mono-to-micro-part-1/routelink.png)</kbd>
+<kbd>![](images/AROLatestImages/inventoryres.jpg)</kbd>
 
 This will open up the sample application UI in a new browser tab:
 
