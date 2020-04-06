@@ -120,12 +120,22 @@ Wait for it to complete startup and report Started RestApplication in ***** seco
 
 **3. Verify the application**
 
+Once the application is live, you will get a pop-up in the bottom right corner of the terminal. Click on **yes** button to get the link to open the application.
+
+
+
+In the next pop-up click on Open Link to open the application.
+
+cataloglinkyes.jpg
+
 In the CodeReady workspace open a new terminal and run the below command:
 ```
 curl http://localhost:8081
 
 ```
-You should now see some HTML.
+You should now see the HTML code.
+
+
 
 > **NOTE:** The service calls to get products from the catalog doesn't work yet. Be patient! We will work on it in the next steps.
 
