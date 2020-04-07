@@ -1119,7 +1119,7 @@ Create the file ``modernize-apps/cart/src/main/fabric8/deployment.yml``
 Add the following content to the file
 
 ~~~yaml
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 kind: Deployment
 metadata:
   name: ${project.artifactId}
@@ -1139,7 +1139,7 @@ Create the file by clicking on open ``modernize-apps/cart/src/main/fabric8/route
 Add the following content:
 
 ~~~yaml
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: ${project.artifactId}
