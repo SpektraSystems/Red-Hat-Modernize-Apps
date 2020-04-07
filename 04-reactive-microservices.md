@@ -1169,7 +1169,7 @@ This sample project includes a simple UI that allows you to access the Inventory
 
 > You can also access the application through the link on the OpenShift Web Console Overview page.
 
-<kbd>![](images/reactive-microservices/routelink.png)</kbd>
+<kbd>![](images/AROLatestImages/cartpod.jpg)</kbd>
 
 ## Congratulations!
 
@@ -1206,7 +1206,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but yours will 
 * **Path**: `/services/cart`
 * **Service**: `cart`
 
-<kbd>![](images/reactive-microservices/route-vals.png)</kbd>
+<kbd>![](images/AROLatestImages/cartredirect.jpg)</kbd>
 
 Leave other values set to their defaults, and click **Save**
 
@@ -1237,7 +1237,3 @@ You have now successfully begun to _strangle_ the monolith. Part of the monolith
 In this scenario, you learned a bit more about what Reactive Systems and Reactive programming are and why it's useful when building Microservices. Note that some of the code in here may have been hard to understand and part of that is that we are not using an IDE, like JBoss Developer Studio (based on Eclipse) or IntelliJ. Both of these have excellent tooling to build Vert.x applications.
 
 You created a new shopping cart microservice almost finalizing the migration from a monolith to microservices. There are a couple of things that are also required. Firstly the checkout of the shopping cart was never implemented, and secondly, the monolith also has an order service. These were removed from this exercise because of time constraints. You have however so far almost completed a migration, so good work. You deserve a promotion. :-)
-
-Your final strangled monolith now looks like:
-
-<kbd>![](images/reactive-microservices/goal.png)</kbd>
