@@ -312,9 +312,9 @@ On to the next challenge!
 
 ## Deploying the Production Environment
 
-In the previous scenarios, you deployed the Coolstore monolith using an OpenShift Template into the `ocpuser0XX-coolstore-dev` Project. The template created the necessary objects (BuildConfig, DeploymentConfig, ImageStreams, Services, and Routes) and gave you as a Developer a "playground" in which to run the app, make changes and debug.
+In the previous scenarios, you deployed the Coolstore monolith using an OpenShift Template into the **ocpuser0XX-coolstore-dev** Project. The template created the necessary objects (BuildConfig, DeploymentConfig, ImageStreams, Services, and Routes) and gave you as a Developer a "playground" in which to run the app, make changes and debug.
 
-In this step we are now going to setup a separate production environment and explore some best practices and techniques for developers and DevOps teams for getting code from the developer (that's YOU!) to production with less downtime and greater consistency.
+In this step, we are now going to setup a separate production environment and explore some best practices and techniques for developers and DevOps teams for getting code from the developer **(that's YOU!)** to production with less downtime and greater consistency.
 
 ## Prod vs. Dev
 
@@ -344,17 +344,24 @@ oc create -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/ma
 
 **2. Add the production elements**
 
-In this case we'll use the production template to create the objects. Execute:
+In this case we'll use the production template to create the objects. Execute via CodeReady Workspaces Terminal window:
+
+`oc project ocpuser0XX-coolstore-prod`
+
+And finally deploy template:
 
 `oc new-app --template=coolstore-monolith-pipeline-build`
 
-This will use an OpenShift Template called `coolstore-monolith-pipeline-build` to construct the production application. As you probably guessed it will also include a Jenkins Pipeline to control the production application (more on this later!)
+We have to deploy a **Jenkins Server** in the namespace because OpenShift 4 doesn't deploy a Jenkins server automatically when we use _Jenkins Pipeline_ build strategy.
 
-Navigate to the Web Console to see your new app and the components using this link:
+`oc new-app --template=jenkins-ephemeral -l app=jenkins -p JENKINS_SERVICE_NAME=jenkins -p DISABLE_ADMINISTRATIVE_MONITORS=true`
 
-* Coolstore Prod Project Overview at 
+`oc set resources dc/jenkins --limits=cpu=1,memory=2Gi --requests=cpu=1,memory=512Mi`
 
-`https://{{OPENSHIFT_MASTER}}/console/project/ocpuser0XX-coolstore-prod/overview`
+This will use an OpenShift Template called **coolstore-monolith-pipeline-build** to construct the production application.
+As you probably guessed it will also include a Jenkins Pipeline to control the production application (more on this later!)
+
+Navigate to the Web Console to see your new app and the compoenents.
 
 <kbd>![](images/developer-intro/coolstore-prod-overview.png)</kbd>
 
@@ -413,7 +420,7 @@ You can see the Jenkinsfile definition of the pipeline in the output:
 
 **2. Update the pipeline with your project names**
 
-In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Pipelines and then clicking on **monolith-pipeline**.
+In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Build configs and then clicking on **monolith-pipeline**.
 
 On this page you can see the pipeline definition. Click **Actions** -> **Edit** to edit the pipeline:
  
@@ -441,7 +448,7 @@ oc policy add-role-to-user edit system:serviceaccount:ocpuser0XX-coolstore-prod:
 
 You can use the oc command line to invoke the build pipeline, or the OpenShift Web Console. Let's use the OpenShift Web Console. Open the production project in the web console. Go to your OpenShift Web Console tab and ensure that you have the "Coolstore Monolith - Production" project opened.
 
-Next, navigate to _Builds -> Pipelines_ and click __Start Pipeline__ next to the `coolstore-monolith` pipeline:
+Next, navigate to _Builds > Build Configs > monolith-pipeline_, click the small menu at the far right, and click _Start Build_:
 
 <kbd>![](images/developer-intro/pipe-start.png)</kbd>
 
@@ -450,9 +457,11 @@ take as much time as the Jenkins infrastructure will already be warmed up). You 
 
 <kbd>![](images/developer-intro/pipe-prog.png)</kbd>
 
-Once the pipeline completes, return to the "Coolstore Monolith - Production" project Overview and notice that the application is now deployed and running!
+Once the pipeline completes, return to the Prod Project Status and notice that the application is now deployed and running!
 
 <kbd>![](images/developer-intro/pipe-done.png)</kbd>
+
+It may take a few moments for the container to deploy fully.
 
 View the production app **with the blue header from before** is running by clicking: CoolStore Production App at 
 
