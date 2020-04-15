@@ -422,6 +422,8 @@ You can see the Jenkinsfile definition of the pipeline in the output:
 
 In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration page in the OpenShift Web Console (you can navigate to it from Builds -> Build configs and then clicking on **monolith-pipeline**.
 
+<kbd>![](images/AROLatestImages/buildconfig.jpg)</kbd>
+
 On this page you can see the pipeline definition. Click **Actions** -> **Edit** to edit the pipeline:
  
 In the pipeline, update the ocpuser0XX with your assigned username.
