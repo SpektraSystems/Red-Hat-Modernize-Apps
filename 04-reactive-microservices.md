@@ -1238,11 +1238,15 @@ In this section, you will deploy an Apache Kafka in openshift, Add kafka produce
 2. Select the dev project by running ``oc project ocpuser0XX-coolstore-dev``
 3. Then, run the below command to load the resources.
 
-``oc create -f https://raw.githubusercontent.com/mattf/openshift-kafka/master/resources.yaml``
+~~~
+oc create -f https://raw.githubusercontent.com/mattf/openshift-kafka/master/resources.yaml
+~~~
 
 2. Deploy Apache Kafka + Apache Zookeeper pod in to openshift by running the below command : 
 
-``oc new-app apache-kafka``
+~~~
+oc new-app apache-kafka
+~~~
 
 3. Now, Navigate back to openshift console to see ``apache-kafka`` pod deployed.
 
@@ -1252,7 +1256,9 @@ In this section, you will deploy an Apache Kafka in openshift, Add kafka produce
 
 5. In the Terminal, run the below command to create a topic named `items`
 
-``bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --partitions 1 --topic test``
+~~~
+bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --partitions 1 --topic test
+~~~
 
 6. To list the topics, run `bin/kafka-topics.sh --list --zookeeper apache-kafka` . You should see `items` in the list.
 
