@@ -1228,6 +1228,37 @@ Add some items to your cart, then visit the **Shopping Cart** tab to observe the
 
 The **Checkout** functionality is yet to be implemented, so won't work, but it's not too far away and if you have time after this workshop feel free to contribute the changes and make this workshop even better!
 
+## Add Apache Kafka for getting Popular Items
+
+In this section, you will deploy an Apache Kafka in openshift, Add kafka producer to Cart Microservice and create a new ``track-popular-items`` microservice. ``Track-popular-items`` microservice will be the kafka consumer for our application.
+
+### Deploy Apache Kafka on openshift
+
+1. Login to Openshift from CodeReady workspace terminal by running the ``oc login`` command.
+2. Select the dev project by running ``oc project ocpuser0XX-coolstore-dev``
+3. Then, run the below command to load the resources.
+
+``oc create -f https://raw.githubusercontent.com/mattf/openshift-kafka/master/resources.yaml``
+
+2. Deploy Apache Kafka + Apache Zookeeper pod in to openshift by running the below command : 
+
+``oc new-app apache-kafka``
+
+3. Now, Navigate back to openshift console to see ``apache-kafka`` pod deployed.
+
+
+
+4. For creating a topic in Apache Kafka, you can select on the running pod and click on ``Termianal`` tab to open the terminal.
+
+5. In the Terminal, run the below command to create a topic named `items`
+
+``bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --partitions 1 --topic test``
+
+6. To list the topics, run `bin/kafka-topics.sh --list --zookeeper apache-kafka` . You should see `items` in the list.
+
+### Add Kafka Producer to Cart Service
+
+
 ## Congratulations!
 
 You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory, Catalog and Shopping Cart) are now implemented as microservices, without touching the monolith.
