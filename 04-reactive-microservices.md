@@ -1379,6 +1379,28 @@ Then, add the below code at `//TODO: Call TrackItems Method here` marker:
 trackItem(reply.result(), quantity);
 ~~~
 
+**Update the Openshift Configuration file**
+
+Open the file: `modernize-apps/cart/src/main/resources/config-openshift.json` and replace it with the below content :
+
+
+~~~json
+{
+    "http.port" : 8080,
+    "catalog.service.port" : 8080,
+    "catalog.service.hostname" : "catalog",
+
+    "bootstrap.servers": "apache-kafka:9092",
+    "key.serializer": "org.apache.kafka.common.serialization.StringSerializer",
+    "value.serializer": "org.apache.kafka.common.serialization.StringSerializer",
+    "acks": "1",
+    "itemposter.kafkatopic": "items"
+}
+
+~~~
+
+**Deploy to OpenShift**
+
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
 `mvn package fabric8:deploy -Popenshift`
