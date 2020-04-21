@@ -568,10 +568,10 @@ the credentials used when deploying to OpenShift.
 **Update the Azure PostgreSQL database details**
 Create the file : `modernize-apps/catalog/src/main/resources/application-openshift.properties`
 
-Copy the following content to the file and replace {Azure PostgreSQL Hostname} with the value provided in the environment details page:
+Copy the following content to the file and replace {Azure PostgreSQL Hostname} and OCPUSER0XX with the values provided in the environment details page:
 
 ~~~java
-spring.datasource.url=jdbc:postgresql://{Azure PostgreSQL HostName}:5432/catalog?ssl=true&sslmode=require
+spring.datasource.url=jdbc:postgresql://{Azure PostgreSQL HostName}:5432/ocpuser0XX?ssl=true&sslmode=require
 spring.datasource.initialization-mode=always
 inventory.ribbon.listOfServers=inventory:8080
 ~~~
