@@ -1266,7 +1266,7 @@ oc new-app apache-kafka
 5. In the Terminal, run the below command to create a topic named `items`
 
 ~~~
-bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --partitions 1 --topic test
+bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --partitions 1 --topic items
 ~~~
 
 6. To list the topics, run `bin/kafka-topics.sh --list --zookeeper apache-kafka` . You should see `items` in the list.
