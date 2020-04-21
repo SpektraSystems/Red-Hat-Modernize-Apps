@@ -640,6 +640,7 @@ private void addToCart(RoutingContext rc) {
     if(productAlreadyInCart) {
         cart.getShoppingCartItemList().forEach(item -> {
             if (item.getProduct().getItemId().equals(itemId)) {
+ //TODO: Call TrackItems Method to get the product
                 item.setQuantity(item.getQuantity() + quantity);
                 sendCart(cart,rc); //TODO: update the shipping fee
             }
@@ -701,6 +702,7 @@ Adding the following at the `//TODO: Get product from Catalog service and add it
 ~~~java
 this.getProduct(itemId, reply -> {
     if (reply.succeeded()) {
+        //TODO : Call TrackItem Method here
         newItem.setProduct(reply.result());
         cart.addShoppingCartItem(newItem);
         sendCart(cart,rc); //TODO: update the shipping fee, here as well
@@ -1365,6 +1367,258 @@ private void trackItem(Product product, int quantity) {
     eb.send("item", Transformers.shoppingCartItemToJson(item).encode());
   }
 ~~~
+
+Also, add the below line at `//TODO: Call TrackItems Method to get the product` marker:
+
+~~~java
+trackItem(item.getProduct(), quantity);
+~~~
+
+Then, add the below code at `//TODO: Call TrackItems Method here` marker:
+~~~java
+trackItem(reply.result(), quantity);
+~~~
+
+Build and deploy the project using the following command, which will use the maven plugin to deploy:
+
+`mvn package fabric8:deploy -Popenshift`
+
+The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
+
+## Add a Kafka Consumer Microservice 
+
+To start in the right directory, run the below command in CodeReady workspace terminal.
+
+~~~
+cd /projects/modernize-apps/track-popular-item
+~~~
+
+**1. Add configuration and verticles**
+We will start by creating the `TrackPopulatItemsVerticle` like this. Create this file and add this code to the
+`modernize-apps/track-popular-item/src/main/java/com/redhat/coolstore/TrackPopulatItemsVerticle.java` file:
+
+~~~java
+package com.redhat.coolstore;
+
+import io.vertx.config.ConfigRetriever;
+import io.vertx.config.ConfigRetrieverOptions;
+import io.vertx.config.ConfigStoreOptions;
+import io.vertx.core.*;
+import io.vertx.core.json.JsonObject;
+
+import java.util.Arrays;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+public class TrackPopularItemsVerticle extends AbstractVerticle {
+
+    public static void main(String[] args) {
+        Vertx.vertx().deployVerticle(new TrackPopularItemsVerticle());
+    }
+
+    @Override
+    public void start() {
+        ConfigRetriever.getConfigAsFuture(getRetriever())
+            .setHandler(config ->  {
+                vertx.deployVerticle(
+                        ItemTrackerVerticle.class.getName(),
+                    new DeploymentOptions().setConfig(config.result())
+                );
+            });
+    }
+
+    private ConfigRetriever getRetriever() {
+        ConfigStoreOptions defaultFileStore = new ConfigStoreOptions()
+            .setType("file")
+            .setConfig(new JsonObject().put("path", "config-default.json"));
+        ConfigRetrieverOptions configStoreOptions = new ConfigRetrieverOptions();
+        configStoreOptions.addStore(defaultFileStore);
+        String profilesStr = System.getProperty("vertx.profiles.active");
+        if(profilesStr!=null && profilesStr.length()>0) {
+            Arrays.stream(profilesStr.split(",")).forEach(s -> configStoreOptions.addStore(new ConfigStoreOptions()
+                .setType("file")
+                .setConfig(new JsonObject().put("path", "config-" + s + ".json"))));
+        }
+        return ConfigRetriever.create(vertx, configStoreOptions);
+    }
+}
+~~~
+
+Now, let's add a `ItemTrackerVerticle`. Create a `modernize-apps/track-popular-item/src/main/java/com/redhat/coolstore/ItemTrackerVerticle.java` file and add the following content: 
+
+~~~java
+package com.redhat.coolstore;
+
+import com.redhat.coolstore.model.Product;
+import com.redhat.coolstore.model.ShoppingCartItem;
+import com.redhat.coolstore.utils.Transformers;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.MessageConsumer;
+import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.kafka.client.consumer.KafkaConsumer;
+import io.vertx.kafka.client.producer.KafkaProducerRecord;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class ItemTrackerVerticle extends AbstractVerticle {
+
+    private final Logger logger = LoggerFactory.getLogger(ItemTrackerVerticle.class.getName());
+
+    // interacting with Apache Kafka
+    
+    private KafkaConsumer<String, String> consumer;
+    private String kafkaTopic;
+
+    private Map<String, Integer> registry = new HashMap<>();
+    private Map<String, Product> productDetails = new HashMap<>();
+
+    @Override
+    public void start() {
+        logger.info("Starting " + this.getClass().getSimpleName());
+
+        // read inputs from kafka
+
+        kafkaTopic = config().getString("itemposter.kafkatopic");
+        consumer = KafkaConsumer.create(vertx, kafkaConfig());
+
+        consumer.subscribe(kafkaTopic);
+
+        consumer.handler(record -> {
+                    System.out.println(record.value());
+                    ShoppingCartItem item = Transformers.jsonToShoppingCartItem(new JsonObject(record.value()));
+                    trackItem(item);
+                }
+        );
+
+        // serve results to the web
+
+        Router router = Router.router(vertx);
+        router.get("/services/populars").handler(this::getItems);
+        vertx.createHttpServer().requestHandler(router::accept).listen(config().getInteger("http.port"));
+    }
+
+    private void trackItem(ShoppingCartItem item) {
+        String id = item.getProduct().getItemId();
+
+        if (registry.containsKey(id)) {
+            registry.put(id, registry.get(id) + item.getQuantity());
+        } else {
+            registry.put(id, item.getQuantity());
+            saveProduct(item.getProduct());
+        }
+
+        System.out.println(id + " -> " + registry.get(id));
+    }
+
+    private void saveProduct(Product product) {
+        productDetails.put(product.getItemId(), product);
+    }
+
+    private Map<String, String> kafkaConfig() {
+        Map<String, String> config = new HashMap<>();
+        config.put("bootstrap.servers", config().getString("bootstrap.servers"));
+        config.put("key.deserializer", config().getString("key.deserializer"));
+        config.put("value.deserializer", config().getString("value.deserializer"));
+        config.put("acks", config().getString("acks"));
+        config.put("group.id", config().getString("group.id"));
+        config.put("auto.offset.reset", config().getString("auto.offset.reset"));
+        config.put("enable.auto.commit", config().getString("enable.auto.commit"));
+
+        return config;
+    }
+
+    private void getItems(RoutingContext ctx) {
+        JsonArray results = new JsonArray();
+
+        registry.keySet().forEach(id -> {
+            int popularity = registry.get(id);
+            Product product = productDetails.get(id);
+
+            JsonObject json = Transformers.productToJson(product);
+            json.put("popularity", popularity);
+
+            results.add(json);
+        });
+
+        sendJsonArrayResponse(ctx, results);
+    }
+
+    private void sendJsonArrayResponse(RoutingContext ctx, JsonArray arr) {
+        ctx.response()
+                .setStatusCode(200)
+                .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                .end(arr.encodePrettily());
+    }
+}
+
+~~~
+
+Review the code to understand how it is interacting with Kafka, read inputs from Kafka and serve the results to we application.
+
+**2. Add Confiuration file**
+
+Create a new file `modernize-apps/cart/src/main/resources/config-default.json` and add this into it:
+
+~~~json
+{
+    "http.port" : 8080,
+    "catalog.service.port" : 8080,
+    "catalog.service.hostname" : "catalog",
+
+    "bootstrap.servers": "apache-kafka:9092",
+    "key.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+    "value.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+    "acks": "1",
+    "group.id": "my_group",
+    "auto.offset.reset": "earliest",
+    "enable.auto.commit": "false",
+    "itemposter.kafkatopic": "items"
+}
+
+~~~
+**3. Add OpenShift Confiuration file**
+
+Create a new file `modernize-apps/cart/src/main/resources/config-default.json` and add this into it:
+
+~~~json
+{
+    "http.port" : 8080,
+    "catalog.service.port" : 8080,
+    "catalog.service.hostname" : "catalog",
+
+    "bootstrap.servers": "apache-kafka:9092",
+    "key.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+    "value.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+    "acks": "1",
+    "group.id": "my_group",
+    "auto.offset.reset": "earliest",
+    "enable.auto.commit": "false",
+    "itemposter.kafkatopic": "items"
+}
+
+~~~
+
+We have specified the Apache Kafka bootstrap server details in this line : `"bootstrap.servers": "apache-kafka:9092",` apache-kafka is the name of the kafka workload running in openshift and 9092 is the port number.
+
+**4.Deploy to OpenShift**
+
+
+Build and deploy the project using the following command, which will use the maven plugin to deploy:
+
+`mvn package fabric8:deploy -Popenshift`
+
+The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
+
 ## Summary
 
 In this scenario, you learned a bit more about what Reactive Systems and Reactive programming are and why it's useful when building Microservices. Note that some of the code in here may have been hard to understand and part of that is that we are not using an IDE, like JBoss Developer Studio (based on Eclipse) or IntelliJ. Both of these have excellent tooling to build Vert.x applications.
