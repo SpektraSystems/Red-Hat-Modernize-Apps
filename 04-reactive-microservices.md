@@ -391,6 +391,8 @@ import java.util.concurrent.BlockingQueue;
 
 public class MainVerticle extends AbstractVerticle {
 
+// TODO: Add MainMethod
+
     @Override
     public void start() {
         ConfigRetriever.getConfigAsFuture(getRetriever())
@@ -401,6 +403,7 @@ public class MainVerticle extends AbstractVerticle {
                 );
                 // TODO: Deploy PromoServiceVerticle
                 // TODO: Deploy ShippingServiceVerticle
+                // TODO: Deploy PopularItemPosterVerticle
             });
     }
 
@@ -981,7 +984,7 @@ public class ShippingServiceVerticle extends AbstractVerticle {
 }
 ~~~
 
-We also need to start the Verticle by deploying it form the MainVerticle. So add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy ShippingServiceVerticle` marker:
+We also need to start the Verticle by deploying it from the MainVerticle. So add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy ShippingServiceVerticle` marker:
 
 ~~~java
 vertx.deployVerticle(
@@ -1228,6 +1231,10 @@ Add some items to your cart, then visit the **Shopping Cart** tab to observe the
 
 The **Checkout** functionality is yet to be implemented, so won't work, but it's not too far away and if you have time after this workshop feel free to contribute the changes and make this workshop even better!
 
+## Congratulations!
+
+You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory, Catalog and Shopping Cart) are now implemented as microservices, without touching the monolith.
+
 ## Add Apache Kafka for getting Popular Items
 
 In this section, you will deploy an Apache Kafka in openshift, Add kafka producer to Cart Microservice and create a new ``track-popular-items`` microservice. ``Track-popular-items`` microservice will be the kafka consumer for our application.
@@ -1264,11 +1271,100 @@ bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --p
 
 ### Add Kafka Producer to Cart Service
 
+We will start by creating the `ItemPosterVerticle`. Create this file and add this code to the
+`modernize-apps/cart/src/main/java/com/redhat/coolstore/ItemPosterVerticle.java` file:
 
-## Congratulations!
+~~~java
+package com.redhat.coolstore;
 
-You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory, Catalog and Shopping Cart) are now implemented as microservices, without touching the monolith.
+import com.redhat.coolstore.model.Product;
+import com.redhat.coolstore.utils.Generator;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.MessageConsumer;
+import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.kafka.client.producer.KafkaProducer;
+import io.vertx.kafka.client.producer.KafkaProducerRecord;
 
+import java.util.HashMap;
+import java.util.Map;
+
+// -change- class added
+public class ItemPosterVerticle extends AbstractVerticle {
+
+    private final Logger logger = LoggerFactory.getLogger(ItemPosterVerticle.class.getName());
+
+    // use producer for interacting with Apache Kafka
+   
+   private KafkaProducer<String, String> producer;
+    private String kafkaTopic;
+
+    @Override
+    public void start() {
+        logger.info("Starting " + this.getClass().getSimpleName());
+
+        kafkaTopic = config().getString("itemposter.kafkatopic");
+        producer = KafkaProducer.create(vertx, kafkaConfig());
+
+        EventBus eb = vertx.eventBus();
+        MessageConsumer<String> consumer = eb.consumer("item");
+
+        consumer.handler(message -> {
+            logger.info("Posting item to the kafka topic" + message.body());
+
+            producer.write(KafkaProducerRecord.create(kafkaTopic, message.body()));
+        });
+    }
+
+    private Map<String, String> kafkaConfig() {
+        Map<String, String> config = new HashMap<>();
+        config.put("bootstrap.servers", config().getString("bootstrap.servers"));
+        config.put("key.serializer", config().getString("key.serializer"));
+        config.put("value.serializer", config().getString("value.serializer"));
+        config.put("acks", config().getString("acks"));
+
+        return config;
+    }
+
+}
+
+~~~
+
+
+Now, we have added kafka producer. We also need to start the Verticle by deploying it from the MainVerticle. So add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PopularItemPosterVerticle` marker:
+
+~~~java
+ vertx.deployVerticle(
+                        ItemPosterVerticle.class.getName(),
+                        new DeploymentOptions().setConfig(config.result())
+                );
+~~~
+
+Also, add the following code at `// TODO: Add MainMethod` marker:
+
+~~~java
+    public static void main(String[] args) {
+        Vertx.vertx().deployVerticle(new MainVerticle());
+    }
+~~~
+
+
+Now, we will update `CartServiceVerticle`. In `modernize-apps/cart/src/main/java/com/redhat/coolstore/CartServiceVerticle.java` we will add the following method at the marker: `//TODO: Add TrackItem method `. Copy the content below:
+
+~~~java
+private void trackItem(Product product, int quantity) {
+    EventBus eb = vertx.eventBus();
+    ShoppingCartItem item = new ShoppingCartItemImpl();
+    item.setProduct(product);
+    item.setQuantity(quantity);
+    eb.send("item", Transformers.shoppingCartItemToJson(item).encode());
+  }
+~~~
 ## Summary
 
 In this scenario, you learned a bit more about what Reactive Systems and Reactive programming are and why it's useful when building Microservices. Note that some of the code in here may have been hard to understand and part of that is that we are not using an IDE, like JBoss Developer Studio (based on Eclipse) or IntelliJ. Both of these have excellent tooling to build Vert.x applications.
