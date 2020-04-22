@@ -1653,6 +1653,58 @@ Build and deploy the project using the following command, which will use the mav
 
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
 
+Navigate back to openshift console to see the `track-popular-items` pod deployed.
+
+<kbd>![](images/AROLatestImages/createtopic.jpg)</kbd>
+
+## Replace (Strangle) monolith Cart services
+
+In earlier scenarios we started [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html) by redirecting calls the product catalog and cart microservice. We will now do the same with our new Popular Items microservice. To do this we are going to again make use of routing capabilities in OpenShift.
+
+Flow the steps below to create a path based route.
+
+**1. Obtain hostname of monolith UI from our Dev environment**
+
+`oc get route/www -n ocpuser0XX-coolstore-dev`
+> Make sure to replace the name of the project with your user number.
+
+The output of this command shows us the hostname:
+
+~~~sh
+NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
+www       www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}             coolstore   <all>                   None
+~~~
+
+My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}` but yours will be different.
+
+**2. Open the openshift console for "Coolstore Monolith - Dev" and navigate to Applications -> Routes**
+
+**3. Click on Create Route, and set**
+
+* **Name**: `popular-items-redirect`
+* **Hostname**: _the hostname from above_
+* **Path**: `/services/populars`
+* **Service**: `track-popular-items`
+* **Targer Port**: `8080->8080(TCP)`
+
+<kbd>![](images/AROLatestImages/popularredirect.jpg)</kbd>
+
+Leave other values set to their defaults, and click **Save**
+
+**4. Test the route**
+
+Test the route by running `curl http://www-ocpuser0XX-coolstore-dev.{{ROUTING_SUFFIX}}/services/populars`
+
+If you have added items to the cart, you should get a complete set of products.
+
+**5. Test the UI**
+
+Open the monolith UI and observe that the new cart and Popular Items are being used along with the monolith.
+Add some items to your cart, then visit the **Popular Items** tab to observe the products added there. If you open a new session of Monolith UI you can find the products added by other users in the Popular Items tab:
+
+<kbd>![](images/AROLatestImages/coolstorepopular.jpg)</kbd>
+
+<kbd>![](images/AROLatestImages/kafkaitems.jpg)</kbd>
 ## Summary
 
 In this scenario, you learned a bit more about what Reactive Systems and Reactive programming are and why it's useful when building Microservices. Note that some of the code in here may have been hard to understand and part of that is that we are not using an IDE, like JBoss Developer Studio (based on Eclipse) or IntelliJ. Both of these have excellent tooling to build Vert.x applications.
