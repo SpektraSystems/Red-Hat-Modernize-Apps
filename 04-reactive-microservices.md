@@ -1239,7 +1239,8 @@ You have now successfully begun to _strangle_ the monolith. Part of the monolith
 
 ## Add Apache Kafka for getting Popular Items
 
-In this section, you will deploy an Apache Kafka in openshift, Add kafka producer to Cart Microservice and create a new ``track-popular-items`` microservice. ``Track-popular-items`` microservice will be the kafka consumer for our application. Let's start by deploying a kafka pod to openshift
+In this section, you will deploy an Apache Kafka in openshift, add kafka producer to Cart Microservice and create a new ``track-popular-items`` microservice. ``Track-popular-items`` microservice will be the kafka consumer for our application. Let's start by deploying a kafka pod to openshift. 
+Due to time constraints, we are not implementing Payement and Order services in this lab. So, we will implement the Popular Items by fetching the details of the product that are added to the Shopping Cart in different sessions of the Monolith UI. 
 
 ### Deploy Apache Kafka on openshift
 
@@ -1278,6 +1279,8 @@ bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --p
 <kbd>![](images/AROLatestImages/createtopic.jpg)</kbd>
 
 ### Add Kafka Producer to Cart Service
+
+**1.Add producer Verticle**
 
 We will start by creating the `ItemPosterVerticle`. Create this file and add this code to the
 `modernize-apps/cart/src/main/java/com/redhat/coolstore/ItemPosterVerticle.java` file:
@@ -1386,7 +1389,7 @@ Then, add the below code at `//TODO: Call TrackItems Method here` marker:
 trackItem(reply.result(), quantity);
 ~~~
 
-**Update the Openshift Configuration file**
+**2. Update the Openshift Configuration file**
 
 Open the file: `modernize-apps/cart/src/main/resources/config-openshift.json` and replace it with the below content :
 
@@ -1406,7 +1409,7 @@ Open the file: `modernize-apps/cart/src/main/resources/config-openshift.json` an
 
 ~~~
 
-**Deploy to OpenShift**
+**3.Deploy to OpenShift**
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
@@ -1415,6 +1418,16 @@ Build and deploy the project using the following command, which will use the mav
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output. Then, navigate back to the `Cart` deployment in openshift and start the rollout by Clicking on `Start Rollout` under `Actions` dropdown.
 
 <kbd>![](images/AROLatestImages/rollout.jpg)</kbd>
+
+**4.Test the application**
+
+For testing the functionality, we will go to Monolith UI from openshift and add items to the cart. Then, open the Terminal of `apache-kafka` pod and run the following command and you should see the list of products added to the cart.
+
+~~~
+bin/kafka-console-consumer.sh --bootstrap-server apache-kafka:9092 --topic items --from-beginning
+~~~
+
+<kbd>![](images/AROLatestImages/kafkaitem.jpg)</kbd>
 
 ## Add a Kafka Consumer Microservice 
 
@@ -1704,7 +1717,6 @@ Add some items to your cart, then visit the **Popular Items** tab to observe the
 
 <kbd>![](images/AROLatestImages/coolstorepopular.jpg)</kbd>
 
-<kbd>![](images/AROLatestImages/kafkaitems.jpg)</kbd>
 ## Summary
 
 In this scenario, you learned a bit more about what Reactive Systems and Reactive programming are and why it's useful when building Microservices. Note that some of the code in here may have been hard to understand and part of that is that we are not using an IDE, like JBoss Developer Studio (based on Eclipse) or IntelliJ. Both of these have excellent tooling to build Vert.x applications.
