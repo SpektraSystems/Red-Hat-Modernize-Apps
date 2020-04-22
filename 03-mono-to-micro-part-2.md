@@ -665,7 +665,7 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will 
 * **Path**: `/services/products`
 * **Service**: `catalog`
 
-<kbd>![](images/AROLatestImages/catalogredirect.jpg)</kbd>
+<kbd>![](images/AROLatestImages/catalogredirect1.jpg)</kbd>
 
 Leave other values set to their defaults, and click **Create**
 
