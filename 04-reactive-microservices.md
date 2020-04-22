@@ -1417,7 +1417,7 @@ cd /projects/modernize-apps/track-popular-item
 
 **1. Add configuration and verticles**
 We will start by creating the `TrackPopulatItemsVerticle` like this. Create this file and add this code to the
-`modernize-apps/track-popular-item/src/main/java/com/redhat/coolstore/TrackPopulatItemsVerticle.java` file:
+`modernize-apps/track-popular-item/src/main/java/com/redhat/coolstore/TrackPopularItemsVerticle.java` file:
 
 ~~~java
 package com.redhat.coolstore;
