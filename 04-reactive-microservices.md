@@ -1486,7 +1486,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import io.vertx.kafka.client.producer.KafkaProducerRecord;
-
+import io.vertx.ext.web.handler.StaticHandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1497,7 +1497,7 @@ public class ItemTrackerVerticle extends AbstractVerticle {
     private final Logger logger = LoggerFactory.getLogger(ItemTrackerVerticle.class.getName());
 
     // interacting with Apache Kafka
-    
+
     private KafkaConsumer<String, String> consumer;
     private String kafkaTopic;
 
@@ -1526,6 +1526,8 @@ public class ItemTrackerVerticle extends AbstractVerticle {
 
         Router router = Router.router(vertx);
         router.get("/services/populars").handler(this::getItems);
+        router.get("/*").handler(StaticHandler.create());
+
         vertx.createHttpServer().requestHandler(router::accept).listen(config().getInteger("http.port"));
     }
 
@@ -1582,7 +1584,6 @@ public class ItemTrackerVerticle extends AbstractVerticle {
                 .end(arr.encodePrettily());
     }
 }
-
 ~~~
 
 Review the code to understand how it is interacting with Kafka, read inputs from Kafka and serve the results to we application.
