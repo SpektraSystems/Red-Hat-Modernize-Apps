@@ -1421,7 +1421,7 @@ The build and deploy may take a minute or two. Wait for it to complete. You shou
 
 **4.Test the application**
 
-For testing the functionality, we will go to Monolith UI from openshift and add items to the cart. Then, open the Terminal of `apache-kafka` pod and run the following command and you should see the list of products added to the cart.
+For testing the functionality, Open the Monolith UI and add items to the cart. Then, open the `Terminal` of `apache-kafka` pod and run the following command to see the list of products added to the cart.
 
 ~~~
 bin/kafka-console-consumer.sh --bootstrap-server apache-kafka:9092 --topic items --from-beginning
