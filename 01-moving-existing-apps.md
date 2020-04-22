@@ -589,7 +589,7 @@ Since our application is using a Database we also configure that by adding the f
 </resource>
 ~~~
 
-Since our application is using a JMS Topic we also need to add the configuration for that by adding the following at the `<-- TODO: Add JMS Topic here -->` comment
+Since our application is using a JMS Topic we also need to add the configuration for that by adding the following at the `<-- TODO: Add JMS Topic definition here -->` comment
 
 ~~~xml
 <resource>
