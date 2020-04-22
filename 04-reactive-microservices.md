@@ -1239,7 +1239,7 @@ You have now successfully begun to _strangle_ the monolith. Part of the monolith
 
 ## Add Apache Kafka for getting Popular Items
 
-In this section, you will deploy an Apache Kafka in openshift, Add kafka producer to Cart Microservice and create a new ``track-popular-items`` microservice. ``Track-popular-items`` microservice will be the kafka consumer for our application.
+In this section, you will deploy an Apache Kafka in openshift, Add kafka producer to Cart Microservice and create a new ``track-popular-items`` microservice. ``Track-popular-items`` microservice will be the kafka consumer for our application. Let's start by deploying a kafka pod to openshift
 
 ### Deploy Apache Kafka on openshift
 
@@ -1259,9 +1259,11 @@ oc new-app apache-kafka
 
 3. Now, Navigate back to openshift console to see ``apache-kafka`` pod deployed.
 
-
+<kbd>![](images/AROLatestImages/podkafka.jpg)</kbd>
 
 4. For creating a topic in Apache Kafka, you can select on the running pod and click on ``Termianal`` tab to open the terminal.
+
+<kbd>![](images/AROLatestImages/kafkapod.jpg)</kbd>
 
 5. In the Terminal, run the below command to create a topic named `items`
 
@@ -1269,7 +1271,11 @@ oc new-app apache-kafka
 bin/kafka-topics.sh --create --zookeeper apache-kafka --replication-factor 1 --partitions 1 --topic items
 ~~~
 
+<kbd>![](images/AROLatestImages/createtopics.jpg)</kbd>
+
 6. To list the topics, run `bin/kafka-topics.sh --list --zookeeper apache-kafka` . You should see `items` in the list.
+
+<kbd>![](images/AROLatestImages/createtopic.jpg)</kbd>
 
 ### Add Kafka Producer to Cart Service
 
@@ -1338,7 +1344,7 @@ public class ItemPosterVerticle extends AbstractVerticle {
 ~~~
 
 
-Now, we have added kafka producer. We also need to start the Verticle by deploying it from the MainVerticle. So add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PopularItemPosterVerticle` marker:
+Now, we have added kafka producer successfully. We also need to start the Verticle by deploying it from the MainVerticle. So add this code to the `modernize-apps/cart/src/main/java/com/redhat/coolstore/MainVerticle.java` file at the `// TODO: Deploy PopularItemPosterVerticle` marker:
 
 ~~~java
  vertx.deployVerticle(
@@ -1375,6 +1381,7 @@ trackItem(item.getProduct(), quantity);
 ~~~
 
 Then, add the below code at `//TODO: Call TrackItems Method here` marker:
+
 ~~~java
 trackItem(reply.result(), quantity);
 ~~~
@@ -1405,7 +1412,9 @@ Build and deploy the project using the following command, which will use the mav
 
 `mvn package fabric8:deploy -Popenshift`
 
-The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output.
+The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the end of the build output. Then, navigate back to the `Cart` deployment in openshift and start the rollout by Clicking on `Start Rollout` under `Actions` dropdown.
+
+<kbd>![](images/AROLatestImages/rollout.jpg)</kbd>
 
 ## Add a Kafka Consumer Microservice 
 
@@ -1416,6 +1425,7 @@ cd /projects/modernize-apps/track-popular-item
 ~~~
 
 **1. Add configuration and verticles**
+
 We will start by creating the `TrackPopulatItemsVerticle` like this. Create this file and add this code to the
 `modernize-apps/track-popular-item/src/main/java/com/redhat/coolstore/TrackPopularItemsVerticle.java` file:
 
@@ -1586,11 +1596,11 @@ public class ItemTrackerVerticle extends AbstractVerticle {
 }
 ~~~
 
-Review the code to understand how it is interacting with Kafka, read inputs from Kafka and serve the results to we application.
+Review the code to understand how it is interacting with Kafka, read inputs from Kafka and serve the results to the application.
 
 **2. Add Confiuration file**
 
-Create a new file `modernize-apps/cart/src/main/resources/config-default.json` and add this into it:
+Create a new file `modernize-apps/cart/src/main/resources/config-default.json` and add the following json code into it:
 
 ~~~json
 {
@@ -1631,10 +1641,11 @@ Create a new file `modernize-apps/cart/src/main/resources/config-default.json` a
 
 ~~~
 
-We have specified the Apache Kafka bootstrap server details in this line : `"bootstrap.servers": "apache-kafka:9092",` apache-kafka is the name of the kafka workload running in openshift and 9092 is the port number.
+We have specified the Apache Kafka bootstrap server details in this line : `"bootstrap.servers": "apache-kafka:9092",` apache-kafka is the name of the kafka workload running in openshift and 9092 is the port number. 
+
+Since we don't have an Apache Kafka Service running locally, we cannot test this locally. If you want to test this in your local kafka environment, you can replace `apache-kafka` in the `config-default.json` with `localhost`.
 
 **4.Deploy to OpenShift**
-
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
