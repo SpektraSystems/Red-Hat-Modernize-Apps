@@ -7,9 +7,9 @@
 ## Intro
 In this scenario, you will learn more about Reactive Microservices using [Eclipse Vert.x](https://vertx.io), one of the runtimes included in [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes).
 
-In this scenario you will create three different services that interact using an _EventBus_ which also does a REST call to the CatalogService we built in the previous steps.
+In this scenario you will Shopping Cart services that interact using an _EventBus_ which also does a REST call to the CatalogService we built in the previous steps. We will also create a Popular Item Service which will fetch items from cart and add it to popular items with the help of Apache Kafka in OpenShift
 
-<kbd>![](images/AROLatestImages/cartstructure.jpg)</kbd>
+<kbd>![](images/AROLatestImages/cartstructure1.jpg)</kbd>
 
 >**NOTE:** To simplify the deployment you will deploy all the services in a single Vert.x Server. However the code is 99% the same if we were to deploy these in separate services.
 
