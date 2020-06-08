@@ -1436,7 +1436,7 @@ bin/kafka-console-consumer.sh --bootstrap-server apache-kafka:9092 --topic items
 To start in the right directory, run the below command in CodeReady workspace terminal.
 
 ~~~
-cd /projects/modernize-apps/track-popular-item
+cd /projects/modernize-apps/track-popular-items
 ~~~
 
 **1. Add configuration and verticles**
