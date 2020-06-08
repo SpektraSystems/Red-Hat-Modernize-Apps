@@ -1636,7 +1636,7 @@ Create a new file `modernize-apps/cart/src/main/resources/config-default.json` a
 ~~~
 **3. Add OpenShift Confiuration file**
 
-Create a new file `modernize-apps/cart/src/main/resources/config-default.json` and add this into it:
+Create a new file `modernize-apps/cart/src/main/resources/config-openshift.json` and add this into it:
 
 ~~~json
 {
