@@ -1670,8 +1670,6 @@ The build and deploy may take a minute or two. Wait for it to complete. You shou
 
 Navigate back to openshift console to see the `track-popular-items` pod deployed.
 
-<kbd>![](images/AROLatestImages/createtopic.jpg)</kbd>
-
 ## Replace (Strangle) monolith Cart services
 
 In earlier scenarios we started [strangling the monolith](https://www.martinfowler.com/bliki/StranglerApplication.html) by redirecting calls the product catalog and cart microservice. We will now do the same with our new Popular Items microservice. To do this we are going to again make use of routing capabilities in OpenShift.
