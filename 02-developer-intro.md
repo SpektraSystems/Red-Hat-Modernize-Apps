@@ -438,6 +438,8 @@ The Pipeline syntax allows creating complex deployment scenarios with the possib
 
 Once done editing, click **Save**.
 
+<kbd>![](images/AROLatestImages/pipelineedit.jpg)</kbd>
+
 To simplify the pipeline in this workshop, we simulate the build and tests and skip any need for human input. Once the pipeline completes, it deploys the app from the dev environment to our production environment using the above `openshift.tag()` method, which simply re-tags the image you already created using a tag which will trigger deployment in the production environment.
 
 Jenkins should have the authorization to tag the image available in the DEV environment. In the codeready workspace terminal, run(ensure to replace `ocpuser0XX` with your assigned username): 
@@ -450,14 +452,14 @@ oc policy add-role-to-user edit system:serviceaccount:ocpuser0XX-coolstore-prod:
 
 You can use the oc command line to invoke the build pipeline, or the OpenShift Web Console. Let's use the OpenShift Web Console. Open the production project in the web console. Go to your OpenShift Web Console tab and ensure that you have the "Coolstore Monolith - Production" project opened.
 
-Next, navigate to _Builds > Build Configs > monolith-pipeline_, click the small menu at the far right, and click _Start Build_:
+Next, navigate to **_Builds > Build Configs > monolith-pipeline_**, then click on **Action** dropdown at the far right, and click **_Start Build_**:
 
-<kbd>![](images/developer-intro/pipe-start.png)</kbd>
+<kbd>![](images/AROLatestImages/startbuild.jpg)</kbd>
 
 This will start the pipeline. **It will take a minute or two to start the pipeline** (future runs will not
 take as much time as the Jenkins infrastructure will already be warmed up). You can watch the progress of the pipeline:
 
-<kbd>![](images/developer-intro/pipe-prog.png)</kbd>
+<kbd>![](images/AROLatestImages/build.jpg)</kbd>
 
 Once the pipeline completes, return to the Prod Project Status and notice that the application is now deployed and running!
 
@@ -473,8 +475,6 @@ a few moments for the container to deploy fully.)
 ## Congratulations!
 
 You have successfully setup a development and production environment for your project and can use this workflow for future projects as well.
-
-In the final step we'll add a human interaction element to the pipeline, so that you as a project lead can be in charge of approving changes.
 
 ## More Reading
 
