@@ -190,6 +190,8 @@ public class CartServiceVerticle extends AbstractVerticle {
 
 //TODO: Add handler for getting a shoppingCart by id
 
+//TODO : Add TrackItem method
+
 //TODO: Add handler for adding a Item to the cart
 
 //TODO: Add handler for removing an item from the cart
