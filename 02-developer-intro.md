@@ -352,6 +352,8 @@ And finally deploy template:
 
 `oc new-app --template=coolstore-monolith-pipeline-build`
 
+<kbd>![](images/AROLatestImages/coolstoreprod.jpg)</kbd>
+
 We have to deploy a **Jenkins Server** in the namespace because OpenShift 4 doesn't deploy a Jenkins server automatically when we use _Jenkins Pipeline_ build strategy.
 
 `oc new-app --template=jenkins-ephemeral -l app=jenkins -p JENKINS_SERVICE_NAME=jenkins -p DISABLE_ADMINISTRATIVE_MONITORS=true`
@@ -362,8 +364,6 @@ This will use an OpenShift Template called **coolstore-monolith-pipeline-build**
 As you probably guessed it will also include a Jenkins Pipeline to control the production application (more on this later!)
 
 Navigate to the Web Console to see your new app and the compoenents.
-
-<kbd>![](images/developer-intro/coolstore-prod-overview.png)</kbd>
 
 You can see the production database, and an application called _Jenkins_ which OpenShift uses to manage CI/CD pipeline deployments. There is no running production app just yet. The only running app is back in the _dev_ environment, where you used a binary build to run the app previously.
 
