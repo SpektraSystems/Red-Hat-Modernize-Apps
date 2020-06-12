@@ -45,13 +45,12 @@ This would be the point at which you would import the project skeletons into you
 
 Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. 
 
-Note the **Terminal** ption in Codeready Workspaces.  CLick on terminal and select **Open Terminal in Specific container**. Then select the default container to open the terminal. 
+Note the **Terminal** option in Codeready Workspaces. CLick on terminal and select **Open Terminal in Specific container**. Then select the default container to open the terminal. 
 
 <kbd>![](images/AROLatestImages/openterminal.jpg)</kbd>
 <kbd>![](images/AROLatestImages/selectcontainer.jpg)</kbd>
 
 For the rest of these labs, anytime you need to run a command in a terminal, you can use the Codeready Workspaces Terminal window.
-
 
 <kbd>![](images/AROLatestImages/terminalopened.jpg)</kbd>
 
