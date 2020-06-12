@@ -626,7 +626,7 @@ Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-nam
 
 ## Test the application
 
-Open another CodeReady Workspaces Terminal Window by clicking on the '**+**' sign next to it and selecting **Terminal**. From the new Terminal window, access the application by running the below command:
+Open another CodeReady Workspaces Terminal Window. From the new Terminal window, access the application by running the below command:
 
 ```
 curl http://localhost:8080
@@ -634,7 +634,7 @@ curl http://localhost:8080
 
 ## Shutdown the application
 
-Before moving on, in the Terminal window from which you started JBoss EAP, type `CTRL-Z` to stop it. This command will stop the running process and send it to the background. To terminate the process, you need to do a `kill %1` from the terminal window.
+Before moving on, in the Terminal window from which you started JBoss EAP, type `CTRL-C` to stop and terminate the process. 
 
 ## Deploy the monolith to OpenShift
 
