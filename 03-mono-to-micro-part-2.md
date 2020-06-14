@@ -5,7 +5,7 @@
 * Time: `60-70 minutes`
 
 ## Intro
-In the previous scenarios, you learned how to take an existing monolithic app and refactor a single _inventory_ service using WildFly Swarm. Since WildFly Swarm is using Java EE much of the technology from the monolith can be reused directly, like JPA and JAX-RS. The previous scenario resulted in you creating an inventory service, but so far we haven't started _strangling_ the monolith. That is because the inventory service is never called directly by the UI. It's a backend service that is only used only by other backend services. In this scenario, you will create the catalog service and the catalog service will call the inventory service. When you are ready, you will change the route to tie the UI calls to new service.
+In the previous scenarios, you learned how to take an existing monolithic app and refactor a single _inventory_ service using Quarkus. Since Quarkus is using Java EE much of the technology from the monolith can be reused directly, like JPA and JAX-RS. The previous scenario resulted in you creating an inventory service, but so far we haven't started _strangling_ the monolith. That is because the inventory service is never called directly by the UI. It's a backend service that is only used only by other backend services. In this scenario, you will create the catalog service and the catalog service will call the inventory service. When you are ready, you will change the route to tie the UI calls to new service.
 
 To implement this, we are going to use the Spring Framework. The reason for using Spring for this service is to introduce you to Spring Development, and how [Red Hat Runtimes](https://www.redhat.com/en/products/runtimes) helps to make Spring development on Kubernetes easy. In real life, the reason for choosing Spring vs. WF Swarm mostly depends on personal preferences, like existing knowledge, etc. At the core Spring and Java EE are very similar.
 
@@ -36,7 +36,7 @@ Initially, the project is almost empty and doesn't do anything. Start by reviewi
 
 The output should look something like this
 
-<kbd>![](images/mono-to-micro-part-2/files.png)</kbd>
+<kbd>![](images/AROLatestImages/catalogtree.jpg)</kbd>
 
 As you can see, there are some files that we have prepared for you in the project. Under `src/main/resources/static/index.html` we have for example prepared a simple html-based UI file for you. Except for the `fabric8/` folder and `index.html`, this matches very well what you would get if you generated an empty project from the [Spring Initializr](https://start.spring.io) web page. For the moment you can ignore the content of the `fabric8/` folder (we will discuss this later).
 
@@ -77,7 +77,7 @@ To add Apache Tomcat to our project all we have to do is to add the following li
     </dependency>
 ~~~
 
-We will also make use of Spring's JDBC implementation, so we need to add the following to `pom.xml` at the `<!-- TODO: Add jdbc dependency here -->` marker:
+We will also make use of Spring's JDBC implementation, so we need to add the following to `pom.xml` at the `<!-- TODO: Add data jpa dependency here -->` marker:
 
 ~~~xml
     <dependency>
@@ -605,7 +605,7 @@ To verify that everything is started, run the following command and wait for it 
 
 `oc rollout status -w dc/catalog`
 
->**NOTE:** If you recall in the WildFly Swarm lab Fabric8 detected the `health` _fraction_ and generated health check definitions for us, the same is true for Spring Boot if you have the `spring-boot-starter-actuator` dependency in our project.
+>**NOTE:** If you recall in the Quarkus lab Fabric8 detected the `health` _fraction_ and generated health check definitions for us, the same is true for Spring Boot if you have the `spring-boot-starter-actuator` dependency in our project.
 
 **3. Access the application running on OpenShift**
 
