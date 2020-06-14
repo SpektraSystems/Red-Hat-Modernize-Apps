@@ -1025,8 +1025,7 @@ private void getShippingFee(ShoppingCart cart, Handler<AsyncResult<Double>> resu
 }
 ~~~
 
-Now, lets update the `addProduct` request handler method. Click to add it at the `sendCart(cart,rc); //TODO: update the shipping fee` marker replacing
-the existing `sendCart(cart, rc);` with an updated code block:
+Now, lets update the `addProduct` request handler method. Replace `//TODO: update the shipping fee` with this updated code block.
 
 ~~~java
 this.getShippingFee(cart, message -> {
@@ -1041,7 +1040,7 @@ this.getShippingFee(cart, message -> {
 ~~~
 
 
-Since we have the special case of product already exists we need to update it twice. Click to add it at the `sendCart(cart,rc); //TODO: update the shipping fee, here as well`  marker replacing the existing `sendCart(cart, rc);` with an updated code block:
+Since we have the special case of product already exists we need to update it twice. Again, replace `//TODO: update the shipping fee, here as well` with this updated code block.
 
 ~~~java
 this.getShippingFee(cart, message -> {
@@ -1227,7 +1226,7 @@ You should get a complete set of products, along with their inventory.
 
 Open the monolith UI and observe that the new catalog is being used along with the monolith:
 
-<kbd>![](images/reactive-microservices/coolstore-web.png)</kbd>
+<kbd>![](images/mono-to-micro-part-2/coolstore-web.png)</kbd>
 
 Add some items to your cart, then visit the **Shopping Cart** tab to observe the new shipping fees we hard-coded earlier:
 
@@ -1264,7 +1263,7 @@ oc new-app apache-kafka
 
 <kbd>![](images/AROLatestImages/podkafka.jpg)</kbd>
 
-4. For creating a topic in Apache Kafka, you can select on the running pod and click on ``Termianal`` tab to open the terminal.
+4. For creating a topic in Apache Kafka, you can select on the running pod and click on ``Terminal`` tab to open the terminal.
 
 <kbd>![](images/AROLatestImages/kafkapod.jpg)</kbd>
 
@@ -1613,7 +1612,7 @@ public class ItemTrackerVerticle extends AbstractVerticle {
 
 Review the code to understand how it is interacting with Kafka, read inputs from Kafka and serve the results to the application.
 
-**2. Add Confiuration file**
+**2. Add Configuration file**
 
 Create a new file `modernize-apps/cart/src/main/resources/config-default.json` and add the following json code into it:
 
@@ -1634,7 +1633,7 @@ Create a new file `modernize-apps/cart/src/main/resources/config-default.json` a
 }
 
 ~~~
-**3. Add OpenShift Confiuration file**
+**3. Add OpenShift Configuration file**
 
 Create a new file `modernize-apps/cart/src/main/resources/config-openshift.json` and add this into it:
 
