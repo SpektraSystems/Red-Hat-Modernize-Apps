@@ -306,7 +306,7 @@ Because we used `oc rsync` to quickly re-deploy changes to the running pod, the 
 
 Kill the `oc rsync` processes we started earlier in the background. Execute:
 
-`kill %1` or close the tab sync-eap-openshift
+`kill %1` 
 
 On to the next challenge!
 
@@ -424,9 +424,9 @@ In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration
 
 <kbd>![](images/AROLatestImages/buildconfig.jpg)</kbd>
 
-On this page you can see the pipeline definition. Click **Actions** -> **Edit** to edit the pipeline:
+On this page you can see the pipeline definition. Click on the YAML tab to edit the pipeline.:
  
-In the pipeline, update the ocpuser0XX with your assigned username.
+In the pipeline, update the `ocpuser0XX` with your assigned username.
 ```
     stage 'Deploy to PROD'
    openshift.withCluster() {
