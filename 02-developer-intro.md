@@ -426,6 +426,8 @@ In Project `ocpuser0XX-coolstore-prod`, Open the monolith-pipeline configuration
 
 On this page you can see the pipeline definition. Click on the YAML tab to edit the pipeline.:
  
+<kbd>![](images/AROLatestImages/pipedit.jpg)</kbd>
+
 In the pipeline, update the `ocpuser0XX` with your assigned username.
 ```
     stage 'Deploy to PROD'
@@ -463,14 +465,11 @@ take as much time as the Jenkins infrastructure will already be warmed up). You 
 
 Once the pipeline completes, return to the Prod Project Status and notice that the application is now deployed and running!
 
-<kbd>![](images/developer-intro/pipe-done.png)</kbd>
-
 It may take a few moments for the container to deploy fully.
 
-View the production app **with the blue header from before** is running by clicking: CoolStore Production App at 
-
-`http://www-ocpuser0XX-coolstore-prod.{{ROUTE_SUFFIX}}` (it may take
+View the production app **with the blue header** by clicking on the route of Coolstore-prod (it may take
 a few moments for the container to deploy fully.)
+<kbd>![](images/AROLatestImages/prodroute.jpg)</kbd>
 
 ## Congratulations!
 
