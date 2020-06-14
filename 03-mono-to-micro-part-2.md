@@ -131,7 +131,7 @@ You should now see the html page HTML.
 
 **4. Stop the application**
 
-Before moving on, press `CTRL-Z` on your terminal window to stop and send the running application to the background, then at the command prompt enter `kill %1` to kill the application.
+Before moving on, press `CTRL-C` on your terminal window to stop the application.
 ## Congratulations
 
 You have now successfully executed the first step in this scenario.
@@ -352,7 +352,7 @@ In the next scenario we will also call another service to enrich the endpoint re
 
 ### Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`.
 
 ## Congratulations!
 
@@ -523,7 +523,7 @@ To test the running application, navigate back to the CodeReady Workspaces and r
 
 You should now see a html code deployed.
 
-To see the raw JSON output using `curl`, you can open an new terminal window by clicking on the plus (+) icon on the terminal toolbar and then choose **Terminal**. Enter the following command to run the test:
+To see the raw JSON output using `curl`, you can open an new terminal window by and enter the following command to run the test:
 
 `curl http://localhost:8081/services/product/329299 ; echo`
 
@@ -539,7 +539,7 @@ The REST API returned a JSON object representing the inventory count for this pr
 
 **4. Stop the application**
 
-Before moving on, be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
+Before moving on, be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`. 
 
 ## Congratulations
 
@@ -609,7 +609,7 @@ To verify that everything is started, run the following command and wait for it 
 
 **3. Access the application running on OpenShift**
 
-This sample project includes a simple UI that allows you to access the Inventory API. This is the same
+This sample project includes a simple UI that allows you to access the Catalog API. This is the same
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
 route URL at
 
