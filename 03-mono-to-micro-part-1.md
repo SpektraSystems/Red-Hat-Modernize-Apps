@@ -411,7 +411,7 @@ The UI will refresh the inventory table every 2 seconds, as before.
 
 In the next steps you will enhance OpenShift's ability to manage the application lifecycle by implementing a _health check pattern_. By default, without health checks (or health _probes_) OpenShift considers services to be ready to accept service requests even before the application is truly ready or if the application is hung or otherwise unable to service requests. OpenShift must be _taught_ how to recognize that our app is alive and ready to accept requests.
 
-## Add Health Check Fraction
+## Add Health Check Extension
 ### What is a Health Check?
 
 A key requirement in any managed application container environment is the ability to determine when the application is in a ready state. Only when an application has reported as ready can the manager (in this case OpenShift) act on the next step of the deployment process. OpenShift makes use of various _probes_ to determine the health of an application during its lifespan. A _readiness_ probe is one of these mechanisms for validating application health and determines when an application has reached a point where it can begin to accept incoming traffic. At that point, the IP address for the pod is added to the list of endpoints backing the service and it can begin to receive requests. Otherwise traffic destined for the application could reach the application before it was fully operational resulting in error from the client perspective.
@@ -420,13 +420,13 @@ Once an application is running, there are no guarantees that it will continue to
 
 In our case we will implement the health check logic in a REST endpoint and let Quarkus publish that logic on the `/health` endpoint for use with OpenShift.
 
-**Add `quarkus-smallrye-health` fraction**
+**Add `quarkus-smallrye-health` extension**
 
 First, from the CodeReady Workspaces File Explorer, open the modernize-apps/inventory/pom.xml file.
 
-Quarkus includes the `smallrye-health` fraction which automatically adds health check infrastructure to your
-application when it is included as a fraction in the project. Open the file to insert the new dependencies
-into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
+Quarkus includes the `smallrye-health` extension which automatically adds health check infrastructure to your
+application when it is included as a Extension in the project. Open the file to insert the new dependencies
+into the `pom.xml` file at the `<!-- Add monitor extension-->` marker:
 
 ~~~xml
   <dependency>
@@ -435,7 +435,9 @@ into the `pom.xml` file at the `<!-- Add monitor fraction-->` marker:
   </dependency> 
 ~~~
 
-By adding the `quarkus-smallrye-health` fraction, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
+By adding the `quarkus-smallrye-health` extension, Fabric8 will automatically add a _readinessProbe_ and _livenessProbe_ to the OpenShift _DeploymentConfig_, published at `/health`, once deployed to OpenShift. But you still need to implement the logic behind the health check, which you'll do next.
+
+Another way to do this is to run`mvn quarkus:add-extension -Dextensions="health"` in the terminal to add the health dependency.
 
 ## Define Health Check Endpoint
 
@@ -513,9 +515,9 @@ To verify that everything is started, run the following command and wait for it 
 oc rollout status -w dc/inventory
 ~~~
 
-Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Replace {{INVENTORY_ROUTE_HOST}} with the inventory route host.
+Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Run: 
 
-``curl http://{{INVENTORY_ROUTE_HOST}}/health``
+``curl $(oc get route inventory -o jsonpath="{.spec.host}")/health``
 
 You should see a JSON response like:
 
@@ -550,17 +552,16 @@ The various timeout values for the probes can be configured in many ways. Let's 
 
 `oc set probe dc/inventory --liveness --initial-delay-seconds=30`
 
-And verify it's been changed (look at the `delay=` value for the Liveness probe):
+This will start a new build, Run `oc rollout status -w dc/inventory` to wait for the new deployment to finish.
+
+Once it is finished, Run (look at the `delay=` value for the Liveness probe):
 
 `oc describe dc/inventory | egrep 'Readiness|Liveness'`
 
 ~~~sh
-    Liveness:   http-get http://:8080/health delay=10s timeout=1s period=10s #success=1 #failure=3
+    Liveness:   http-get http://:8080/health delay=30s timeout=1s period=10s #success=1 #failure=3
     Readiness:  http-get http://:8080/health delay=5s timeout=1s period=10s #success=1 #failure=3
 ~~~
-
-You can also edit health checks by navigating Applications > Deployments > inventory > #2 (latest) - ensure you select the version that says 'latest' - on the OpenShift Web Console, or click on this link at
-`https://$OPENSHIFT_MASTER/console/project/ocpuser0XX-coolstore-dev/edit/health-checks?kind=DeploymentConfig&name=inventory` to access the health check edit page for the Inventory deployment.
 
 In the next step we'll exercise the probe and watch as it fails and OpenShift recovers the application.
 
@@ -592,7 +593,7 @@ unhealthy.
 
 <kbd>![](images/mono-to-micro-part-1/inventory-fail.png)</kbd>
 
-At this point, return to the OpenShift web console and click on the _Overview_ tab for the project. Notice that the dark blue circle has now gone light blue, indicating the application is failing its _liveness probe
+At this point, return to the OpenShift web console, navigate through **Projects > ocpuser0XX-coolstore-dev > Workloads** and then click on **Inventory** workload to see the blue circles failing.
 
 After too many liveness probe failures, OpenShift will forcibly kill the pod and container running the service, and spin up a new one to take its place. Once this occurs, the light blue circle should return to dark blue. This should take about 30 seconds.
 
