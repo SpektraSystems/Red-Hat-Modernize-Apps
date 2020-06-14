@@ -307,7 +307,7 @@ In next step of this scenario, we will discuss a bit a about configuration in Ve
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`.
 
 ## Setup environment specific configuration
 
@@ -464,7 +464,7 @@ In next step of this scenario, we will start implementing our rest endpoints.
 
 ## Before moving on
 
-Be sure to stop the cart service by clicking on the first Terminal window and typing CTRL-Z to stop and send the running application to the background.Then at the command line, enter kill %1 to stop the application.
+Be sure to stop the cart service by clicking on the first Terminal window and typing CTRL-C
 
 ## Create REST endpoints for retrieving carts
 
@@ -596,7 +596,7 @@ In the next step we will implement another endpoint and this time it will also c
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background. Then at the command line, enter `kill %1` to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`.
 
 ## Create REST endpoints for adding and deleting products
 
@@ -799,7 +799,7 @@ This should print the follow:
 
 ## Before moving on
 
-Be sure to stop the cart service. To do this, go to the Terminal window from which you started the cart services, press `CTRL-Z` to stop and send the running application to the background, and then enter `kill %1` to terminate the process.
+Be sure to stop the cart service. To do this, go to the Terminal window from which you started the cart services, press `CTRL-C` to stop the application.
 
 **5. Add endpoint for deleting items**
 
@@ -876,7 +876,7 @@ However, looking at the output you can see that the discount and shippingFee is 
 
 ## Before moving on
 
-Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-Z` to stop and send the running application to the background.Then at the command line, enter `kill %1` to stop the application.
+Be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`.
 
 ## Using the Vert.x Event Bus for shipping services
 
@@ -1082,7 +1082,7 @@ This should now return a new shopping cart where one only instance of the produc
 
 ## Before moving on
 
-Be sure to stop both, the cart service and the catalog service. Do this by clicking on the respective Terminal windows from which you started them and typing `CTRL-Z` to stop and send the respective running application to the background. Then at the command line, enter `kill %1` to stop each application.
+Be sure to stop both, the cart service and the catalog service. Do this by clicking on the respective Terminal windows from which you started them and typing `CTRL-C` to stop the application.
 
 ## Navigate to OpenShift dev project
 
