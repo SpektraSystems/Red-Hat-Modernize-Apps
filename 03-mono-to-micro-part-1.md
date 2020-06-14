@@ -344,7 +344,7 @@ The REST API returned a JSON object representing the inventory count for this pr
 
 **4. Stop the application**
 
-Before moving on, click in the first terminal window where Quarkus is running and then press `CTRL-Z` to stop the running application! This command will stop the running process and send it to the background. To terminate the process, you need to do a `kill %1` from the terminal window.
+Before moving on, click in the first terminal window where Quarkus is running and then press `CTRL-C` to stop the running application.
 
 You should see something like:
 
@@ -400,7 +400,11 @@ oc rollout status -w dc/inventory
 **3. Access the application running on OpenShift**
 
 This sample project includes a simple UI that allows you to access the Inventory API. This is the same
-UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Go to inventory and open the route URL to see inventory webpage.
+UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Navigate through **Home > Projects > ocpuser0XX-coolstor-dev > Workloads**. Open inventory workload, click on resources and open the route URL to see inventory webpage.
+
+<kbd>![](images/AROLatestImages/inventoryroute.jpg)</kbd>
+
+The inventory webpage will look like this :
 
 <kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
 
