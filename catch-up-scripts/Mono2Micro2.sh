@@ -4,11 +4,11 @@
 ## Desired State:
 ##   monolith solution deployed in "coolstore-dev" project
 ##   inventory solution deployed in "inventory" project
-##   catalog solution deployed in "catalog" project
 ##
 
+OCP_USERNAME=${1}
 # delete all projects
-oc delete project ocpuser0XX-coolstore-dev
+oc delete project $OCP_USERNAME-coolstore-dev
 
 # sleep a bit more
 echo "All projects deleted. Waiting 120 seconds to ensure they are gone"
@@ -25,9 +25,9 @@ git pull
 cd monolith
 git checkout solution
 git pull
-oc new-project ocpuser0XX-coolstore-dev --display-name="Coolstore Monolith - Dev" || { echo "cant create project - ensure all projects gone with oc get projects and try again" ; exit 1; }
+oc new-project $OCP_USERNAME-coolstore-dev --display-name="Coolstore Monolith - Dev" || { echo "cant create project - ensure all projects gone with oc get projects and try again" ; exit 1; }
 
-oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary1.json
+oc create -n $OCP_USERNAME-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
 
 oc new-app coolstore-monolith-binary-build
 mvn clean package -Popenshift
@@ -42,40 +42,21 @@ oc start-build coolstore --from-file=deployments/ROOT.war
 cd /projects/modernize-apps/inventory
 mvn clean package
 mvn fabric8:deploy -Popenshift
-sleep 20
 
-# deploy catalog solution to catalog project
-cd /projects/modernize-apps/catalog
-mvn clean package
-mvn package fabric8:deploy -Popenshift
-Sleep 20
-# strangle monolith for catalog service
-ROUTE_HOSTNAME=$(oc get route/www -n ocpuser0XX-coolstore-dev -o jsonpath='{.spec.host}')
-cat <<EOF | oc create -n ocpuser0XX-coolstore-dev -f -
-apiVersion: v1
-kind: Route
-metadata:
-  name: catalog-redirect
-spec:
-  host: "${ROUTE_HOSTNAME}"
-  path: /services/products
-  port:
-    targetPort: 8080
-  to:
-    kind: Service
-    name: catalog
-EOF
+
 # go back to master to start at the right place for scenario
 mvn clean
 git clean -df
 git clean -Xf
 git checkout master
+
 # checkout solution for previous projects
 cd ..
 git checkout solution -- monolith
 git checkout solution -- inventory
-git checkout solution -- catalog
+
 # start in right directory
+cd /projects/modernize-apps/catalog
 echo "---"
-echo "Reset complete. To start in the right place: cd /projects/modernize-apps/cart"
+echo "Reset complete. To start in the right place: cd /projects/modernize-apps/catalog"
 echo "---"
