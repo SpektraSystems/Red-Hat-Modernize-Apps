@@ -4,9 +4,13 @@
 ## Reset to beginning of Developer Intro
 ## Desired State: monolith solution deployed in "coolstore-dev" project
 ##
-
+OCP_USERNAME=${1}
 # delete all projects
-oc delete project ocpuser0XX-coolstore-dev
+oc delete project $OCP_USERNAME-coolstore-dev
+
+# sleep a bit more
+echo "All projects deleted. Waiting 120 seconds to ensure they are gone"
+sleep 120 
 
 # clean the workspace
 cd /projects/modernize-apps
@@ -24,9 +28,10 @@ cd monolith
 git checkout master -- src/main/java/com/redhat/coolstore/utils/Transformers.java
 git checkout master -- src/main/webapp/app/css/coolstore.css
 
-oc new-project ocpuser0XX-coolstore-dev --display-name="Coolstore Monolith - Dev" || { echo "cant create project; ensure all projects gone with 'oc get projects' and try again"; exit 1; }
+oc new-project $OCP_USERNAME-coolstore-dev --display-name="Coolstore Monolith - Dev" || { echo "cant create project; ensure all projects gone with 'oc get projects' and try again"; exit 1; }
 
-oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
+oc create -n $OCP_USERNAME-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
+
 oc new-app coolstore-monolith-binary-build
 mvn clean package -Popenshift
 
@@ -47,6 +52,8 @@ cd ..
 git checkout solution -- monolith
 
 # start in right directory
+cd /projects/modernize-apps/monolith
 echo "---"
-echo "Reset complete. To start in the right place: cd $HOME/projects/monolith"
+echo "Reset complete. To start in the right place: cd /projects/modernize-apps/monolith"
 echo "---"
+cd /projects/modernize-apps/monolith
