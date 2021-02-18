@@ -106,6 +106,13 @@ We will go ahead and add a bunch of other dependencies while we have the pom.xml
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
     </dependency>
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20180813</version>
+    </dependency>
+
+
 ~~~
 
 **Test the application locally**
@@ -145,7 +152,7 @@ In next step of this scenario, we will add the logic to be able to read a list o
 
 ## Implement the database repository
 
-We are now ready to implement the database repository.  
+We are now ready to implement the database repository.
 
 Create the file ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/ProductRepository.java``.
 
@@ -240,12 +247,16 @@ And then Open the file to implement the new service:
 package com.redhat.coolstore.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 //import com.redhat.coolstore.client.InventoryClient;
 import com.redhat.coolstore.model.Product;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Service
 public class CatalogService {
@@ -404,7 +415,7 @@ import feign.hystrix.FallbackFactory;
 @FeignClient(name="inventory")
 public interface InventoryClient {
     @GetMapping(path = "/services/inventory/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    Inventory getInventoryStatus(@PathVariable("itemId") String itemId);
+    String getInventoryStatus(@PathVariable("itemId") String itemId);
 
 //TODO: Add Fallback factory here
 }
@@ -436,7 +447,11 @@ private InventoryClient inventoryClient;
 Next, update the `read(String id)` method at the comment `//TODO: Update the quantity for the product by calling the Inventory service` add the following:
 
 ~~~java
-product.setQuantity(inventoryClient.getInventoryStatus(product.getItemId()).getQuantity());
+JSONArray jsonArray = new JSONArray(inventoryClient.getInventoryStatus(product.getItemId()));
+List<String> quantity = IntStream.range(0, jsonArray.length())
+    .mapToObj(index -> ((JSONObject)jsonArray.get(index))
+    .optString("quantity")).collect(Collectors.toList());
+product.setQuantity(Integer.parseInt(quantity.get(0)));
 ~~~
 
 Also, don't forget to add the import statement by un-commenting the import statement `//import com.redhat.coolstore.client.InventoryClient` near the top
@@ -448,13 +463,15 @@ import com.redhat.coolstore.client.InventoryClient;
 Also in the `readAll()` method replace the comment `//TODO: Update the quantity for the products by calling the Inventory service` with the following:
 
 ~~~java
-productList.parallelStream()
-            .forEach(p -> {
-                p.setQuantity(inventoryClient.getInventoryStatus(p.getItemId()).getQuantity());
-            });
+productList.forEach(p -> {
+    JSONArray jsonArray = new JSONArray(this.inventoryClient.getInventoryStatus(p.getItemId()));
+    List<String> quantity = IntStream.range(0, jsonArray.length())
+      .mapToObj(index -> ((JSONObject)jsonArray.get(index))
+      .optString("quantity")).collect(Collectors.toList());
+    p.setQuantity(Integer.parseInt(quantity.get(0)));
+});
 ~~~
 
->**NOTE:** The lambda expression to update the product list uses a `parallelStream`, which means that it will process the inventory calls asynchronously, which will be much faster than using synchronous calls. 
 ## Create a fallback for inventory
 
 In the previous step we added a client to call the Inventory service. Services calling services is a common practice in Microservices Architecture, but as we add more and more services the likelihood of a problem increases dramatically. Even if each service has 99.9% update, if we have 100 of services our estimated up time will only be ~90%. We therefor need to plan for failures to happen and our application logic has to consider that dependent services are not responding.
@@ -470,7 +487,7 @@ And paste this into it at the `//TODO: Add Fallback factory here` marker:
 class InventoryClientFallbackFactory implements FallbackFactory<InventoryClient> {
   @Override
   public InventoryClient create(Throwable cause) {
-    return itemId -> new Inventory(itemId,-1);
+        return itemId -> "[{'quantity':-1}]";
   }
 }
 ~~~
@@ -539,7 +556,7 @@ The REST API returned a JSON object representing the inventory count for this pr
 
 **4. Stop the application**
 
-Before moving on, be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`. 
+Before moving on, be sure to stop the service by clicking on the first Terminal window and typing `CTRL-C`.
 
 ## Congratulations
 
@@ -576,7 +593,7 @@ spring.datasource.initialization-mode=always
 inventory.ribbon.listOfServers=inventory:8080
 ~~~
 
-Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the `username` and `password` with the `Azure PostgreSQL username and password` provided in the environment details page.
+Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the `username` and `password` values with the `Azure PostgreSQL username and password` provided in the environment details page, in the format as seen below:
 
 ~~~
 apiVersion: "v1"
@@ -585,9 +602,9 @@ metadata:
   name: "catalog-database-secret"
 stringData:
   #Update the value with Azure PostgreSQL username.
-  user: ""
+  user: "{Azure PostgreSQL Username}@{Azure PostgreSQL Hostname}"
   #Update the value with Azure PostgreSQL password.
-  password: ""
+  password: "{Azure PostgreSQL Password}"
 ~~~
 >**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 

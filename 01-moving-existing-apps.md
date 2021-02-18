@@ -547,7 +547,7 @@ At the `TODO: Add wildfly plugin here` we are going to add a the following confi
 <plugin>
     <groupId>org.wildfly.plugins</groupId>
     <artifactId>wildfly-maven-plugin</artifactId>
-    <version>1.2.1.Final</version>
+    <version>2.0.2.Final</version>
     <!-- TODO: Add configuration here -->
 </plugin>
 ~~~
@@ -634,7 +634,7 @@ curl http://localhost:8080
 
 ## Shutdown the application
 
-Before moving on, in the Terminal window from which you started JBoss EAP, type `CTRL-C` to stop and terminate the process. 
+Before moving on, in the Terminal window from which you started JBoss EAP, type `CTRL-C` to stop and terminate the process.
 
 ## Deploy the monolith to OpenShift
 
@@ -698,7 +698,7 @@ on and you will experience failures if you do not name it `ocpuser0XX-coolstore-
 <kbd>![](images/AROLatestImages/createproject.jpg)</kbd>
 <kbd>![](images/AROLatestImages/projectdetails.jpg)</kbd>
 
-Click on the name of the newly-created project. The project Dashboard will look like this : 
+Click on the name of the newly-created project. The project Dashboard will look like this :
 
 <kbd>![](images/AROLatestImages/projectdash.jpg)</kbd>
 
@@ -722,7 +722,7 @@ And finally deploy template:
 
 `oc new-app coolstore-monolith-binary-build`
 
-This will deploy both PostgreSQL database and JBoss EAP, but it will not start a build for our application.
+This will initialize our EAP application, but it will not start a build for our application.
 
 You can see the components being deployed on the workloads section, but note that **coolstore** has 0 pods. You have not yet deployed the container image built in previous steps, but you'll do that next.
 
@@ -765,10 +765,12 @@ When it's done you should see the status changed to **1 0f 1 pods** for the data
 
 <kbd>![](images/AROLatestImages/1of1.jpg)</kbd>
 
-To test the application, Click on Coolstore, select Resources tab and click on the Route link 
+To test the application, Click on Coolstore, select Resources tab and click on the Route link
 
 `http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`,
 which will open the same monolith Coolstore in your browser, this time running on OpenShift:
+
+> **NOTE**: If it does not show up, simply wait a few moments and reload your browser. As we have no health probes in place yet (this is coming later), the app may take some time to initialize.
 
 <kbd>![](images/AROLatestImages/coolstoreroute.jpg)</kbd>
 
