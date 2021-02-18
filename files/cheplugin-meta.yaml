@@ -31,6 +31,6 @@ spec:
         - exposedPort: 61436
       volumes:
         - name: rhamt-vscode
-          mountPath: "/home/theia/redhat.mta-vscode-extension"
+          mountPath: "/home/theia/mta/redhat.mta-vscode-extension"
   extensions:
     - https://open-vsx.org/api/redhat/mta-vscode-extension/0.0.63/file/redhat.mta-vscode-extension-0.0.63.vsix
