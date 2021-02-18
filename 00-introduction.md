@@ -8,7 +8,7 @@ We are using a pre-created Azure Red Hat OpenShift cluster in this lab.
 
 Navigate to https://portal.azure.com. Login using the Azure Username and Password provided in the lab enviornment details page. Select `Resource groups` to see all the Resource groups in the subscription
 
-Open `Jboss-labs` resource group to see the pre-created OpenShift Cluster. You can see a Virtual Network and an Openshift cluster in this Resource group.  
+Open `Jboss-labs` resource group to see the pre-created OpenShift Cluster. You can see a Virtual Network and an Openshift cluster in this Resource group.
 
 <kbd>![](images/AROLatestImages/aro.jpg)</kbd>
 
@@ -17,7 +17,7 @@ You can explore through all the resources available here. You can also see the M
 
 <kbd>![](images/AROLatestImages/aro-main.jpg)</kbd>
 
-We are also using an Azure PostgreSQL Database in this lab. Please open `PostgreSQL` resources group to access the PostgreSQL Database. 
+We are also using an Azure PostgreSQL Database in this lab. Please open `PostgreSQL` resources group to access the PostgreSQL Database.
 
 Open the PostgreSQL Database to see the Host name/Server name.
 
@@ -35,7 +35,7 @@ For connecting to our Azure PostgreSQL Database, Right Click on `Server`, select
 
 <kbd>![](images/AROLatestImages/pgserver.jpg)</kbd>
 
-In the new window that appear, provide a name for the connection. 
+In the new window that appear, provide a name for the connection.
 
 <kbd>![](images/AROLatestImages/general.jpg)</kbd>
 
@@ -67,7 +67,7 @@ OpenShift ships with a web-based console that will allow users to
 perform various tasks via a browser.  To get a feel for how the web console
 works, open your browser and go to the **OpenShift Web Console url** provided in the environment details page.
 
-The first screen you will see is the authentication screen. Select **htpasswd** option and enter your **OpenShift username** and **password**. 
+The first screen you will see is the authentication screen. Select **htpasswd** option and enter your **OpenShift username** and **password**.
 <kbd>![](images/AROLatestImages/htpasswd.jpg)</kbd>
 <kbd>![](images/AROLatestImages/login.jpg)</kbd>
 CodeReady Workspaces and your deployment environment, both, run on this OpenShift cluster.
@@ -91,23 +91,21 @@ CodeReady Workspaces IDE running in your browser.
 
 This would be the point at which you would import the project skeletons into your workspace. For this lab, the projects are already imported into your workspace and are visible in the project explorer
 
-Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types. 
+Codeready Workspaces is a full featured IDE and provides language specific capabilities for various project types.
 
-Note the **Terminal** option in Codeready Workspaces. CLick on terminal and select **Open Terminal in Specific container**. Then select the default container to open the terminal. 
+**Opening Terminals**
 
-<kbd>![](images/AROLatestImages/openterminal.jpg)</kbd>
-<kbd>![](images/AROLatestImages/selectcontainer.jpg)</kbd>
+Note the **Terminal** option in Codeready Workspaces. CLick on cube on the right, and under the `maven3-jdk11` runtime select **New Terminal**.
 
-For the rest of these labs, anytime you need to run a command in a terminal, you can use the Codeready Workspaces Terminal window.
+<kbd>![](images/moving-existing-apps/new-terminal.png)</kbd>
 
-<kbd>![](images/AROLatestImages/terminalopened.jpg)</kbd>
-
+For the rest of these labs, anytime you need to run a command in a terminal, you can use any open terminal you have.
 
 ## Explore OpenShift with OpenShift CLI
 
 In order to login, we will use the `oc` command. We can get the login command from OpenShift Console.
 
-Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**. 
+Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**.
 
 <kbd>![](images/AROLatestImages/copylogin.jpg)</kbd>
 
