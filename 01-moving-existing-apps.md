@@ -682,7 +682,7 @@ From the CodeReady Workspaces Terminal window, switch to the dev project you cre
 Run the below commands one by one to import all the required images and the template in to our namespace.
 
 ~~~sh
-oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
+oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/faizyorg/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
 ~~~
 
 And finally deploy template:
