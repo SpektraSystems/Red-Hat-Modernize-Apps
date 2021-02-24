@@ -55,15 +55,17 @@ First, run the Maven build to make sure the skeleton project builds successfully
 > Make sure to run the **package** Maven goal and not **install**. The latter would download a lot more dependencies and do things you don't need yet!
 
 ~~~sh
-mvn clean package
+mvn clean package -f $CHE_PROJECTS_ROOT/modernize-apps/inventory
 ~~~~
+
+> **NOTE**: The first time you run this command, it may take a few moments to download necessary libraries. It will go much faster next time!
 
 You should see a **BUILD SUCCESS** in the logs.
 
 We will add Quarkus extensions to the Inventory application for using _Panache_ (a simplified way to access data via Hibernate ORM), a database with Postgres (in production) and _H2_ (in-memory database for testing). We'll also add the ability to add health probes (which we'll use later on) using the MicroProfile Health extension. Run the following commands to add the extensions using CodeReady Terminal:
 
 ~~~sh
-mvn -q quarkus:add-extension -Dextensions="hibernate-orm-panache, jdbc-postgresql, jdbc-h2"
+mvn -q -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="hibernate-orm-panache, jdbc-postgresql, jdbc-h2"
 ~~~
 
 you will see:
@@ -86,7 +88,13 @@ With our skeleton project in place, let's get to work defining the business logi
 
 The first step is to define the model (definition) of an Inventory object.
 
-Using the CodeReady Workspaces File Explorer interface, create a new file named `Inventory.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/model` for the Inventory Java class in package `com.redhat.coolstore.model` with the following code:
+Using the CodeReady Workspaces File Explorer interface, create a new file named `Inventory.java` in directory `modernize-apps/inventory/src/main/java/com/redhat/coolstore/model` for the Inventory Java class in package `com.redhat.coolstore.model`. To do this, find the right directory, right-click on it, and select _Create > New File_ as shown:
+
+![](images/mono-to-micro-part-1/new-file.png)
+
+![](images/mono-to-micro-part-1/new-filename.png)
+
+In the newly-created file, add the following code:
 
 ~~~java
 package com.redhat.coolstore;
@@ -160,7 +168,7 @@ Open the empty `modernize-apps/inventory/src/main/resources/application.properti
 
 After adding the above lines, update the last few with your `Azure PostgreSQL Host Name`, `Your User ID (ocpuser0XX)`, `PostgreSQL Username` and `PostgreSQL Password` as assigned to you for this lab.
 
-> **WARNING**: Make sure to remove the surrounding brace characters! So your final value for `prod.quarkus.datasource.url` would be something like `jdbc:postgresql://coolstore.postgres.database.azure.com:5432/ocpuser099?ssl=true&sslmode=require` and the value for `prod.quarkus.datasource.username` would look like `ocpuser099@coolstore.postgres.database.azure.com`
+> **WARNING**: Make sure to remove the surrounding `{}` brace characters around each postgres credential after you edit each line!
 
 The prefixes like `%dev` are naming specific Quarkus _configuration profiles_. These allows you to have multiple configurations in the same file and select between then via a _profile name_,
 such as `%dev` (when running locally as a developer) or `%prod` (production).
@@ -173,7 +181,7 @@ By default Quarkus has three profiles, although it is possible to use as many as
 
 ## Add inventory test data
 
-Let’s add inventory data to the database so we can test things out. Create a new file at the path `modernize-apps/inventory/src/main/resources/import.sql` file and copy
+Let’s add inventory data to the database so we can test things out. Create a new file (using same right-click process as before) at the path `modernize-apps/inventory/src/main/resources/import.sql` file and copy
 the following SQL statements to *import.sql*:
 
 ~~~sql
@@ -190,7 +198,7 @@ INSERT INTO INVENTORY (id, itemId, link, location, quantity) values (nextval('hi
 Build and package the Inventory service using Maven to make sure your code compiles:
 
 ~~~sh
-mvn clean package
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory clean package
 ~~~~
 
 If it builds successfully, continue to the next step to create a new service.
@@ -265,7 +273,7 @@ being the ID for which we want inventory status.
 Re-Build and package the Inventory service using Maven to make sure your code compiles:
 
 ~~~sh
-mvn clean package
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory clean package
 ~~~~
 
 You should see a **BUILD SUCCESS** in the build logs. If builds successfully, continue to the next step to create a new RESTful endpoint that uses this service.
@@ -274,12 +282,10 @@ You should see a **BUILD SUCCESS** in the build logs. If builds successfully, co
 
 Using the Quarkus maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
 ~~~sh
-mvn quarkus:dev
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:dev
 ~~~
 
 > As an uber-jar, it could also be run with `java -jar target/inventory-1.0.0-runner.jar` but you don't need to do this now
-
-Once the application is done initializing you should see:
 
 You should see a bunch of log output that ends with:
 
@@ -293,15 +299,13 @@ Running locally using `quarkus:dev` will use the local database.
 
 **3. Test the application**
 
-Once you run the application a pop will appear. Click on the Open Link button in that pop-up to open the application.
+Once you run the application a pop for both port `5005` (debug) and `8080` (web) will appear. Click on the `Open In Preview` button for porta 8080 in that pop-up to open the application.
 
-<kbd>![](images/AROLatestImages/inventoryopenlink.jpg)</kbd>
+![](images/mono-to-micro-part-1/8080-popup.png)
 
-Or open a second CodeReady Workspaces Terminal window (if a second one is not already open) by clicking on New terminal button, Navigate to it and run the below command to see the html code deployed.
+You will see the running Quarkus welcome page in the embedded browser (you may need to click the small refresh button at the top if it is showing old content):
 
-```
-curl http://localhost:8080
-```
+![](images/mono-to-micro-part-1/quarkus-preview.png)
 
 This is a simple webpage that will access the inventory *every 2 seconds* and refresh the table of product inventories.
 
@@ -324,7 +328,7 @@ Before moving on, click in the first terminal window where Quarkus is running an
 You should see something like:
 
 ~~~sh
-INFO  [io.quarkus] (Quarkus Shutdown Thread) Quarkus stopped in 0.007s
+INFO  [io.quarkus] (Quarkus Main Thread) inventory stopped in 0.007s
 ~~~
 
 This indicates the application is stopped.
@@ -342,7 +346,7 @@ We have already deployed our coolstore monolith to OpenShift, but now we are wor
 
 In this step we will deploy our new Inventory microservice for our CoolStore application, so let's navigate back to `ocpuser0XX-coolstore-dev`
 
-From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-coolstore-dev` project by entering the following command:
+From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-coolstore-dev` project by entering the following command (replace username appropriately with your assigned username):
 ```
 oc project ocpuser0XX-coolstore-dev
 ```
@@ -363,7 +367,7 @@ Quarkus also offers the ability to automatically generate OpenShift resources ba
 Add the OpenShift extension via the Terminal:
 
 ~~~sh
-mvn -q quarkus:add-extension -Dextensions="openshift"
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory -q quarkus:add-extension -Dextensions="openshift"
 ~~~
 
 you will see:
@@ -386,10 +390,10 @@ Next, add the following lines to your _modernize-apps/inventory/src/main/resourc
 
 This configures the Kubernetes and Quarkus extensions on how to build and deploy the application after it is built. Quarkus will create the necessary resource objects (typically written in yaml), and automatically add them to our namespace to cause the app to be built and deployed.
 
-With this defined, invoke the following command to build _and_ deploy the app to OpenShift:
+With this defined, invoke the following command to build _and_ deploy the app to OpenShift (ignore any popups in CodeReady during the build):
 
 ~~~sh
-mvn clean package
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory clean package
 ~~~~
 
 This will take a bit longer to build the Quarkus app, build and push the container image, and then deploy to OpenShift.
@@ -402,12 +406,11 @@ oc rollout status -w dc/inventory
 
 **3. Access the application running on OpenShift**
 
-This sample project includes a simple UI that allows you to access the Inventory API. This is the same
-UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Navigate through **Home > Projects > ocpuser0XX-coolstor-dev > Workloads**. Open inventory workload, click on resources and open the route URL to see inventory webpage.
+Back in the OpenShift Dev Perspective, you should see your new Quarkus application deployed alongside our monolith from before, with a blue circle:
 
-<kbd>![](images/AROLatestImages/inventoryroute.jpg)</kbd>
+![](images/mono-to-micro-part-1/quarkus-deploy.png)
 
-The inventory webpage will look like this :
+To make sure the app is working, click the route link in the upper-right of the circle to see inventory webpage:
 
 <kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
 
@@ -432,7 +435,7 @@ In our case we will implement the health check logic in a REST endpoint and let 
 Add the Quarkus Health Probe extension for Kubernetes via the Terminal:
 
 ~~~sh
-mvn -q quarkus:add-extension -Dextensions="quarkus-smallrye-health"
+mvn -q -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="quarkus-smallrye-health"
 ~~~
 
 you will see:
@@ -498,7 +501,7 @@ HealthCheck is a functional interface whose single method call returns a HealthC
 Build and deploy the Inventory service again using Maven:
 
 ~~~sh
-mvn clean package
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory clean package
 ~~~~
 
 You should see a **BUILD SUCCESS** in the build logs, and the application will be re-deployed to OpenShift with its new health checks in place.
@@ -541,26 +544,37 @@ The general _outcome_ of the health check is computed as a logical AND of all th
 
 The various timeout values for the probes can be configured in many ways. Let's tune the _liveness probe_ initial delay so that we don't have to wait 3 minutes for it to be activated. Use the **oc** command to tune the probe to wait 30 seconds before starting to poll the probe:
 
-`oc set probe dc/inventory --liveness --initial-delay-seconds=30`
+~~~sh
+oc set probe dc/inventory --liveness --initial-delay-seconds=30
+~~~
+
+You'll get `deploymentconfig.apps.openshift.io/inventory probes updated`
+
+
+Next, wait for the redeploy triggered by the additional of health probes:
+
+~~~sh
+oc rollout status -w dc/inventory
+~~~
 
 Next, run the `oc describe` command below and look at the `delay=` value for the Liveness probe:
 
-`oc describe dc/inventory | egrep 'Readiness|Liveness'`
+~~~sh
+oc describe dc/inventory | egrep 'Readiness|Liveness'
+~~~
 
 ~~~sh
-    Liveness:   http-get http://:8080/health/live delay=30s timeout=10s period=30s #success=1 #failure=3
-    Readiness:  http-get http://:8080/health/ready delay=0s timeout=10s period=30s #success=1 #failure=3
+Liveness:   http-get http://:8080/health/live delay=30s timeout=10s period=30s #success=1 #failure=3
+Readiness:  http-get http://:8080/health/ready delay=0s timeout=10s period=30s #success=1 #failure=3
 ~~~
 
 In the next step we'll exercise the probe and watch as it fails and OpenShift recovers the application.
 
 ## Exercise Health Check
 
-From the OpenShift Web Console overview page, click on the route link to open the sample application UI:
+Open the sample Inventory application UI by clicking on the route link (upper right of Quarkus circle).
 
-<kbd>![](images/AROLatestImages/inventoryres.jpg)</kbd>
-
-This will open up the sample application UI in a new browser tab:
+This will again open up the sample application UI in a new browser tab:
 
 <kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
 
@@ -575,16 +589,18 @@ To simulate the app crashing, let's kill the underlying service so it stops resp
 
 This will execute the Linux `kill` command to stop the running Java process in the container.
 
-Check out the application sample UI page and notice it is now failing to access the inventory data, and the
+Quickly look at the application sample UI page and notice it is now failing to access the inventory data, and the
 `Last Successful Fetch` counter starts increasing, indicating that the UI cannot access inventory. This could have
 been caused by an overloaded server, a bug in the code, or any other reason that could make the application
 unhealthy.
 
 <kbd>![](images/mono-to-micro-part-1/inventory-fail.png)</kbd>
 
-At this point, return to the OpenShift web console, navigate through **Projects > ocpuser0XX-coolstore-dev > Workloads** and then click on **Inventory** workload to see the blue circles failing.
+Also, in the OpenShift console, you will notice the yellow warning color around the app:
 
-After too many liveness probe failures, OpenShift will forcibly kill the pod and container running the service, and spin up a new one to take its place. Once this occurs, the light blue circle should return to dark blue. This should take about 30 seconds.
+<kbd>![](images/mono-to-micro-part-1/quarkus-warn.png)</kbd>
+
+After too many liveness probe failures, OpenShift will forcibly kill the pod and container running the service, and spin up a new one to take its place. Once this occurs, the light blue or yellow circle should return to dark blue. This should take about 30 seconds.
 
 Return to the same sample app UI (without reloading the page) and notice that the UI has automatically re-connected to the new service and successfully accessed the inventory once again:
 

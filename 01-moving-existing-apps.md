@@ -11,18 +11,18 @@ We'll answer questions like:
 * Why move applications to OCP and cloud?
 * What does the lift and shift process look like?
 
-We will then take the following steps to migrate (lift & shift) an existing Java EE app to EAP+OpenShift using [Red Hat Application Migration Toolkit](https://developers.redhat.com/products/rhamt/overview/) (RHAMT)
+We will then take the following steps to migrate (lift & shift) an existing Java EE app to EAP+OpenShift using [Red Hat Migration Toolkit for Applications](https://developers.redhat.com/products/mta/overview) (RHMTA)
 
-* Analyze existing WebLogic monolith application using RHAMT.
+* Analyze existing WebLogic monolith application using RHMTA directly in the CodeReady Workspaces IDE
 * Review the report and update code and config to run on JBoss EAP
 * Deploy to OpenShift
 * Use OpenShift features like automatic clustering and failover to enhance the application
 
-## What is Red Hat Application Migration Toolkit?
+## What is Red Hat Migration Toolkit for Applications?
 
-<kbd>![](images/moving-existing-apps/rhamt-logo.png)</kbd>
+![](images/moving-existing-apps/rhamt-logo.png)
 
-Red Hat Application Migration Toolkit (RHAMT) is an extensible and customizable rule-based tool that helps simplify migration of Java applications.
+Red Hat Migration Toolkit for Applications (RHMTA) is an extensible and customizable rule-based tool that helps simplify migration of Java applications.
 
 It is used by organizations for:
 
@@ -33,28 +33,21 @@ It is used by organizations for:
 * Rule extension and customizability
 * Ability to analyze source code or application archives
 
-RHAMT examines application artifacts, including project source directories and application archives, then produces an HTML report that highlights areas needing changes. RHAMT can be used to migrate Java applications from previous versions of Red Hat JBoss Enterprise Application Platform or from other containers, such as Oracle® WebLogic Server or IBM® WebSphere® Application Server.
+RHMTA examines application artifacts, including project source directories and application archives, then produces an HTML report that highlights areas needing changes. RHMTA can be used to migrate Java applications from previous versions of Red Hat JBoss Enterprise Application Platform or from other containers, such as Oracle® WebLogic Server or IBM® WebSphere® Application Server.
 
-## How Does Red Hat Application Migration Toolkit Simplify Migration?
+## How Does RHMTA Simplify Migration?
 
-Red Hat Application Migration Toolkit looks for common resources and highlights technologies and known trouble spots when migrating applications. The goal is to provide a high-level view into the technologies used by the application and provide a detailed report organizations can use to estimate, document, and migrate enterprise applications to Java EE and Red Hat JBoss Enterprise Application Platform.
+RHMTA looks for common resources and highlights technologies and known trouble spots when migrating applications. The goal is to provide a high-level view into the technologies used by the application and provide a detailed report organizations can use to estimate, document, and migrate enterprise applications to Java EE and Red Hat JBoss Enterprise Application Platform.
 
-> RHAMT is usually part of a much larger application migration and modernization program that involves well defined and repeatable phases over weeks or months and involves many people from a given business. Do not be fooled into thinking that every single
+> RHMTA is usually part of a much larger application migration and modernization program that involves well defined and repeatable phases over weeks or months and involves many people from a given business. Do not be fooled into thinking that every single
 migration is a simple affair and takes an hour or less! To learn more about Red Hat's philosophy and proven methodology, check out
-the [RHAMT documentation](https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit) and contact your local Red Hat representative when embarking on a real world migration and modernization strategy.
+the [RHMTA documentation](https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications) and contact your local Red Hat representative when embarking on a real world migration and modernization strategy.
 
-## More RHAMT Resources
+## More RHMTA Resources
 
-* [Documentation](https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit)
-* [Developer Homepage](https://developers.redhat.com/products/rhamt/overview/)
+* [Documentation](https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications)
+* [Developer Homepage](https://developers.redhat.com/products/mta/overview)
 
-
-## Setup for Exercise
-To start in the right directory, from the CodeReady Workspaces Terminal window, run the following commands to set up your environment for this scenario:
-
-~~~shell
-cd /projects/modernize-apps/monolith
-~~~
 
 ## Analyzing a Java EE app using Red Hat Application Migration Toolkit
 
@@ -63,161 +56,116 @@ Oracle® WebLogic Server (WLS). This application is a Java EE application
 using a number of different technologies, including standard Java EE APIs
 as well as proprietary Weblogic APIs and best practices.
 
-The Red Hat Application Migration Toolkit can be installed and used in a few different ways:
+**1. MTA IDE Plugin**
 
-* **Web Console** - The web console for Red Hat Application Migration Toolkit is a web-based system that allows a team of users to assess and prioritize migration and modernization efforts for a large number of applications. It allows you to group applications into projects for analysis and provides numerous reports that highlight the results.
-* **Command Line Interface** - The CLI is a command-line tool that allows users to assess and prioritize migration and modernization efforts for applications. It provides numerous reports that highlight the analysis results.
-* **Eclipse Plugin** - The Eclipse plugin for Red Hat Application Migration Toolkit provides assistance directly in Eclipse and Red Hat JBoss Developer Studio for developers making changes for a migration or modernization effort. It analyzes your projects using RHAMT, marks migration issues in the source code, provides guidance to fix the issues, and offers automatic code replacement when possible.
+For this lab, we will use the [MTA Plugin]( https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/5.0/html-single/ide_plugin_guide/index) based on CodeReady Workspaces.
 
-For this scenario, we will use the CLI as you are the only one that will run RHAMT in this system. For multi-user use, the Web Console would be a good option.
+The IDE Plugin for the Migration Toolkit for Applications provides assistance directly in Eclipse and Red Hat CodeReady Studio/Workspaces for developers making changes for a migration or modernization effort. It analyzes your projects using MTA, marks migration issues in the source code, provides guidance to fix the issues, and offers automatic code replacement when possible.
 
-**1. Verify Red Hat Application Migration Toolkit CLI**
+**2. Use the configuration editor to setup the analysis**
 
-The RHAMT CLI is has been installed for you. To verify that the tool was properly installed, run:
+Click on `MTA Explorer` icon on the left, click on `+` icon to add a new MTA configuration:
 
-``${HOME}/rhamt-cli-4.3.0.Final/bin/rhamt-cli --version``
+![](images/moving-existing-apps/mta_newconf.png)
 
-You should see:
+> NOTE: If you don't see '+' icon, please try to `uncheck` *Explorer* via right-clicking on _MIGRATION TOOLKIT FOR APPLICATIONS_ menu then `check` it again.
 
-~~~shell
-Using RHAMT at /home/jboss/rhamt-cli-4.3.0.Final
-> Red Hat Application Migration Toolkit (RHAMT) CLI, version 4.3.0.Final.
-~~~
+To input source files and directories, on the `--input` option click on `Add` then select `Open File Explorer`:
 
-**2. Inspect the project source code**
+![](images/moving-existing-apps/mta-add-input.png)
 
-The sample project we will migrate is a monolithic Java EE application that implements
-an online shopping store called _Coolstore_ containing retail items that you can add to a shopping
-cart and purchase. The source code is laid out in different
-subdirectories according to Maven best practices.
+Navigate to `projects > modernize-apps` then select `monolith` directory. Click on `Choose...`:
 
-``tree -L 3``
+![](images/moving-existing-apps/mta-add-opendir.png)
 
-You should see:
+Then you will see that */projects/mdoernize-apps/monoilth* directory is added in _--input_ configuration.
 
-~~~shell
-.
-+-- hello.txt
-+-- pom.xml
-+-- README.md
-\-- src
-    \-- main
-        +-- java
-        +-- openshift
-        +-- resources
-        \-- webapp
-~~~
+Select `eap7` in _--target_ server to migrate:
 
-This is a minimal Java EE project which uses [JAX-RS](https://docs.oracle.com/javaee/7/tutorial/jaxrs.htm) for building
-RESTful services and the [Java Persistence API (JPA)](https://docs.oracle.com/javaee/7/tutorial/partpersist.htm) for connecting
-to a database and an [AngularJS](https://angularjs.org) frontend.
+![](images/moving-existing-apps/mta-target.png)
 
-When you later deploy the application, it will look like:
+Click on `--source` to migrate from then select `weblogic`. Leave the other configurations:
 
-<kbd>![](images/moving-existing-apps/coolstore-web.png)</kbd>
+![](images/moving-existing-apps/mta-source.png)
 
-**3. Run the RHAMT CLI against the project**
+**3. Run an analysis report**
 
-The RHAMT CLI has a number of options to control how it runs. Run the below command
-to execute the RHAMT CLI and analyze the existing project:
+Right-click on *mtaConfiguration* to analyze the WebLogic application. Click on `Run` in the popup menu:
 
-~~~shell
-  ${HOME}/rhamt-cli-4.3.0.Final/bin/rhamt-cli \
-  --sourceMode \
-  --input /projects/modernize-apps/monolith \
-  --output /projects/rhamt-reports/monolith \
-  --overwrite \
-  --source weblogic \
-  --target eap:7 \
-  --packages com.redhat weblogic
+![](images/moving-existing-apps/mta-run-report.png)
 
-~~~
+Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few minutes to complete the analysis. Click on `Open Report`:
 
-> Note the use of the ``--source`` and ``--target`` options. This allows you to target specific migration paths supported by RHMAT. Other
-migration paths include **IBM® WebSphere® Application Server** and **JBoss EAP** 5/6/7.
+![](images/moving-existing-apps/mta-analysis-complete.png)
 
-**Wait for it to complete before continuing!**. You should see `Report created: /projects/rhamt-reports/monolith/index.html`.
+**4. Review the report**
 
-**3. View the results**
+![](images/moving-existing-apps/rhamt_result_landing_page.png)
 
-Next, go to the **project explorer**. Expand `rhamt-reports/monolith` on the left-hand side. Right click on `index.html` and click on **Open with** and then select **preview** to view the landing page.
+The main landing page of the report lists the applications that were processed. Each row contains a high-level overview of the
+story points, number of incidents, and technologies encountered in that application.
 
-<kbd>![](images/AROLatestImages/reportpreview.jpg)</kbd>
+**Click on the `monolith` link** to access details for the project:
 
-You should see the landing page for the report:
+![](images/moving-existing-apps/rhamt_project_overview.png)
 
-<kbd>![](images/AROLatestImages/monolith.jpg)</kbd>
-
-The main landing page of the report lists the applications that were processed. Each row contains a high-level overview of the story points, number of incidents, and technologies encountered in that application.
-
-Click on the `monolith` link to access details for the project:
-
-<kbd>![](images/AROLatestImages/monolithgraph.jpg)</kbd>
-
-## Understanding the report
+**5. Understanding the report**
 
 The Dashboard gives an overview of the entire application migration effort. It summarizes:
 
-* The **incidents and story points by category**
-* The **incidents and story points by level of effort** of the suggested changes
-* The **incidents by package**
+* The incidents and story points by category
+* The incidents and story points by level of effort of the suggested changes
+* The incidents by package
 
-> Story points are an abstract metric commonly used in Agile software development to estimate the relative level of effort needed to implement a feature or change.
-Red Hat Application Migration Toolkit uses story points to express the level of effort needed to migrate particular application constructs, and the application as a whole.
-The level of effort will vary greatly depending on the size and complexity of the application(s) to migrate.
+> *NOTE:* _Story points_ are an abstract metric commonly used in Agile software development to estimate the relative level of effort needed to
+implement a feature or change. Migration Toolkit for Application uses story points to express the level of effort needed to
+migrate particular application constructs, and the application as a whole. The level of effort will vary greatly depending on the
+size and complexity of the application(s) to migrate.
 
-There are several other sub-pages accessible by the menu near the top. Click on each one and observe the results for each of these pages:
+You can use this report to estimate how easy/hard each app is, and make decisions about which apps to migrate, which to refactor, and which to leave alone. In this case we will do a straight migration to JBoss EAP.
 
-* **All Applications** Provides a list of all applications scanned.
-* **Dashboard** Provides an overview for a specific application.
-* **Issues** Provides a concise summary of all issues that require attention.
-* **Application Details** provides a detailed overview of all resources found within the application that may need attention during the migration.
-* **Unparsable** shows all files that RHAMT could not parse in the expected format. For instance, a file with a .xml or .wsdl suffix is assumed to be an XML file. If the XML parser fails, the issue is reported here and also where the individual file is listed.
-* **Dependencies** displays all Java-packaged dependencies found within the application.
-* **Remote Services** Displays all remote services references that were found within the application.
-* **EJBs** contains a list of EJBs found within the application.
-* **JBPM** contains all of the JBPM-related resources that were discovered during analysis.
-* **JPA** contains details on all JPA-related resources that were found in the application.
-* **About** Describes the current version of RHAMT and provides helpful links for further assistance.
+On to the next step to change the code!
 
-> Some of the above sections may not appear depending on what was detected in the project.
+**6. Jump to Code**
 
-Now that you have the RHAMT report available, let's get to work migrating the app!
+Let's jump to code containing identified migration issues. Expand the *monolith* source project in the MTA explorer and navigate to `modernize-apps > monolith > src > main > java > com > redhat > coolstore > utils > StartupListener.java`. Be sure to click the arrow next to the actual class name `StartupListener.java` to expand and show the Hints:
 
-## Migrate Application Startup Code
+![](images/moving-existing-apps/mta_project_issues.png)
 
-In this step we will migrate some Weblogic-specific code in the app to use standard Java EE interfaces.
+In the Explorer, MTA issues use an icon to indicate their severity level and status. The following table describes the meaning of the various icons:
 
-**1. Review the issue related to `ApplicationLifecycleListener`**
+![](images/moving-existing-apps/mta-issues-table.png)
 
-Open the Issues report
+**7. View Details about the Migration Issues**
 
-<kbd>![](images/AROLatestImages/issues.jpg)</kbd>
+Let's take a look at the details about the migration issue. Right-click on `WebLogic ApplicationLifecycleListenerEvent[rule-id:xxx]` in _Hints_ of _StartupListener.java_ file. Click on `View Details`:
 
-RHAMT provides helpful links to understand the issue deeper and offer guidance for the migration.
+![](images/moving-existing-apps/mta-issue-detail.png)
 
-The WebLogic `ApplicationLifecycleListener` abstract class is used to perform functions or schedule jobs at Oracle WebLogic Server start and stop. In this case we have
-code in the `postStart` and `preStop` methods which are executed after Weblogic starts up and before it shuts down, respectively.
+MTA also provides helpful links to understand the issue deeper and offer guidance for the migration when you click on `Open Report`:
 
-In JBoss Enterprise Application Platform, there is no equivalent to intercept these events, but you can get equivalent functionality using a _Singleton EJB_ with standard annotations,
-as suggested in the issue in the RHAMT report.
+![](images/moving-existing-apps/mta-issue-open-report.png)
 
-We will use the `@Startup` annotation to tell the container to initialize the singleton session
-bean at application start. We will similarly use the `@PostConstruct` and `@PreDestroy` annotations to specify the
-methods to invoke at the start and end of the application lifecyle achieving the same result but without
-using proprietary interfaces.
+The WebLogic `ApplicationLifecycleListener` abstract class is used to perform functions or schedule jobs in Oracle WebLogic, like server start and stop. In this case we have code in the `postStart` and `preStop` methods which are executed after Weblogic starts up and before it shuts down, respectively.
 
-While the code in our startup and shutdown is very simple, in the real world this code may require additional thought as part of the migration. However,
-using this method makes the code much more portable.
+In Jakarta EE, there is no equivalent to intercept these events, but you can get equivalent
+functionality using a _Singleton EJB_ with standard annotations, as suggested in the issue in the MTA report.
 
-**2. Open the file**
+We will use the `@Startup` annotation to tell the container to initialize the singleton session bean at application start. We
+will similarly use the `@PostConstruct` and `@PreDestroy` annotations to specify the methods to invoke at the start and end of
+the application lifecyle achieving the same result but without using proprietary interfaces.
 
-Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
-`modernize-apps/monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java`.Double click on the StartupListener.java" file to open it
+Using this method makes the code much more portable.
 
-The first issue we will tackle is the one reporting the use of _Weblogic ApplicationLifecyleEvent_ and
-_Weblogic LifecycleListener_ in this file. Open the file to make these changes in the file.
+**8. Fix the ApplicationLifecycleListener issues**
 
+To begin we are fixing the issues under the Monolith application. Right-click on `WebLogic ApplicationLifecycleListenerEvent[rule-id:xxx]` in _Hints_ of _StartupListener.java_ file. Click on `Open Code`:
+
+![](images/moving-existing-apps/mta-issue-open-code.png)
+
+You can also navigate to the `modernize-apps` folder in the project tree, then open the file `monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java` by clicking on it.
+
+Replace the file content with the below code by selecting all existing code with CTRL-A or CMD-A, pressing BACKSPACE, then copying pasting this code in:
 
 ~~~java
 package com.redhat.coolstore.utils;
@@ -249,39 +197,50 @@ public class StartupListener {
 }
 ~~~
 
-**3. Test the build**
+> *NOTE:* Where is the Save button? CodeReady workspaces will autosave your changes, that is why you can’t find a SAVE button - no
+more losing code because you forgot to save. You can undo with `CTRL-Z` (or CMD-Z on a Mac) or by using the `Edit -> Undo` menu option.
 
-From the CodeReady Workspaces Terminal window, build and package the app using Maven to make sure the changed code still compiles:
-~~~shell
-cd /projects/modernize-apps/monolith
-mvn clean package
+**9. Test the build**
+
+Open a new Terminal window under the `maven3-jdk11` container (on the right). In the terminal, issue the following command to test the build:
+
+~~~sh
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/monolith clean package
 ~~~
 
-If builds successfully (you will see `BUILD SUCCESS`), then let's move on to the next issue! If it does not compile,
-verify you made all the changes correctly and try the build again.
+![](images/moving-existing-apps/codeready-workspace-build.png)
 
-## Migrate Logging
+If it builds successfully (you will see `BUILD SUCCESS`), let’s move on to the next issue! If it does not compile, verify
+you made all the changes correctly and try the build again.
 
-In this step we will migrate some Weblogic-specific code in the app to use standard Java EE interfaces.
+![](images/moving-existing-apps/codeready-workspace-build-result.png)
 
-Some of our application makes use of Weblogic-specific logging methods, which offer features related to logging of
+**10. View the diffs**
+
+You can review the changes you've made. On the left, click on the _Version Control_ icon, which shows a list of the changed files. Double-click on `StartupListener.java` to view the differences you've made:
+
+![](images/moving-existing-apps/codeready-workspace-diffs.png)
+
+CodeReady keeps track (using Git) of the changes you make, and you can use version control to check in, update, and compare files as you change them.
+
+For now, go back to the _Explorer_ tree and lets fix the remaining issues.
+
+**11. Fix the logger issues**
+
+Some of our application makes use of Weblogic-specific logging methods like the `NonCatalogLogger`, which offer features related to logging of
 internationalized content, and client-server logging.
 
-In this case we are using Weblogic's `NonCatalogLogger` which is a simplified logging framework that doesn't use
-localized message catalogs (hence the term _NonCatalog_).
+The WebLogic `NonCatalogLogger` is not supported on JBoss EAP (or any other Jakarta EE platform), and should be migrated to a
+supported logging framework, such as the JDK Logger or JBoss Logging.
 
-The WebLogic `NonCatalogLogger` is not supported on JBoss EAP (or any other Java EE platform), and should be migrated to a supported logging framework, such as the JDK Logger or JBoss Logging.
+We will use the standard Java Logging framework, a much more portable framework. The framework also [supports
+internationalization](https://docs.oracle.com/javase/8/docs/technotes/guides/logging/overview.html#a1.17) if needed.
 
-We will use the standard Java Logging framework, a much more portable framework. The framework also
-[supports internationalization](https://docs.oracle.com/javase/8/docs/technotes/guides/logging/overview.html#a1.17) if needed.
+Go back to the File Exporer:
 
-**1. Open the file**
+![](images/moving-existing-apps/codeready-explorer.png)
 
-Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
-`modernize-apps/monolith/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java`
-
-
-**2. Make the changes** Open the file to make these changes:
+In the same `monolith` directory, open the `src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java` file and replace its contents with:
 
 ~~~java
 package com.redhat.coolstore.service;
@@ -300,116 +259,121 @@ import com.redhat.coolstore.utils.Transformers;
 import java.util.logging.Logger;
 
 @MessageDriven(name = "OrderServiceMDB", activationConfig = {
-	@ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "topic/orders"),
-	@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-	@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge")})
+    @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "topic/orders"),
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
+    @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge")})
 public class OrderServiceMDB implements MessageListener {
 
-	@Inject
-	OrderService orderService;
+    @Inject
+    OrderService orderService;
 
-	@Inject
-	CatalogService catalogService;
+    @Inject
+    CatalogService catalogService;
 
-	private Logger log = Logger.getLogger(OrderServiceMDB.class.getName());
+    private Logger log = Logger.getLogger(OrderServiceMDB.class.getName());
 
-	@Override
-	public void onMessage(Message rcvMessage) {
-		TextMessage msg = null;
-		try {
-				if (rcvMessage instanceof TextMessage) {
-						msg = (TextMessage) rcvMessage;
-						String orderStr = msg.getBody(String.class);
-						log.info("Received order: " + orderStr);
-						Order order = Transformers.jsonToOrder(orderStr);
-						log.info("Order object is " + order);
-						orderService.save(order);
-						order.getItemList().forEach(orderItem -> {
-							catalogService.updateInventoryItems(orderItem.getProductId(), orderItem.getQuantity());
-						});
-				}
-		} catch (JMSException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public void onMessage(Message rcvMessage) {
+        TextMessage msg = null;
+        try {
+                if (rcvMessage instanceof TextMessage) {
+                        msg = (TextMessage) rcvMessage;
+                        String orderStr = msg.getBody(String.class);
+                        log.info("Received order: " + orderStr);
+                        Order order = Transformers.jsonToOrder(orderStr);
+                        log.info("Order object is " + order);
+                        orderService.save(order);
+                        order.getItemList().forEach(orderItem -> {
+                            catalogService.updateInventoryItems(orderItem.getProductId(), orderItem.getQuantity());
+                        });
+                }
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
 ~~~
 
 That one was pretty easy.
 
-## Test the build
+**12. Test the build**
 
-Build and package the app using Maven to make sure you code still compiles:
+Build and package the app again just as before:
 
-`mvn clean package`
+~~~sh
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/monolith clean package
+~~~
 
-If builds successfully (you will see `BUILD SUCCESS`), then let's move on to the next issue! If it does not compile,
-verify you made all the changes correctly and try the build again.
+If builds successfully (you will see `BUILD SUCCESS`), then let’s move on to the next issue! If it does not compile, verify you
+made all the changes correctly and try the build again.
 
+**13. Fix issues with MDBs**
 
-## Migrate JMS Topic
+In this final step we will again migrate some Weblogic-specific code in the app to use standard Java EE interfaces, and one
+JBoss-specific interface.
 
-In this final step we will again migrate some Weblogic-specific code in the app to use standard Java EE interfaces,
-and one JBoss-specific interface.
+Our application uses [JMS](https://en.wikipedia.org/wiki/Java_Message_Service) to
+communicate. Each time an order is placed in the application, a JMS message is sent to a JMS Topic, which is then consumed by
+listeners (subscribers) to that topic to process the order using
+[Message-driven beans](https://docs.oracle.com/javaee/6/tutorial/doc/gipko.html), a form of
+Enterprise JavaBeans (EJBs) that allow Java EE applications to process messages asynchronously.
 
-Our application uses [JMS](https://en.wikipedia.org/wiki/Java_Message_Service) to communicate. Each time an order is placed in the application, a JMS message is sent to
-a JMS Topic, which is then consumed by listeners (subscribers) to that topic to process the order using [Message-driven beans](https://docs.oracle.com/javaee/6/tutorial/doc/gipko.html), a form
-of Enterprise JavaBeans (EJBs) that allow Java EE applications to process messages asynchronously.
+In this case, `InventoryNotificationMDB` is subscribed to and listening for messages from `ShoppingCartService`. When an order
+comes through the `ShoppingCartService`, a message is placed on the JMS Topic. At that point, the `InventoryNotificationMDB`
+receives a message and if the inventory service is below a pre-defined threshold, sends a message to the log indicating that the
+supplier of the product needs to be notified.
 
-In this case, `InventoryNotificationMDB` is subscribed to and listening for messages from `ShoppingCartService`. When
-an order comes through the `ShoppingCartService`, a message is placed on the JMS Topic. At that point, the `InventoryNotificationMDB`
-receives a message and if the inventory service is below a pre-defined threshold, sends a message to the log indicating that
-the supplier of the product needs to be notified.
+Unfortunately this MDB was written a while ago and makes use of weblogic-proprietary interfaces to configure and operate the MDB.
+MTA has flagged this and reported it using a number of issues.
 
-Unfortunately this MDB was written a while ago and makes use of weblogic-proprietary interfaces to configure and operate the
-MDB. RHAMT has flagged this and reported it using a number of issues.
+JBoss EAP provides an even more efficient and declarative way to configure and manage the lifecycle of MDBs. In this case, we can
+use annotations to provide the necessary initialization and configuration logic and settings. We will use the `@MessageDriven`
+and `@ActivationConfigProperty` annotations, along with the `MessageListener` interfaces to provide the same functionality as
+from Weblogic.
 
-JBoss EAP provides an even more efficient and declarative way
-to configure and manage the lifecycle of MDBs. In this case, we can use annotations to provide the necessary initialization
-and configuration logic and settings. We will use the
-`@MessageDriven` and `@ActivationConfigProperty` annotations, along with the `MessageListener` interfaces to provide the
-same functionality as from Weblogic.
-
-Much of Weblogic's interfaces for EJB components like MDBs reside in Weblogic descriptor XML files. Open
-``src/main/webapp/WEB-INF/weblogic-ejb-jar.xml`` to see one of these descriptors. There are many different configuration
+Much of Weblogic’s interfaces for EJB components like MDBs reside in Weblogic descriptor XML files. Open
+`src/main/webapp/WEB-INF/weblogic-ejb-jar.xml` to see one of these descriptors. There are many different configuration
 possibilities for EJBs and MDBs in this file, but luckily our application only uses one of them, namely it configures
-`<trans-timeout-seconds>` to 30, which means that if a given transaction within an MDB operation takes too
-long to complete (over 30 seconds), then the transaction is rolled back and exceptions are thrown. This interface is
-Weblogic-specific so we'll need to find an equivalent in JBoss.
+`<trans-timeout-seconds>` to 30, which means that if a given transaction within an MDB operation takes too long to complete
+(over 30 seconds), then the transaction is rolled back and exceptions are thrown. This interface is Weblogic-specific so we’ll
+need to find an equivalent in JBoss.
 
-> You should be aware that this type of migration is more involved than the previous steps, and in real world applications
-it will rarely be as simple as changing one line at a time for a migration. Consult the [RHAMT documentation](https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit) for more detail on Red Hat's
-Application Migration strategies or contact your local Red Hat representative to learn more about how Red Hat can help you
-on your migration path.
+> **NOTE:** You should be aware that this type of migration is more involved than the previous steps, and in real world applications it will
+rarely be as simple as changing one line at a time for a migration. Consult the
+[MTA documentation](https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications/) for more
+detail on Red Hat’s Application Migration strategies or contact your local Red Hat representative to learn more about how Red Hat
+can help you on your migration path.
 
-**1. Review the issues**
+**14. Review the issues**
 
-From the RHAMT Issues report (right-click on the file `rhamt-reports/monolith/index.html` and then click preview), we will fix the remaining issues:
+From the MTA Issues report, we will fix the remaining issues:
 
-* **Call of JNDI lookup** - Our apps use a weblogic-specific [JNDI](https://en.wikipedia.org/wiki/Java_Naming_and_Directory_Interface) lookup scheme.
-* **Proprietary InitialContext initialization** - Weblogic has a very different lookup mechanism for InitialContext objects
-* **WebLogic InitialContextFactory** - This is related to the above, essentially a Weblogic proprietary mechanism
-* **WebLogic T3 JNDI binding** - The way EJBs communicate in Weblogic is over T2, a proprietary implementation of Weblogic.
+* `Call of JNDI lookup` - Our apps use a weblogic-specific [JNDI](https://en.wikipedia.org/wiki/Java_Naming_and_Directory_Interface) lookup scheme.
+* `Proprietary InitialContext initialization` - Weblogic has a very different lookup mechanism for InitialContext objects
+* `WebLogic InitialContextFactory` - This is related to the above, essentially a Weblogic proprietary mechanism
+* `WebLogic T3 JNDI binding` - The way EJBs communicate in Weblogic is over T2, a proprietary implementation of Weblogic.
 
-All of the above interfaces have equivalents in JBoss, however they are greatly simplified and overkill for our application which uses
-JBoss EAP's internal message queue implementation provided by [Apache ActiveMQ Artemis](https://activemq.apache.org/artemis/).
+All of the above interfaces have equivalents in JBoss, however they are greatly simplified and overkill for our application which
+uses JBoss EAP’s internal message queue implementation provided by [Apache ActiveMQ
+Artemis](https://activemq.apache.org/artemis/).
 
-**2. Remove the weblogic EJB Descriptors**
+**15. Remove the weblogic EJB Descriptors**
 
-The first step is to remove the unneeded `weblogic-ejb-jar.xml` file. This file is proprietary to Weblogic and not recognized or processed by JBoss
-EAP. Run the following command in Codeready workspace terminal to remove it:
+The first step is to remove the unneeded `weblogic-ejb-jar.xml` file. This file is proprietary to Weblogic and not recognized or
+processed by JBoss EAP. Delete the file by right-clicking on the `src/main/webapp/WEB-INF/weblogic-ejb-jar.xml` file and choose **Delete**, and click **OK**.
 
-`rm -f /projects/modernize-apps/monolith/src/main/webapp/WEB-INF/weblogic-ejb-jar.xml`
+![](images/moving-existing-apps/codeready-workspace-delete-jar.png)
 
-While we're at it, let's remove the stub weblogic implementation classes added as part of the scenario.
-Run this command to remove them:
+While we’re at it, let’s remove the stub weblogic implementation classes added as part of the scenario.
 
-`rm -rf /projects/modernize-apps/monolith/src/main/java/weblogic`
+Right-click on the `src/main/java/weblogic` folder and select *Delete* to delete the folder:
 
-**3. Fix the code**
+![](images/moving-existing-apps/codeready-workspace-delete-weblogic.png)
 
-Open `/projects/modernize-apps/monolith/src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java`. Open the file to fix the code:
+**16. Fix the code**
+
+Open the `monolith/src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java` file and replace its contents with:
 
 ~~~java
 package com.redhat.coolstore.service;
@@ -468,75 +432,69 @@ public class InventoryNotificationMDB implements MessageListener {
 ~~~
 
 Remember the `<trans-timeout-seconds>` setting from the `weblogic-ejb-jar.xml` file? This is now set as an
-`@ActivationConfigProperty` in the new code. There are pros and cons to using annotations vs. XML descriptors and care should be
+`@ActivationConfigProperty` in the new code. There are pros and cons to using annotations vs. XML descriptors and care should be
 taken to consider the needs of the application.
 
 Your MDB should now be properly migrated to JBoss EAP.
 
-## Test the build
+Lastly, remove Maven dependency on *org.jboss.spec.javax.rmi:jboss-rmi-api_1.0_spec*. In JBoss EAP 7.3(or later), artifact with groupId _org.jboss.spec.javax.rmi_ and artifactId _jboss-rmi-api_1.0_spec_ are unneeded dependencies. Remove the following dependency in `monolith/pom.xml`:
 
-Build and package the app using Maven to make sure you code still compiles:
+![](images/moving-existing-apps/mta-remove-dependency.png)
 
-`mvn clean package`
+**17. Test the build**
 
-If builds successfully (you will see `BUILD SUCCESS`), then let's move on to the next issue! If it does not compile,
-verify you made all the changes correctly and try the build again.
+Build once again:
 
-
-## Re-Run the RHAMT report
-
-In this step we will re-run the RHAMT report to verify our migration was successfu.
-
-**1. Run the RHAMT CLI against the project**
-
-Run the below command to clean the old build artifacts and re-execute the RHAMT CLI and analyze the new project:
-
-~~~shell
-mvn clean && \
-${HOME}/rhamt-cli-4.3.0.Final/bin/rhamt-cli \
-  --sourceMode \
-  --input /projects/modernize-apps/monolith \
-  --output /projects/rhamt-reports/monolith \
-  --overwrite \
-  --source weblogic \
-  --target eap:7 \
-  --packages com.redhat weblogic
+~~~sh
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/monolith clean package
 ~~~
 
-**Wait for it to complete before continuing!**. You should see `Report created: /projects/rhamt-reports/monolith/index.html`.
+If builds successfully (you will see `BUILD SUCCESS`). If it does not compile, verify you
+made all the changes correctly and try the build again.
 
-**2. View the results**
+**18. Re-run the MTA report**
 
-Reload the report web page (right-click on the file `rhamt-reports/monolith/index.html` and then click **preview**) and verify that it now reports 0 Story Points:
-Go to the project explorer > expand rhamt-report on the left hand side. Right click on index.html and click on preview to view the landing page.
+In this step we will re-run the MTA report to verify our migration was successful.
+
+In the MTA explorer, right-click on *mtaConfiguration* to analyze the WebLogic application once again. Click on `Run` in the popup menu:
+
+![](images/moving-existing-apps/mta-rerun-report.png)
+
+Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few mins to complete the analysis. Click on `Open Report`:
+
+![](images/moving-existing-apps/mta-analysis-rerun-complete.png)
+
+> **NOTE:** If it is taking too long, feel free to skip the next section and proceed to step *13* and return back to the analysis later to confirm that you
+eliminated all the issues.
+
+**19. View the results**
+
+Click on the latest result to go to the report web page and verify that it now reports `0 Story Points`:
+
 You have successfully migrated this app to JBoss EAP, congratulations!
 
-<kbd>![](images/AROLatestImages/storypoint0.jpg)</kbd>
+![](images/moving-existing-apps/rhamt_project_issues_story.png)
 
-
-## Migration Complete!
-
-Now that we've migrated the app, let's deploy it and test it out and start to explore some of the features that JBoss EAP
-plus Red Hat OpenShift bring to the table.
+Now that we’ve migrated the app, let’s deploy it and test it out and start to explore some of the features that JBoss EAP plus Red
+Hat OpenShift bring to the table.
 
 ## Migrate and run the project
 
 Now that we migrated the application you are probably eager to test it. To test it locally, JBoss EAP 7.2 has already been downloaded. We just need to install it.
 
 Run the following command in the terminal window.
-~~~
+~~~sh
 unzip -d $HOME $HOME/jboss-eap-7.2.0.zip
 ~~~
 We should also set the JBOSS_HOME environment variable like this:
-~~~
+~~~sh
 export JBOSS_HOME=$HOME/jboss-eap-7.2
 ~~~
 Done! That is how easy it is to install JBoss EAP.
 
 Open the `pom.xml` file.
-Navigate to your CodeReady Workspace File Explorer and expand the "modernize-apps" directory to the following file:
+Navigate to your CodeReady Workspace File Explorer and expand the `modernize-apps` directory to the following file:
 `monolith/pom.xml`. Double click on **pom.xml** to open the file
-
 
 ## The maven-wildfly-plugin
 JBoss EAP comes with a nice maven-plugin tool that can stop, start, deploy, and configure JBoss EAP directly from Apache Maven. Let's add that the pom.xml file.
@@ -606,9 +564,11 @@ We are now ready to build and test the project.
 
 Our application is at this stage pretty standards based, but it needs two things. One is the need to add the JMS Topic since our application depends on it. In the CodeReady Workspaces Terminal window, Run the following command
 
-~~~shell
-export JBOSS_HOME=$HOME/jboss-eap-7.2 ; mvn wildfly:start wildfly:add-resource wildfly:shutdown
+~~~sh
+export JBOSS_HOME=$HOME/jboss-eap-7.2 ; mvn -f $CHE_PROJECTS_ROOT/modernize-apps/monolith wildfly:start wildfly:add-resource wildfly:shutdown
 ~~~
+
+> **NOTE**: You can ignore and dismiss the popups about port `8080-tcp` or other ports for now. We'll use that later.
 
 Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the correct changes and try again!
 
@@ -619,18 +579,24 @@ Wait for a `BUILD SUCCESS` message. If it fails, check that you made all the cor
 We are now ready to deploy the application. In the Codeready workspace terminal window, Run the following command:
 
 ~~~shell
-export JBOSS_HOME=$HOME/jboss-eap-7.2 ; mvn wildfly:run
+export JBOSS_HOME=$HOME/jboss-eap-7.2 ; mvn -f $CHE_PROJECTS_ROOT/modernize-apps/monolith wildfly:run
 ~~~
 
 Wait for the server to startup. You should see `Deployed "ROOT.war" (runtime-name: "ROOT.war")`
 
-## Test the application
+## Open the Web view
 
-Open another CodeReady Workspaces Terminal Window. From the new Terminal window, access the application by running the below command:
+When JBoss EAP starts up, CodeReady notices that it opens ports and offers to open them in a preview window. Click on **Open In Preview** for the `8080-tcp` port to open the embedded web browser and ensure the coolstore is working (ignore/dismiss the other popups):
 
-```
-curl http://localhost:8080
-```
+![](images/moving-existing-apps/eap-preview.png)
+
+You should see:
+
+![](images/moving-existing-apps/eap-preview-window.png)
+
+Click on the link next to the address bar to open the same view in a full browser tab:
+
+![](images/moving-existing-apps/coolstore-ui-crw.png)
 
 ## Shutdown the application
 
@@ -682,11 +648,17 @@ Login using:
 * Username: provide the openshift cluster username from the lab details page.
 * Password: provide the openshift cluster password from the lab details page.
 
-You will see the OpenShift landing page:
+Click **Skip Tour** to dismiss the intro popup about an OpenShift tour.
 
-<kbd>![](images/moving-existing-apps/createproject.jpg)</kbd>
+You will then see the OpenShift landing page:
 
-Click **Create Project**, fill in the fields, and click **Create** (make sure to replace XX with your assigned number):
+<kbd>![](images/moving-existing-apps/ocp-landing.png)</kbd>
+
+You will be placed on the OpenShift _Dev Perspective_. You can freely switch between _Developer_ and _Administrator_ perspective using the menu on the left:
+
+![](images/moving-existing-apps/ocp-switch.png)
+
+Open the _Project_ drop-down menu, select **Create Project**, fill in the fields, and click **Create** (make sure to replace XX with your assigned number):
 
 * Name: `ocpuser0XX-coolstore-dev`
 * Display Name: `Coolstore Monolith - Dev`
@@ -695,12 +667,7 @@ Click **Create Project**, fill in the fields, and click **Create** (make sure to
 > **NOTE**: YOU **MUST** USE `ocpuser0XX-coolstore-dev` AS THE PROJECT NAME, as this name is referenced later
 on and you will experience failures if you do not name it `ocpuser0XX-coolstore-dev`!
 
-<kbd>![](images/AROLatestImages/createproject.jpg)</kbd>
-<kbd>![](images/AROLatestImages/projectdetails.jpg)</kbd>
-
-Click on the name of the newly-created project. The project Dashboard will look like this :
-
-<kbd>![](images/AROLatestImages/projectdash.jpg)</kbd>
+![](images/moving-existing-apps/ocp-create-project-fields.png)
 
 There's nothing there yet, but that's about to change.
 
@@ -714,19 +681,21 @@ From the CodeReady Workspaces Terminal window, switch to the dev project you cre
 
 Run the below commands one by one to import all the required images and the template in to our namespace.
 
-```
+~~~sh
 oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/fasalzaman/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
-```
+~~~
 
 And finally deploy template:
 
-`oc new-app coolstore-monolith-binary-build`
+~~~sh
+oc new-app coolstore-monolith-binary-build
+~~~
 
 This will initialize our EAP application, but it will not start a build for our application.
 
-You can see the components being deployed on the workloads section, but note that **coolstore** has 0 pods. You have not yet deployed the container image built in previous steps, but you'll do that next.
+You can see the components deployed on the topology view, but note that **coolstore** has 0 pods. You have not yet deployed the container image built in previous steps, but you'll do that next.
 
-<kbd>![](images/AROLatestImages/workload.jpg)</kbd>
+<kbd>![](images/moving-existing-apps/ocp-topology-nopods.png)</kbd>
 
 **4. Deploy application using Binary build**
 
@@ -737,7 +706,7 @@ First, build the project once more using the `openshift` Maven profile, which wi
 From the CodeReady Workspaces Terminal window, build the project:
 
 ~~~shell
-mvn clean package -Popenshift
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/monolith clean package -Popenshift
 ~~~
 
 Wait for the build to finish and the `BUILD SUCCESS` message!
@@ -745,34 +714,35 @@ Wait for the build to finish and the `BUILD SUCCESS` message!
 And finally, start the build process that will take the `.war` file and combine it with JBoss EAP and produce a Linux container image which will be automatically deployed into the project, thanks to the *DeploymentConfig* object created from the template:
 
 ~~~shell
-oc start-build coolstore --from-file=deployments/ROOT.war
+oc start-build coolstore --from-file=$CHE_PROJECTS_ROOT/modernize-apps/monolith/deployments/ROOT.war
 ~~~
 
 Check the OpenShift web console and you'll see the application being built:
 
-<kbd>![](images/AROLatestImages/coolstorebuild.jpg)</kbd>
+![](images/moving-existing-apps/ocp-coolstorebuild.png)
 
-Wait for the build and deploy to complete:
+Wait for the build and deploy to complete (the circle will turn dark blue).
 
-``oc rollout status -w dc/coolstore``
+![](images/moving-existing-apps/ocp-coolstorebuild-done.png)
+
+You can also confirm the rollout is complete using this command in a CodeReady Workspaces terminal:
+
+~~~sh
+oc rollout status -w dc/coolstore
+~~~
 
 This command will be used often to wait for deployments to complete. Be sure it returns success when you use it!
 You should eventually see `replication controller "coolstore-1" successfully rolled out`.
 
 > If the above command reports `Error from server (ServerTimeout)` then simply re-run the command until it reports success!
 
-When it's done you should see the status changed to **1 0f 1 pods** for the database and the monolith:
+To test the application, Click on the "Route" link in the Topology view:
 
-<kbd>![](images/AROLatestImages/1of1.jpg)</kbd>
+![](images/moving-existing-apps/ocp-routelink.png)
 
-To test the application, Click on Coolstore, select Resources tab and click on the Route link
-
-`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}`,
-which will open the same monolith Coolstore in your browser, this time running on OpenShift:
+This will open the same monolith Coolstore in your browser, this time running on OpenShift:
 
 > **NOTE**: If it does not show up, simply wait a few moments and reload your browser. As we have no health probes in place yet (this is coming later), the app may take some time to initialize.
-
-<kbd>![](images/AROLatestImages/coolstoreroute.jpg)</kbd>
 
 ## Congratulations!
 

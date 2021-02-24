@@ -111,8 +111,6 @@ We will go ahead and add a bunch of other dependencies while we have the pom.xml
         <artifactId>json</artifactId>
         <version>20180813</version>
     </dependency>
-
-
 ~~~
 
 **Test the application locally**
@@ -121,20 +119,25 @@ As we develop the application, we might want to test and verify our change at di
 
 Run the application by executing the below command:
 
-`mvn spring-boot:run`
+~~~sh
+mvn -f /projects/modernize-apps/catalog spring-boot:run
+~~~
 
 Wait for it to complete startup and report Started RestApplication in ***** seconds (JVM running for ******)
 
 **3. Verify the application**
 
-In the CodeReady workspace open a new terminal and run the below command:
-```
-curl http://localhost:8081
+In the CodeReady workspaces, add a route for this app using the dialog box for port 8081:
 
-```
-You should now see the html page HTML.
+![](images/mono-to-micro-part-2/add8081.png)
 
-> **NOTE:** The service calls to get products from the catalog doesn't work yet. Be patient! We will work on it in the next steps.
+Then you'll get a new popup to _Open Link_:
+
+![](images/mono-to-micro-part-2/add8081-open.png)
+
+You should now see the sample _catalog_ service UI (the list of catalog items will be empty - we will add that functionality next):
+
+![](images/mono-to-micro-part-2/catalog-preview.png)
 
 **4. Stop the application**
 
@@ -146,9 +149,6 @@ You have now successfully executed the first step in this scenario.
 Now you've seen how to get started with Spring Boot development on Red Hat Runtimes.
 
 In next step of this scenario, we will add the logic to be able to read a list of fruits from the database.
-
-## Create Domain Objects
-
 
 ## Implement the database repository
 
@@ -331,7 +331,7 @@ Since we now have endpoints that returns the catalog we can also start the servi
 Start the application by running the following command:
 
 ~~~sh
-mvn spring-boot:run
+mvn -f /projects/modernize-apps/catalog spring-boot:run
 ~~~~
 
 Once the application is live, you will get a pop-up in the bottom-right corner of the terminal. Click on **Yes** button to get the link of the application
@@ -342,10 +342,13 @@ Then, click on **Open Link** to open the application
 
 <kbd>![](images/AROLatestImages/catalogopenlink.jpg)</kbd>
 
+You will see the same UI as before, but now with the listing of catalog items in a table.
 
-Or, we can verify the endpoint by running the following command in a new terminal (Note the link below will execute in a second terminal)
+You can also verify the endpoint by running the following command in a new terminal:
 
-``curl http://localhost:8081/services/products ; echo``
+~~~sh
+curl http://localhost:8081/services/products ; echo
+~~~
 
 You should get a full JSON array consisting of all the products:
 
@@ -390,6 +393,7 @@ Our problem is that the user interface requires data from two services when call
 3. **Service-to-Service** - Depending on use-case and preferences another solution would be to do service-to-service calls instead. In our case means that the Catalog Service would call the Inventory service using REST to retrieve the inventory status and include that in the response.
 
 There are no right or wrong answers here, but since this is a workshop on application modernization using Red Hat Runtimes, we will not choose option 1 or 2 here. Instead we are going to use option 3 and extend our Catalog to call the Inventory service.
+
 **Implementing the Inventory Client**
 
 Since we now have a nice way to test our service-to-service interaction we can now create the client that calls the Inventory. Netflix has provided some nice extensions to the Spring Framework that are mostly captured in the Spring Cloud project, however Spring Cloud is mainly focused on Pivotal Cloud Foundry and because of that Red Hat and others have contributed Spring Cloud Kubernetes to the Spring Cloud project, which enables the same functionallity for Kubernetes based platforms like OpenShift.
@@ -472,6 +476,8 @@ productList.forEach(p -> {
 });
 ~~~
 
+These two methods will retrieve a list of catalog items and then fill in their inventory count by making a REST call (via Feign) to the inventory service.
+
 ## Create a fallback for inventory
 
 In the previous step we added a client to call the Inventory service. Services calling services is a common practice in Microservices Architecture, but as we add more and more services the likelihood of a problem increases dramatically. Even if each service has 99.9% update, if we have 100 of services our estimated up time will only be ~90%. We therefor need to plan for failures to happen and our application logic has to consider that dependent services are not responding.
@@ -519,7 +525,7 @@ As you have seen in previous steps, using the Spring Boot maven plugin (predefin
 Execute the following command to run the new service locally:
 
 ~~~sh
-mvn spring-boot:run
+mvn -f /projects/modernize-apps/catalog spring-boot:run
 ~~~~
 
 > **INFO:** As an uber-jar, it could also be run with `java -jar target/catalog-1.0-SNAPSHOT-swarm.jar` but you don\'t need to do this now
@@ -536,13 +542,17 @@ Running locally using `spring-boot:run` will use an in-memory database with defa
 
 To test the running application, navigate back to the CodeReady Workspaces and run the following in a new terminal:
 
-`curl http://localhost:8081`
+~~~sh
+curl http://localhost:8081
+~~~
 
 You should now see a html code deployed.
 
 To see the raw JSON output using `curl`, you can open an new terminal window by and enter the following command to run the test:
 
-`curl http://localhost:8081/services/product/329299 ; echo`
+~~~sh
+curl http://localhost:8081/services/product/329299 ; echo
+~~~
 
 You would see a JSON response like this:
 
@@ -585,7 +595,7 @@ the credentials used when deploying to OpenShift.
 **Update the Azure PostgreSQL database details**
 Create the file : `modernize-apps/catalog/src/main/resources/application-openshift.properties`
 
-Copy the following content to the file and replace {Azure PostgreSQL Hostname} and OCPUSER0XX with the values provided in the environment details page:
+Copy the following content to the file and replace `{Azure PostgreSQL Hostname}` and `{ocpuser0XX}` with the values provided in the environment details page:
 
 ~~~java
 spring.datasource.url=jdbc:postgresql://{Azure PostgreSQL HostName}:5432/ocpuser0XX?ssl=true&sslmode=require
@@ -593,7 +603,7 @@ spring.datasource.initialization-mode=always
 inventory.ribbon.listOfServers=inventory:8080
 ~~~
 
-Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the `username` and `password` values with the `Azure PostgreSQL username and password` provided in the environment details page, in the format as seen below:
+Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the `username` and `password` values with the `Azure PostgreSQL username and password` provided in the environment details page, in the format as seen below (using your username _and_ hostname in the `user:` field)
 
 ~~~
 apiVersion: "v1"
@@ -612,7 +622,9 @@ stringData:
 
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
-`mvn package fabric8:deploy -Popenshift`
+~~~sh
+mvn -f /projects/modernize-apps/catalog package fabric8:deploy -Popenshift
+~~~
 
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the
 end of the build output.
@@ -620,27 +632,23 @@ end of the build output.
 After the maven build finishes it will take less than a minute for the application to become available.
 To verify that everything is started, run the following command and wait for it complete successfully:
 
-`oc rollout status -w dc/catalog`
+~~~sh
+oc rollout status -w dc/catalog
+~~~
 
->**NOTE:** If you recall in the Quarkus lab Fabric8 detected the `health` _fraction_ and generated health check definitions for us, the same is true for Spring Boot if you have the `spring-boot-starter-actuator` dependency in our project.
+>**NOTE:** If you recall in the Quarkus lab it detected the `health` extension and generated health check definitions for us, the same is true for Spring Boot if you have the `spring-boot-starter-actuator` dependency in our project.
 
 **3. Access the application running on OpenShift**
 
 This sample project includes a simple UI that allows you to access the Catalog API. This is the same
 UI that you previously accessed outside of OpenShift which shows the CoolStore inventory. Click on the
-route URL at
+route link to access it:
 
-`http://catalog-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` to access the sample UI.
+![](images/mono-to-micro-part-2/spring-pod.png)
 
-> /!\ Don't forget to change the user number in your route.
+The UI will refresh the catalog table every 2 seconds, as before. Since we previously have a inventory service running you should now see the actual quantity values and not the fallback value of -1
 
-> You can also access the application through the link on the OpenShift Web Console Overview page.
-
-<kbd>![](images/AROLatestImages/catalogpod.jpg)</kbd>
-
-The UI will refresh the catalog table every 2 seconds, as before.
-
-> **NOTE:** Since we previously have a inventory service running you should now see the actual quantity value and not the fallback value of -1
+![](images/mono-to-micro-part-2/catalog-ui.png)
 
 ## Congratulations!
 
@@ -654,28 +662,32 @@ For the home page the product list is loaded via a REST call to *http://<monolit
 
 <kbd>![](images/AROLatestImages/ImageCatalog.JPG)</kbd>
 
-Flow the steps below to create a path based route.
+Follow the steps below to create a path based route.
 
 **1. Obtain hostname of monolith UI from our Dev environment**
 
-`oc get route/www -n ocpuser0XX-coolstore-dev`
+In the Developer Perspective, click on the circle for `coolstore` and then look for the `www` link under the _Routes_ section:
 
-> /!\ Change the project name according to your user number
+![](images/mono-to-micro-part-2/get-hostname.png)
 
-The output of this command shows us the hostname:
+This will take you to the details page for the existing route that serves the monolith UI:
 
-~~~sh
-NAME      HOST/PORT                                 PATH      SERVICES    PORT      TERMINATION   WILDCARD
-www       www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}             coolstore   <all>                   None
-~~~
+![](images/mono-to-micro-part-2/get-hostname-details.png)
 
-My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will be different**.
+Copy that hostname to your clipboard as you'll use it in a minute.
 
-**2. Open the OpenShift Console for "Coolstore Monolith Dev" and navigate to Networking -> Routes
+>**NOTE:** You can also get this route hostname using this command in a Terminal: `oc get route www`
 
-<kbd>![](images/AROLatestImages/catalogroute.jpg)</kbd>
+**2. Create new route**
 
-**3. Click on Create Route, and set**
+From the previous route detail screen, click on the `Routes` breadcrumb:
+
+![](images/mono-to-micro-part-2/get-hostname-details-bread.png)
+
+This shows you all routes for your project. We'll create a new one, so click on **Create Route**:
+![](images/mono-to-micro-part-2/create-route.png)
+
+In the dialog, set the following values:
 
 * **Name**: `catalog-redirect`
 * **Hostname**: _the hostname from above_
@@ -687,16 +699,24 @@ My hostname is `www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` but **yours will 
 Leave other values set to their defaults, and click **Create**
 
 **4. Test the route**
+curl $(oc get route www -o jsonpath="{.spec.host}")
 
-Test the route by running `curl http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}/services/products`
+Test the route by running:
+
+~~~sh
+curl http://$(oc get route www -o jsonpath="{.spec.host}")
+~~~
 
 You should get a complete set of products, along with their inventory.
 
 **5. Test the UI**
 
-Open the monolith UI at
+Open the monolith UI by clicking on its route link once again:
 
-`http://www-ocpuser0XX-coolstore-dev.{{ROUTE_SUFFIX}}` and observe that the new catalog is being used along with the monolith:
+![](images/moving-existing-apps/ocp-routelink.png)
+
+
+Observe that the new catalog is being used along with the monolith:
 
 <kbd>![](images/mono-to-micro-part-2/coolstore-web.png)</kbd>
 
@@ -704,7 +724,7 @@ The screen will look the same, but notice that the earlier product *Atari 2600 J
 
 ## Congratulations!
 
-You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory and Catalog) are now implemented as microservices, without touching the monolith. But there's a few more things left to do, which we'll do in the next steps.
+You have now successfully begun to _strangle_ the monolith. Part of the monolith's functionality (Inventory and Catalog) are now implemented as microservices, without touching the monolith.
 
 
 ## Summary
