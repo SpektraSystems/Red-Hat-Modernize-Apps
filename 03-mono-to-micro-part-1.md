@@ -35,7 +35,7 @@ It also provides the correct information to GraalVM (a universal virtual machine
 
 To start in the right directory, from the CodeReady Workspaces Terminal, run the following command:
 ```
-cd /projects/modernize-apps/inventory
+cd $CHE_PROJECTS_ROOT/modernize-apps/inventory
 ```
 
 ## Examine the sample project
