@@ -25,7 +25,7 @@ Another thing you will learn in this scenario is one of the techniques to aggreg
 To start in the right directory, from the CodeReady Workspaces Terminal, run the following command:
 
 ~~~sh
-cd /projects/modernize-apps/catalog
+cd $CHE_PROJECTS_ROOT/modernize-apps/catalog
 ~~~
 
 ## Examine the sample project
@@ -120,10 +120,10 @@ As we develop the application, we might want to test and verify our change at di
 Run the application by executing the below command:
 
 ~~~sh
-mvn -f /projects/modernize-apps/catalog spring-boot:run
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/catalog spring-boot:run
 ~~~
 
-Wait for it to complete startup and report Started RestApplication in ***** seconds (JVM running for ******)
+Wait for it to complete startup and report `Started RestApplication in ***** seconds (JVM running for ******)`
 
 **3. Verify the application**
 
@@ -241,7 +241,7 @@ Now you are going to create a service class. Later on the service class will be 
 
 Create a new class `CatalogService` with the following path ``modernize-apps/catalog/src/main/java/com/redhat/coolstore/service/CatalogService.java``
 
-And then Open the file to implement the new service:
+And then add the following code to the file to implement the new service:
 
 ~~~java
 package com.redhat.coolstore.service;
@@ -331,7 +331,7 @@ Since we now have endpoints that returns the catalog we can also start the servi
 Start the application by running the following command:
 
 ~~~sh
-mvn -f /projects/modernize-apps/catalog spring-boot:run
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/catalog spring-boot:run
 ~~~~
 
 Once the application is live, you will get a pop-up in the bottom-right corner of the terminal. Click on **Yes** button to get the link of the application
@@ -525,7 +525,7 @@ As you have seen in previous steps, using the Spring Boot maven plugin (predefin
 Execute the following command to run the new service locally:
 
 ~~~sh
-mvn -f /projects/modernize-apps/catalog spring-boot:run
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/catalog spring-boot:run
 ~~~~
 
 > **INFO:** As an uber-jar, it could also be run with `java -jar target/catalog-1.0-SNAPSHOT-swarm.jar` but you don\'t need to do this now
@@ -623,7 +623,7 @@ stringData:
 Build and deploy the project using the following command, which will use the maven plugin to deploy:
 
 ~~~sh
-mvn -f /projects/modernize-apps/catalog package fabric8:deploy -Popenshift
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/catalog package fabric8:deploy -Popenshift
 ~~~
 
 The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the
@@ -704,7 +704,7 @@ curl $(oc get route www -o jsonpath="{.spec.host}")
 Test the route by running:
 
 ~~~sh
-curl http://$(oc get route www -o jsonpath="{.spec.host}")
+curl http://$(oc get route www -o jsonpath="{.spec.host}")/services/products
 ~~~
 
 You should get a complete set of products, along with their inventory.
