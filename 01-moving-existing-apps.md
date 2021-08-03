@@ -13,6 +13,8 @@ We'll answer questions like:
 
 We will then take the following steps to migrate (lift & shift) an existing Java EE app to EAP+OpenShift using [Red Hat Migration Toolkit for Applications](https://developers.redhat.com/products/mta/overview) (RHMTA)
 
+We'll follow the steps below:
+
 * Analyze existing WebLogic monolith application using RHMTA directly in the CodeReady Workspaces IDE
 * Review the report and update code and config to run on JBoss EAP
 * Deploy to OpenShift
@@ -62,41 +64,42 @@ For this lab, we will use the [MTA Plugin]( https://access.redhat.com/documentat
 
 The IDE Plugin for the Migration Toolkit for Applications provides assistance directly in Eclipse and Red Hat CodeReady Studio/Workspaces for developers making changes for a migration or modernization effort. It analyzes your projects using MTA, marks migration issues in the source code, provides guidance to fix the issues, and offers automatic code replacement when possible.
 
-**2. Use the configuration editor to setup the analysis**
+**2. Run an analysis report**
 
-Click on `MTA Explorer` icon on the left, click on `+` icon to add a new MTA configuration:
+For simplicity, we'll use the MTA command line to run our report.
 
-![](images/moving-existing-apps/mta_newconf.png)
+On the command explorer on the right, expand the **Plugins** --> **rhamt-extensioniml** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
 
-> NOTE: If you don't see '+' icon, please try to `uncheck` *Explorer* via right-clicking on _MIGRATION TOOLKIT FOR APPLICATIONS_ menu then `check` it again.
+![](images/AROLatestImages/cliopen.png)
 
-To input source files and directories, on the `--input` option click on `Add` then select `Open File Explorer`:
+First, we'll instruct the source control system to ignore our generated report. Run this command to add it to the ignore file:
 
-![](images/moving-existing-apps/mta-add-input.png)
+~~~sh
+echo 'mta-report/' >> ${CHE_PROJECTS_ROOT}/modernize-apps/.gitignore
+~~~
 
-Navigate to `projects > modernize-apps` then select `monolith` directory. Click on `Choose...`:
+Next, issue the following command in the terminal to run the report:
 
-![](images/moving-existing-apps/mta-add-opendir.png)
+~~~sh
+${MTA_HOME}/bin/mta-cli --input /projects/modernize-apps/monolith --source weblogic --target eap7 --sourceMode --output ${CHE_PROJECTS_ROOT}/modernize-apps/mta-report --overwrite
+~~~
 
-Then you will see that */projects/mdoernize-apps/monoilth* directory is added in _--input_ configuration.
+Note the following options are supplied:
 
-Select `eap7` in _--target_ server to migrate:
+* `--input`: Specifies the location of the source file. We've specified our monolith Weblogic app here.
+* `--source weblogic`: This indicates to MTA to enable all of the known Weblogic migration rules.
+* `--target eap7`: This indicates to MTA that we wish to migrate to Red Hat JBoss EAP 7 and to enable the specific guidance for this platform
+* `--sourceMode`: This tells MTA that the source is actual source code (not binaries requiring decompilation).
+* `--output``: Where to create the report
+* `--overwrite`: Do not prompt for overwriting the reports (we'll run it again later)
 
-![](images/moving-existing-apps/mta-target.png)
+Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few minutes to complete the analysis.
 
-Click on `--source` to migrate from then select `weblogic`. Leave the other configurations:
+Once the report is done, a new directory will be created called `mta-report`, and inside of which is an `index.html`. Right-click on this file and select **Open With --> Preview** :
 
-![](images/moving-existing-apps/mta-source.png)
+![](images/AROLatestImages/cliopen.png)
 
-**3. Run an analysis report**
-
-Right-click on *mtaConfiguration* to analyze the WebLogic application. Click on `Run` in the popup menu:
-
-![](images/moving-existing-apps/mta-run-report.png)
-
-Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few minutes to complete the analysis. Click on `Open Report`:
-
-![](images/moving-existing-apps/mta-analysis-complete.png)
+This will open the report in a small browser inside of CodeReady. If you want more space to view the report, you can double-click on the `index.html` title to expand the report to fill the screen. Double-click again on `index.html` to collapse it.
 
 **4. Review the report**
 
@@ -126,25 +129,23 @@ You can use this report to estimate how easy/hard each app is, and make decision
 
 On to the next step to change the code!
 
+**5. View issues**
+
+Click on the **Issues** tab within the report:
+
+![](images/AROLatestImages/issues.png)
+
+You can see the list of issues discovered. Let's tackle the `ApplicationLifecycleListener` issue first. Click on it to see the details:
+
+![](images/AROLatestImages/issue-detail.png)
+
+Here you get info about the issue, and potential resolution.
+
 **6. Jump to Code**
 
-Let's jump to code containing identified migration issues. Expand the *monolith* source project in the MTA explorer and navigate to `modernize-apps > monolith > src > main > java > com > redhat > coolstore > utils > StartupListener.java`. Be sure to click the arrow next to the actual class name `StartupListener.java` to expand and show the Hints:
-
-![](images/moving-existing-apps/mta_project_issues.png)
-
-In the Explorer, MTA issues use an icon to indicate their severity level and status. The following table describes the meaning of the various icons:
-
-![](images/moving-existing-apps/mta-issues-table.png)
+Let's jump to code containing identified migration issues. Expand the *monolith* source project in the file explorer and navigate to `modernize-apps > monolith > src > main > java > com > redhat > coolstore > utils > StartupListener.java`.
 
 **7. View Details about the Migration Issues**
-
-Let's take a look at the details about the migration issue. Right-click on `WebLogic ApplicationLifecycleListenerEvent[rule-id:xxx]` in _Hints_ of _StartupListener.java_ file. Click on `View Details`:
-
-![](images/moving-existing-apps/mta-issue-detail.png)
-
-MTA also provides helpful links to understand the issue deeper and offer guidance for the migration when you click on `Open Report`:
-
-![](images/moving-existing-apps/mta-issue-open-report.png)
 
 The WebLogic `ApplicationLifecycleListener` abstract class is used to perform functions or schedule jobs in Oracle WebLogic, like server start and stop. In this case we have code in the `postStart` and `preStop` methods which are executed after Weblogic starts up and before it shuts down, respectively.
 
@@ -158,12 +159,6 @@ the application lifecyle achieving the same result but without using proprietary
 Using this method makes the code much more portable.
 
 **8. Fix the ApplicationLifecycleListener issues**
-
-To begin we are fixing the issues under the Monolith application. Right-click on `WebLogic ApplicationLifecycleListenerEvent[rule-id:xxx]` in _Hints_ of _StartupListener.java_ file. Click on `Open Code`:
-
-![](images/moving-existing-apps/mta-issue-open-code.png)
-
-You can also navigate to the `modernize-apps` folder in the project tree, then open the file `monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java` by clicking on it.
 
 Replace the file content with the below code by selecting all existing code with CTRL-A or CMD-A, pressing BACKSPACE, then copying pasting this code in:
 
@@ -456,20 +451,25 @@ made all the changes correctly and try the build again.
 
 In this step we will re-run the MTA report to verify our migration was successful.
 
-In the MTA explorer, right-click on *mtaConfiguration* to analyze the WebLogic application once again. Click on `Run` in the popup menu:
+As before, on the command explorer on the right, expand the **Plugins** --> **rhamt-extensioniml** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
 
-![](images/moving-existing-apps/mta-rerun-report.png)
+![](images/AROLatestImages/cliopen.png)
 
-Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few mins to complete the analysis. Click on `Open Report`:
+Next, issue the following command in the terminal to re-run the report:
 
-![](images/moving-existing-apps/mta-analysis-rerun-complete.png)
+~~~sh
+${MTA_HOME}/bin/mta-cli --input /projects/modernize-apps/monolith --source weblogic --target eap7 --sourceMode --output ${CHE_PROJECTS_ROOT}/modernize-apps/mta-report --overwrite
+~~~
 
-> **NOTE:** If it is taking too long, feel free to skip the next section and proceed to step *13* and return back to the analysis later to confirm that you
-eliminated all the issues.
+Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few mins to complete the analysis.
 
 **19. View the results**
 
-Click on the latest result to go to the report web page and verify that it now reports `0 Story Points`:
+Re-open the `mta-report/index.html` file as before:
+
+![](images/AROLatestImages/cliopen.png)
+
+Verify that it now reports `0 Story Points`:
 
 You have successfully migrated this app to JBoss EAP, congratulations!
 
@@ -482,7 +482,8 @@ Hat OpenShift bring to the table.
 
 Now that we migrated the application you are probably eager to test it. To test it locally, JBoss EAP 7.2 has already been downloaded. We just need to install it.
 
-Run the following command in the terminal window.
+Run the following command in one of the `maven3-jdk11` terminal window (or open a new one):
+
 ~~~sh
 unzip -d $HOME $HOME/jboss-eap-7.2.0.zip
 ~~~
@@ -658,6 +659,8 @@ You will be placed on the OpenShift _Dev Perspective_. You can freely switch bet
 
 ![](images/moving-existing-apps/ocp-switch.png)
 
+Here, select the **Developer** view.
+
 Open the _Project_ drop-down menu, select **Create Project**, fill in the fields, and click **Create** (make sure to replace XX with your assigned number):
 
 * Name: `ocpuser0XX-coolstore-dev`
@@ -675,11 +678,19 @@ There's nothing there yet, but that's about to change.
 
 We'll use the CLI to deploy the components for our monolith. We will enter the CLI commands from the CodeReady Workspaces Terminal window. Before issuing these CLI commands, remember to log in to the OpenShift cluster by following the instructions from the "Introduction" lab you completed earlier. To deploy the monolith template using the CLI, execute the following commands:
 
-From the CodeReady Workspaces Terminal window, switch to the dev project you created earlier:
+Confirm you are logged in:
+
+`oc whoami`
+
+This should return your uername (e.g. `ocpuser001`). If it does not, repeat the earlier steps to login from the Introduction lab.
+
+Next, from the CodeReady Workspaces Terminal window, switch to the dev project you created earlier:
 
 `oc project ocpuser0XX-coolstore-dev`
 
 Run the below commands one by one to import all the required images and the template in to our namespace.
+
+> **NOTE**: Do not forget to replace the `ocpuser0XX` with your own username!
 
 ~~~sh
 oc create -n ocpuser0XX-coolstore-dev -f https://raw.githubusercontent.com/faizyorg/modernize-apps-labs/master/monolith/src/main/openshift/template-binary.json
@@ -762,3 +773,5 @@ application runs well in a distributed and containerized environment.
 
 But first, you'll need to dive a bit deeper into OpenShift and how
 it supports the end-to-end developer workflow.
+
+[Go to the next section](03-mono-to-micro-part-1.md)

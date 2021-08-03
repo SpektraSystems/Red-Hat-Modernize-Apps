@@ -39,11 +39,13 @@ In the new window that appear, provide a name for the connection.
 
 <kbd>![](images/AROLatestImages/general.jpg)</kbd>
 
-Then Select Connection tab and provide HostName , Username and Password.All these values will be available in the environment details page.
+Then Select Connection tab and provide HostName , Username and Password. All these values will be available in the environment details page.
+
+> **NOTE**: The username must be in `username@host` format. e.g. `demouser@coolstore`
 
 <kbd>![](images/AROLatestImages/connection.jpg)</kbd>
 
-Once you successfully connected to the database, Expand `Databases` to see the database already created for you. The database name will be same as that of you OpenShift Username (for example : OCPUSER0XX). Now expand your database, Schemas and Tables. There won't be any tables availabe yet. We will create tables in Second and Third Exercise.
+Once you successfully connected to the database, Expand `Databases` to see the database already created for you. The database name will be same as that of you OpenShift Username (for example : OCPUSER0XX). Now expand your database, Schemas and Tables. There may not be any tables available yet. We will be sure to create tables in Second and Third Exercise.
 
 <kbd>![](images/AROLatestImages/nodbs.jpg)</kbd>
 
@@ -72,6 +74,8 @@ The first screen you will see is the authentication screen. Select **htpasswd** 
 <kbd>![](images/AROLatestImages/login.jpg)</kbd>
 CodeReady Workspaces and your deployment environment, both, run on this OpenShift cluster.
 
+You will see the single new OpenShift project (Kubernetes namespace) created for you. We'll come back to the OpenShift console later on. Now let's get into our developer environment and setup our workspace.
+
 ## Setup Your Workspace on CodeReady Workspaces
 
 Follow these instructions to setup the development environment on CodeReady Workspaces.
@@ -83,7 +87,7 @@ which you will use during these labs.
 
 Go to the **CodeReady Workspaces url** in order to configure your development workspace
 
-Log into CodeReady Workspaces with your user account (you can find the username and password in the environment details page).
+Again, select the **htpasswd** option on the login screen, then log into CodeReady Workspaces with your CodeReady user account (you can find the username and password in the environment details page).
 
 Click on the workspace shown in the **Recent Workspaces** section.
 It takes a little while for the workspace to be ready. When it's ready, you will see a fully functional
@@ -99,11 +103,11 @@ Note the **Terminal** option in Codeready Workspaces. CLick on cube on the right
 
 <kbd>![](images/moving-existing-apps/new-terminal.png)</kbd>
 
-For the rest of these labs, anytime you need to run a command in a terminal, you can use any open terminal you have.
+For the rest of these labs, anytime you need to run a command in a terminal, you can use any open terminal you have, and close them when you're done with them (having many open terminals can crowd the screen / menu bar).
 
 ## Explore OpenShift with OpenShift CLI
 
-In order to login, we will use the `oc` command. We can get the login command from OpenShift Console.
+In order to login to ARO within CodeReady, we will use the `oc` command. We can get the login command from OpenShift Console.
 
 Go to your OpenShift console and click on your username icon on the top right of the screen to open up the pop-down menu and then select **"Copy Login Command"**.
 
@@ -122,3 +126,5 @@ Then, go to the CodeReady Workspaces Terminal window and paste the login command
 Congratulations, you are now authenticated to the OpenShift server.
 
 Now you are ready to get started with the labs!
+
+[Move to the next section](01-moving-existing-apps.md)
