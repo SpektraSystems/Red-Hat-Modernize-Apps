@@ -68,7 +68,7 @@ The IDE Plugin for the Migration Toolkit for Applications provides assistance di
 
 For simplicity, we'll use the MTA command line to run our report.
 
-On the command explorer on the right, expand the **Plugins** --> **rhamt-extensioniml** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
+On the command explorer on the right, expand the **Plugins** --> **rhamt-extensionXXX** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
 
 ![](images/AROLatestImages/cliopen.png)
 
@@ -90,18 +90,18 @@ Note the following options are supplied:
 * `--source weblogic`: This indicates to MTA to enable all of the known Weblogic migration rules.
 * `--target eap7`: This indicates to MTA that we wish to migrate to Red Hat JBoss EAP 7 and to enable the specific guidance for this platform
 * `--sourceMode`: This tells MTA that the source is actual source code (not binaries requiring decompilation).
-* `--output``: Where to create the report
+* `--output`: Where to create the report
 * `--overwrite`: Do not prompt for overwriting the reports (we'll run it again later)
 
 Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few minutes to complete the analysis.
 
 Once the report is done, a new directory will be created called `mta-report`, and inside of which is an `index.html`. Right-click on this file and select **Open With --> Preview** :
 
-![](images/AROLatestImages/cliopen.png)
+![](images/AROLatestImages/clipreview.png)
 
 This will open the report in a small browser inside of CodeReady. If you want more space to view the report, you can double-click on the `index.html` title to expand the report to fill the screen. Double-click again on `index.html` to collapse it.
 
-**4. Review the report**
+**3. Review the report**
 
 ![](images/moving-existing-apps/rhamt_result_landing_page.png)
 
@@ -112,7 +112,7 @@ story points, number of incidents, and technologies encountered in that applicat
 
 ![](images/moving-existing-apps/rhamt_project_overview.png)
 
-**5. Understanding the report**
+**4. Understanding the report**
 
 The Dashboard gives an overview of the entire application migration effort. It summarizes:
 
@@ -451,7 +451,7 @@ made all the changes correctly and try the build again.
 
 In this step we will re-run the MTA report to verify our migration was successful.
 
-As before, on the command explorer on the right, expand the **Plugins** --> **rhamt-extensioniml** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
+As before, on the command explorer on the right, expand the **Plugins** --> **rhamt-extensionXXX** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
 
 ![](images/AROLatestImages/cliopen.png)
 
@@ -467,7 +467,7 @@ Migration Toolkit for Applications (MTA) CLI will be executed automatically in a
 
 Re-open the `mta-report/index.html` file as before:
 
-![](images/AROLatestImages/cliopen.png)
+![](images/AROLatestImages/clipreview.png)
 
 Verify that it now reports `0 Story Points`:
 
