@@ -40,7 +40,7 @@ cd $CHE_PROJECTS_ROOT/modernize-apps/inventory
 
 ## Examine the sample project
 
-The sample project shows the components of a basic Quarkus project laid out in different subdirectories.
+The sample project under the `modernize-apps/invendotry` shows the components of a basic Quarkus project laid out in different subdirectories.
 
 **1. Examine the Maven project structure.**
 
@@ -285,6 +285,8 @@ Using the Quarkus maven plugin (predefined in pom.xml), you can conveniently run
 mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:dev
 ~~~
 
+> **NOTE**: If you get an error about `Address already in use` you may have forgotten to CTRL-C the earlier execution of JBoss EAP. Go find the terminal in which EAP is running and CTRL-C it, before trying the Quarkus app again!
+
 > As an uber-jar, it could also be run with `java -jar target/inventory-1.0.0-runner.jar` but you don't need to do this now
 
 You should see a bunch of log output that ends with:
@@ -299,11 +301,11 @@ Running locally using `quarkus:dev` will use the local database.
 
 **3. Test the application**
 
-Once you run the application a pop for both port `5005` (debug) and `8080` (web) will appear. Click on the `Open In Preview` button for porta 8080 in that pop-up to open the application.
+Once you run the application a pop for both port `5005` (debug) and `8080` (web) will appear. Click on the `Open In Preview` button for port 8080 in that pop-up to open the application.
 
 ![](images/mono-to-micro-part-1/8080-popup.png)
 
-You will see the running Quarkus welcome page in the embedded browser (you may need to click the small refresh button at the top if it is showing old content):
+You will see the running Quarkus welcome page in the embedded browser (you may need to click the small refresh button at the top if it is showing old content from the earlier exercises):
 
 ![](images/mono-to-micro-part-1/quarkus-preview.png)
 
@@ -585,7 +587,7 @@ The app will begin polling the inventory as before and report success:
 Now you will corrupt the service and cause its health check to start failing.
 To simulate the app crashing, let's kill the underlying service so it stops responding. Execute:
 
-`oc rsh dc/inventory kill 1`
+`oc rsh dc/inventory /bin/sh -c 'kill 1'`
 
 This will execute the Linux `kill` command to stop the running Java process in the container.
 
@@ -616,3 +618,6 @@ You created a new Inventory microservice representing functionality previously i
 Quarkus brings in a number of concepts and APIs from the Java EE community, so your existing Java EE skills can be re-used to bring your applications into the modern world of containers, microservices and cloud deployments.
 
 Quarkus is one of many components of Red Hat Runtimes. In the next scenario you'll use Spring Boot, another popular framework, to implement additional microservices. Let's go!
+
+[Go to the next section](03-mono-to-micro-part-2.md)
+
