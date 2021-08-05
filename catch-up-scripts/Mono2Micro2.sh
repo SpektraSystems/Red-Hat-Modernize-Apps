@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 ##
-## Reset to beginning of Reactive Microservices
+## Reset to beginning of Mono 2 Micro part 2
 ## Desired State:
 ##   monolith solution deployed in "coolstore-dev" project
-##   inventory solution deployed in "inventory" project
+##   inventory solution deployed in "coolstore-dev" project
 ##
 
 OCP_USERNAME=${1}
+POSTGRES_HOST=${2}
+POSTGRES_USERNAME=${3}
+POSTGRES_PASSWORD=${4}
+
+if [ -z "$OCP_USERNAME" -o -z "$POSTGRES_HOST" -o -z "$POSTGRES_USERNAME" -o -z "$POSTGRES_PASSWORD" ] ; then
+	echo "usage: $0 <ocp_username> <postgres_host> <postgres_username> <postgres_password>"
+	exit 1
+fi
+
 # delete all projects
 oc delete project $OCP_USERNAME-coolstore-dev
 
@@ -40,9 +49,13 @@ oc start-build coolstore --from-file=deployments/ROOT.war
 
 # deploy inventory solution to inventory project
 cd /projects/modernize-apps/inventory
-mvn clean package
-mvn fabric8:deploy -Popenshift
+sed -i 's/{Azure PostgreSQL Host Name}/'${POSTGRES_HOST}'/g' src/main/resources/application.properties
+sed -i 's/{ocpuser0XX}/'${OCP_USERNAME}'/g' src/main/resources/application.properties
+sed -i 's/{PostgreSQL Username}/'${POSTGRES_USERNAME}'/g' src/main/resources/application.properties
+sed -i 's/{PostgreSQL Password}/'${POSTGRES_PASSWORD}'/g' src/main/resources/application.properties
 
+# Deploy to OCP
+mvn clean package
 
 # go back to master to start at the right place for scenario
 mvn clean
