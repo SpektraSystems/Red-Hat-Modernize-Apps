@@ -17,9 +17,9 @@ You can explore through all the resources available here. You can also see the M
 
 <kbd>![](images/AROLatestImages/aro-main.jpg)</kbd>
 
-We are also using an Azure PostgreSQL Database in this lab. Please open `PostgreSQL` resources group to access the PostgreSQL Database.
+We are also using an Azure PostgreSQL Database in this lab.
 
-Open the PostgreSQL Database to see the Host name/Server name.
+Open the PostgreSQL Database deployed in `jboss-labs` resource group to see the Host name/Server name.
 
 <kbd>![](images/AROLatestImages/postgerss.jpg)</kbd>
 
