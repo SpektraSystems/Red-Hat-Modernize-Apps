@@ -65,7 +65,7 @@ You should see a **BUILD SUCCESS** in the logs.
 We will add Quarkus extensions to the Inventory application for using _Panache_ (a simplified way to access data via Hibernate ORM), a database with Postgres (in production) and _H2_ (in-memory database for testing). We'll also add the ability to add health probes (which we'll use later on) using the MicroProfile Health extension. Run the following commands to add the extensions using CodeReady Terminal:
 
 ~~~sh
-mvn -q -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="hibernate-orm-panache, jdbc-postgresql, jdbc-h2"
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="hibernate-orm-panache, jdbc-postgresql, jdbc-h2"
 ~~~
 
 you will see:
@@ -97,7 +97,7 @@ Using the CodeReady Workspaces File Explorer interface, create a new file named 
 In the newly-created file, add the following code:
 
 ~~~java
-package com.redhat.coolstore;
+package com.redhat.coolstore.model;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -145,8 +145,7 @@ For local testing we'll use an in-memory database, but for production we'll use 
 Open the empty `modernize-apps/inventory/src/main/resources/application.properties` file. This file contains Quarkus application configuration. Add the following values:
 
 ~~~properties
-%dev.quarkus.datasource.url=jdbc:h2:mem:inventory
-%dev.quarkus.datasource.driver=org.h2.Driver
+%dev.quarkus.datasource.db-kind=h2
 %dev.quarkus.datasource.username=inventory
 %dev.quarkus.datasource.password=mysecretpassword
 %dev.quarkus.datasource.max-size=8
@@ -154,14 +153,14 @@ Open the empty `modernize-apps/inventory/src/main/resources/application.properti
 %dev.quarkus.hibernate-orm.database.generation=drop-and-create
 %dev.quarkus.hibernate-orm.log.sql=false
 
-%prod.quarkus.datasource.driver = org.postgresql.Driver
+%prod.quarkus.datasource.db-kind=postgresql
 %prod.quarkus.hibernate-orm.database.generation=drop-and-create
 %prod.quarkus.hibernate-orm.sql-load-script=import.sql
 
 #
 # !! Update these with your assigned Azure PostgreSQL hostname and username
 #
-%prod.quarkus.datasource.url = jdbc:postgresql://{Azure PostgreSQL Host Name}:5432/{ocpuser0XX}?ssl=true&sslmode=require
+%prod.quarkus.datasource.jdbc.url = jdbc:postgresql://{Azure PostgreSQL Host Name}:5432/{ocpuser0XX}?ssl=true&sslmode=require
 %prod.quarkus.datasource.username ={PostgreSQL Username}@{Azure PostgreSQL Host Name}
 %prod.quarkus.datasource.password = {PostgreSQL Password}
 ~~~
@@ -225,6 +224,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import com.redhat.coolstore.model.Inventory;
+
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 @Path("/services/inventory")
@@ -282,7 +283,7 @@ You should see a **BUILD SUCCESS** in the build logs. If builds successfully, co
 
 Using the Quarkus maven plugin (predefined in pom.xml), you can conveniently run the application locally and test the endpoint by entering the following command in the CodeReady Workspaces Terminal window:
 ~~~sh
-mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:dev
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:dev -Dquarkus.http.host=0.0.0.0
 ~~~
 
 > **NOTE**: If you get an error about `Address already in use` you may have forgotten to CTRL-C the earlier execution of JBoss EAP. Go find the terminal in which EAP is running and CTRL-C it, before trying the Quarkus app again!
@@ -369,7 +370,7 @@ Quarkus also offers the ability to automatically generate OpenShift resources ba
 Add the OpenShift extension via the Terminal:
 
 ~~~sh
-mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory -q quarkus:add-extension -Dextensions="openshift"
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="openshift"
 ~~~
 
 you will see:
@@ -386,7 +387,7 @@ Next, add the following lines to your _modernize-apps/inventory/src/main/resourc
 %prod.quarkus.container-image.build=true
 %prod.quarkus.kubernetes.deploy=true
 %prod.quarkus.kubernetes.deployment-target=openshift
-%prod.quarkus.openshift.expose=true
+%prod.quarkus.openshift.route.expose=true
 %prod.quarkus.openshift.labels.app.openshift.io/runtime=quarkus
 ~~~
 
@@ -437,7 +438,7 @@ In our case we will implement the health check logic in a REST endpoint and let 
 Add the Quarkus Health Probe extension for Kubernetes via the Terminal:
 
 ~~~sh
-mvn -q -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="quarkus-smallrye-health"
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/inventory quarkus:add-extension -Dextensions="quarkus-smallrye-health"
 ~~~
 
 you will see:
@@ -514,10 +515,10 @@ To verify that everything is started, run the following command and wait for it 
 oc rollout status -w dc/inventory
 ~~~
 
-Once the project is deployed, you should be able to access the health check logic at the `/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Run:
+Once the project is deployed, you should be able to access the health check logic at the `/q/health` endpoint using a simple _curl_ command. This is the same API that OpenShift will repeatedly poll to determine application health. Run:
 
 ~~~sh
-curl $(oc get route inventory -o jsonpath="{.spec.host}")/health
+curl $(oc get route inventory -o jsonpath="{.spec.host}")/q/health
 ~~~
 
 You should see a JSON response like:
@@ -538,7 +539,7 @@ You should see a JSON response like:
 }
 ~~~
 
-> You can define separate readiness and liveness probes using `@Liveness` and `@Readiness` annotations and access them separately at `/health/live` and `/health/ready`.
+> You can define separate readiness and liveness probes using `@Liveness` and `@Readiness` annotations and access them separately at `/q/health/live` and `/q/health/ready`.
 
 The general _outcome_ of the health check is computed as a logical AND of all the declared health check procedures. Quarkus extensions can also provide default health checks out of the box, which is why you see the `Database connections health check` above, since we are using a database extension.
 
@@ -566,8 +567,8 @@ oc describe dc/inventory | egrep 'Readiness|Liveness'
 ~~~
 
 ~~~sh
-Liveness:   http-get http://:8080/health/live delay=30s timeout=10s period=30s #success=1 #failure=3
-Readiness:  http-get http://:8080/health/ready delay=0s timeout=10s period=30s #success=1 #failure=3
+Liveness:   http-get http://:8080/q/health/live delay=30s timeout=10s period=30s #success=1 #failure=3
+Readiness:  http-get http://:8080/q/health/ready delay=0s timeout=10s period=30s #success=1 #failure=3
 ~~~
 
 In the next step we'll exercise the probe and watch as it fails and OpenShift recovers the application.
@@ -587,7 +588,9 @@ The app will begin polling the inventory as before and report success:
 Now you will corrupt the service and cause its health check to start failing.
 To simulate the app crashing, let's kill the underlying service so it stops responding. Execute:
 
-`oc rsh dc/inventory /bin/sh -c 'kill 1'`
+```sh
+oc rsh dc/inventory /bin/sh -c 'kill 1'
+```
 
 This will execute the Linux `kill` command to stop the running Java process in the container.
 
