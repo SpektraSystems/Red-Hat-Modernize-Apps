@@ -64,44 +64,43 @@ For this lab, we will use the [MTA Plugin]( https://access.redhat.com/documentat
 
 The IDE Plugin for the Migration Toolkit for Applications provides assistance directly in Eclipse and Red Hat CodeReady Studio/Workspaces for developers making changes for a migration or modernization effort. It analyzes your projects using MTA, marks migration issues in the source code, provides guidance to fix the issues, and offers automatic code replacement when possible.
 
-**2. Run an analysis report**
+**2. Use the configuration editor to setup the analysis**
 
-For simplicity, we'll use the MTA command line to run our report.
+Click on `MTA Explorer` icon on the left, click on `+` icon to add a new MTA configuration:
 
-On the command explorer on the right, expand the **Plugins** --> **rhamt-extensionXXX** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
+![](images/moving-existing-apps/mta_newconf.png)
 
-![](images/AROLatestImages/cliopen.png)
+> NOTE: If you don't see '+' icon, please try to `uncheck` *Explorer* via right-clicking on _MIGRATION TOOLKIT FOR APPLICATIONS_ menu then `check` it again.
 
-First, we'll instruct the source control system to ignore our generated report. Run this command to add it to the ignore file:
+To input source files and directories, on the `--input` option click on `Add` then select `Open File Explorer`:
 
-~~~sh
-echo 'mta-report/' >> ${CHE_PROJECTS_ROOT}/modernize-apps/.gitignore
-~~~
+![](images/moving-existing-apps/mta-add-input.png)
 
-Next, issue the following command in the terminal to run the report:
+Navigate to `projects > modernize-apps` then select `monolith` directory. Click on `Choose...`:
 
-~~~sh
-${MTA_HOME}/bin/mta-cli --input /projects/modernize-apps/monolith --source weblogic --target eap7 --sourceMode --output ${CHE_PROJECTS_ROOT}/modernize-apps/mta-report --overwrite
-~~~
+![](images/moving-existing-apps/mta-add-opendir.png)
 
-Note the following options are supplied:
+Then you will see that */projects/mdoernize-apps/monoilth* directory is added in _--input_ configuration.
 
-* `--input`: Specifies the location of the source file. We've specified our monolith Weblogic app here.
-* `--source weblogic`: This indicates to MTA to enable all of the known Weblogic migration rules.
-* `--target eap7`: This indicates to MTA that we wish to migrate to Red Hat JBoss EAP 7 and to enable the specific guidance for this platform
-* `--sourceMode`: This tells MTA that the source is actual source code (not binaries requiring decompilation).
-* `--output`: Where to create the report
-* `--overwrite`: Do not prompt for overwriting the reports (we'll run it again later)
+Select `eap7` in _--target_ server to migrate:
 
-Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few minutes to complete the analysis.
+![](images/moving-existing-apps/mta-target.png)
 
-Once the report is done, a new directory will be created called `mta-report`, and inside of which is an `index.html`. Right-click on this file and select **Open With --> Preview** :
+Click on `--source` to migrate from then select `weblogic`. Leave the other configurations:
 
-![](images/AROLatestImages/clipreview.png)
+![](images/moving-existing-apps/mta-source.png)
 
-This will open the report in a small browser inside of CodeReady. If you want more space to view the report, you can double-click on the `index.html` title to expand the report to fill the screen. Double-click again on `index.html` to collapse it.
+**3. Run an analysis report**
 
-**3. Review the report**
+Right-click on *mtaConfiguration* to analyze the WebLogic application. Click on `Run` in the popup menu:
+
+![](images/moving-existing-apps/mta-run-report.png)
+
+Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few minutes to complete the analysis. Click on `Open Report`:
+
+![](images/moving-existing-apps/mta-analysis-complete.png)
+
+**4. Review the report**
 
 ![](images/moving-existing-apps/rhamt_result_landing_page.png)
 
@@ -143,9 +142,25 @@ Here you get info about the issue, and potential resolution.
 
 **6. Jump to Code**
 
-Let's jump to code containing identified migration issues. Expand the *monolith* source project in the file explorer and navigate to `modernize-apps > monolith > src > main > java > com > redhat > coolstore > utils > StartupListener.java`.
+**6. Jump to Code**
+
+Let's jump to code containing identified migration issues. Expand the *monolith* source project in the MTA explorer and navigate to `modernize-apps > monolith > src > main > java > com > redhat > coolstore > utils > StartupListener.java`. Be sure to click the arrow next to the actual class name `StartupListener.java` to expand and show the Hints:
+
+![](images/moving-existing-apps/mta_project_issues.png)
+
+In the Explorer, MTA issues use an icon to indicate their severity level and status. The following table describes the meaning of the various icons:
+
+![](images/moving-existing-apps/mta-issues-table.png)
 
 **7. View Details about the Migration Issues**
+
+Let's take a look at the details about the migration issue. Right-click on `WebLogic ApplicationLifecycleListenerEvent[rule-id:xxx]` in _Hints_ of _StartupListener.java_ file. Click on `View Details`:
+
+![](images/moving-existing-apps/mta-issue-detail.png)
+
+MTA also provides helpful links to understand the issue deeper and offer guidance for the migration when you click on `Open Report`:
+
+![](images/moving-existing-apps/mta-issue-open-report.png)
 
 The WebLogic `ApplicationLifecycleListener` abstract class is used to perform functions or schedule jobs in Oracle WebLogic, like server start and stop. In this case we have code in the `postStart` and `preStop` methods which are executed after Weblogic starts up and before it shuts down, respectively.
 
@@ -159,6 +174,12 @@ the application lifecyle achieving the same result but without using proprietary
 Using this method makes the code much more portable.
 
 **8. Fix the ApplicationLifecycleListener issues**
+
+To begin we are fixing the issues under the Monolith application. Right-click on `WebLogic ApplicationLifecycleListenerEvent[rule-id:xxx]` in _Hints_ of _StartupListener.java_ file. Click on `Open Code`:
+
+![](images/moving-existing-apps/mta-issue-open-code.png)
+
+You can also navigate to the `modernize-apps` folder in the project tree, then open the file `monolith/src/main/java/com/redhat/coolstore/utils/StartupListener.java` by clicking on it.
 
 Replace the file content with the below code by selecting all existing code with CTRL-A or CMD-A, pressing BACKSPACE, then copying pasting this code in:
 
@@ -451,25 +472,20 @@ made all the changes correctly and try the build again.
 
 In this step we will re-run the MTA report to verify our migration was successful.
 
-As before, on the command explorer on the right, expand the **Plugins** --> **rhamt-extensionXXX** and then click on **New Terminal** to open a new terminal within the context of the MTA plugin:
+In the MTA explorer, right-click on *mtaConfiguration* to analyze the WebLogic application once again. Click on `Run` in the popup menu:
 
-![](images/AROLatestImages/cliopen.png)
+![](images/moving-existing-apps/mta-rerun-report.png)
 
-Next, issue the following command in the terminal to re-run the report:
+Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few mins to complete the analysis. Click on `Open Report`:
 
-~~~sh
-${MTA_HOME}/bin/mta-cli --input /projects/modernize-apps/monolith --source weblogic --target eap7 --sourceMode --output ${CHE_PROJECTS_ROOT}/modernize-apps/mta-report --overwrite
-~~~
+![](images/moving-existing-apps/mta-analysis-rerun-complete.png)
 
-Migration Toolkit for Applications (MTA) CLI will be executed automatically in a new terminal then it will take a few mins to complete the analysis.
+> **NOTE:** If it is taking too long, feel free to skip the next section and proceed to step *13* and return back to the analysis later to confirm that you
+eliminated all the issues.
 
 **19. View the results**
 
-Re-open the `mta-report/index.html` file as before:
-
-![](images/AROLatestImages/clipreview.png)
-
-Verify that it now reports `0 Story Points`:
+Click on the latest result to go to the report web page and verify that it now reports `0 Story Points`:
 
 You have successfully migrated this app to JBoss EAP, congratulations!
 
