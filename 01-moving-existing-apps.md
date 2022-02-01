@@ -142,8 +142,6 @@ Here you get info about the issue, and potential resolution.
 
 **6. Jump to Code**
 
-**6. Jump to Code**
-
 Let's jump to code containing identified migration issues. Expand the *monolith* source project in the MTA explorer and navigate to `modernize-apps > monolith > src > main > java > com > redhat > coolstore > utils > StartupListener.java`. Be sure to click the arrow next to the actual class name `StartupListener.java` to expand and show the Hints:
 
 ![](images/moving-existing-apps/mta_project_issues.png)
