@@ -50,9 +50,9 @@ Notice that we are not using the default BOM (Bill of material) that Spring Boot
 <dependencyManagement>
     <dependencies>
     <dependency>
-        <groupId>me.snowdrop</groupId>
-        <artifactId>spring-boot-bom</artifactId>
-        <version>${spring-boot.bom.version}</version>
+        <groupId>dev.snowdrop</groupId>
+        <artifactId>snowdrop-dependencies</artifactId>
+        <version>xxxx</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
@@ -101,15 +101,7 @@ We will go ahead and add a bunch of other dependencies while we have the pom.xml
     <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>20180813</version>
+        <version>2.2.10.RELEASE</version>
     </dependency>
 ~~~
 
@@ -278,8 +270,6 @@ public class CatalogService {
         return productList;
     }
 
-    //TODO: Add Callback Factory Component
-
 }
 ~~~
 
@@ -407,21 +397,22 @@ Add the following small code to the file:
 ~~~java
 package com.redhat.coolstore.client;
 
+import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.redhat.coolstore.model.Inventory;
-import feign.hystrix.FallbackFactory;
-
-@FeignClient(name="inventory")
+@FeignClient(name = "inventory", url = "${inventory.url}")
 public interface InventoryClient {
-    @GetMapping(path = "/services/inventory/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+
+    @RequestMapping(method = RequestMethod.GET, value = "/services/inventory/{itemId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     String getInventoryStatus(@PathVariable("itemId") String itemId);
 
-//TODO: Add Fallback factory here
+    //TODO: Add Fallback factory here
+
 }
 ~~~
 
@@ -430,11 +421,12 @@ There is one more thing that we need to do which is to tell Feign where the inve
 Open ``modernize-apps/catalog/src/main/resources/application-default.properties`` and add these properties below the `#TODO: Configure netflix libraries` marker:
 
 ~~~java
-inventory.ribbon.listOfServers=inventory:8080
+inventory.url=inventory:8080
 feign.hystrix.enabled=true
+feign.circuitbreaker.enabled=true
 ~~~
 
-By setting `inventory.ribbon.listOfServers` we are hard coding the actual URL of the service to `inventory:8080`. If we had multiple servers we could also add those using a comma. However using Kubernetes there is no need to have multiple endpoints listed here since Kubernetes has a concept of _Services_ that will internally route between multiple instances of the same service. Later on we will update this value to reflect our URL when deploying to OpenShift.
+By setting `inventory.url` we are hard coding the actual URL of the service to `inventory:8080`. If we had multiple servers we could also add those using a comma. However using Kubernetes there is no need to have multiple endpoints listed here since Kubernetes has a concept of _Services_ that will internally route between multiple instances of the same service. Later on we will update this value to reflect our URL when deploying to OpenShift.
 
 
 Now that we have a client we can make use of it in our `CatalogService`
@@ -501,7 +493,7 @@ class InventoryClientFallbackFactory implements FallbackFactory<InventoryClient>
 After creating the fallback factory all we have to do is to tell Feign to use that fallback in case of an issue, by adding the fallbackFactory property to the `@FeignClient` annotation. Open the file to replace it at the `@FeignClient(name="inventory")` line:
 
 ~~~java
-@FeignClient(name="inventory",fallbackFactory = InventoryClient.InventoryClientFallbackFactory.class)
+@FeignClient(name = "inventory", url = "${inventory.url}", fallbackFactory = InventoryClient.InventoryClientFallbackFactory.class)
 ~~~
 
 **Slow running services**
@@ -509,10 +501,10 @@ Having fallbacks is good but that also requires that we can correctly detect whe
 
 Open ``modernize-apps/catalog/src/main/resources/application-default.properties``
 
-And add this line to it at the `#TODO: Set timeout to for inventory to 500ms` marker:
+And add this line to it at the `#TODO: Set timeout to for inventory to 2000ms` marker:
 
 ~~~java
-hystrix.command.inventory.execution.isolation.thread.timeoutInMilliseconds=500
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=2000
 ~~~
 
 
@@ -588,49 +580,63 @@ From the CodeReady Workspaces Terminal window, navigate back to `ocpuser0XX-cool
 
 Now that you've logged into OpenShift, let's deploy our new catalog microservice:
 
-> **NOTE:** If you change the username and password you also need to update `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` which contains
-the credentials used when deploying to OpenShift.
-
-
 **Update the Azure PostgreSQL database details**
 Create the file : `modernize-apps/catalog/src/main/resources/application-openshift.properties`
 
-Copy the following content to the file and replace `{Azure PostgreSQL Hostname}` and `{ocpuser0XX}` with the values provided in the environment details page:
+Copy the following content to the file and replace `{Azure PostgreSQL Hostname}` and `{Azure PostgreSQL Username}` and `{Azure PostgreSQL Password}` and `{ocpuser0XX}` and with the values provided in the environment details page:
 
 ~~~java
 spring.datasource.url=jdbc:postgresql://{Azure PostgreSQL HostName}:5432/ocpuser0XX?ssl=true&sslmode=require
 spring.datasource.initialization-mode=always
-inventory.ribbon.listOfServers=inventory:8080
+spring.datasource.username={Azure PostgreSQL Username}@{Azure PostgreSQL Hostname}
+spring.datasource.password={Azure PostgreSQL Password}
+spring.datasource.initialization-mode=always
+spring.datasource.initialize=true
+spring.datasource.schema=classpath:/schema.sql
+spring.datasource.continue-on-error=true
+inventory.url=inventory
+feign.hystrix.enabled=true
+feign.circuitbreaker.enabled=true
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=2000
 ~~~
-
-Now, Open `modernize-apps/catalog/src/main/fabric8/credential-secret.yml` and update the `username` and `password` values with the `Azure PostgreSQL username and password` provided in the environment details page, in the format as seen below (using your username _and_ hostname in the `user:` field)
-
-~~~
-apiVersion: "v1"
-kind: "Secret"
-metadata:
-  name: "catalog-database-secret"
-stringData:
-  #Update the value with Azure PostgreSQL username.
-  user: "{Azure PostgreSQL Username}@{Azure PostgreSQL Hostname}"
-  #Update the value with Azure PostgreSQL password.
-  password: "{Azure PostgreSQL Password}"
-~~~
->**NOTE:** The `application-openshift.properties` does not have all values of `application-default.properties`, that is because on the values that need to change has to be specified here. Spring will fall back to `application-default.properties` for the other values.
 
 **Build and Deploy**
 
-Build and deploy the project using the following command, which will use the maven plugin to deploy:
+If you still have the local app running, stop it by typing `CTRL-C` in its Terminal.
+
+Build the project into a runnable JAR file using the following command:
 
 ~~~sh
-mvn -f $CHE_PROJECTS_ROOT/modernize-apps/catalog package fabric8:deploy -Popenshift
+mvn -f $CHE_PROJECTS_ROOT/modernize-apps/catalog clean install spring-boot:repackage -DskipTests
 ~~~
 
-The build and deploy may take a minute or two. Wait for it to complete. You should see a **BUILD SUCCESS** at the
-end of the build output.
+You should see a **BUILD SUCCESS** at the end of the build output.
 
-After the maven build finishes it will take less than a minute for the application to become available.
-To verify that everything is started, run the following command and wait for it complete successfully:
+Then deploy the project using the following command in the CodeReady Workspaces Terminal:
+
+```sh
+oc new-build registry.access.redhat.com/ubi8/openjdk-11 --binary --name=catalog -l app=catalog
+```
+
+And then start and watch the build, which will take about a minute to complete:
+
+```sh
+oc start-build catalog --from-file $CHE_PROJECTS_ROOT/modernize-apps/catalog/target/*.jar --follow
+```
+
+Once the build is done, we’ll deploy it as an OpenShift application and override the spring profile to use our _production_ values.
+
+```sh
+oc new-app catalog -e JAVA_OPTS_APPEND='-Dspring.profiles.active=openshift'
+```
+
+Next, run this to expose your service to the world and add a health check:
+
+```sh
+oc expose service catalog && oc set probe dc/catalog  --readiness --get-url=http://:8080/actuator/health --initial-delay-seconds=5 --period-seconds=5 --failure-threshold=15
+```
+
+And confirm its done rolling out:
 
 ~~~sh
 oc rollout status -w dc/catalog
