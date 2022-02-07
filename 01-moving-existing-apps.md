@@ -11,11 +11,11 @@ We'll answer questions like:
 * Why move applications to OCP and cloud?
 * What does the lift and shift process look like?
 
-We will then take the following steps to migrate (lift & shift) an existing Java EE app to EAP+OpenShift using [Red Hat Migration Toolkit for Applications](https://developers.redhat.com/products/mta/overview) (RHMTA)
+We will then take the following steps to migrate (lift & shift) an existing Java EE app to EAP on OpenShift using [Migration Toolkit for Applications](https://developers.redhat.com/products/mta/overview) (MTA)
 
 We'll follow the steps below:
 
-* Analyze existing WebLogic monolith application using RHMTA directly in the CodeReady Workspaces IDE
+* Analyze existing WebLogic monolith application using MTA directly in the CodeReady Workspaces IDE
 * Review the report and update code and config to run on JBoss EAP
 * Deploy to OpenShift
 * Use OpenShift features like automatic clustering and failover to enhance the application
@@ -24,7 +24,7 @@ We'll follow the steps below:
 
 ![](images/moving-existing-apps/rhamt-logo.png)
 
-Red Hat Migration Toolkit for Applications (RHMTA) is an extensible and customizable rule-based tool that helps simplify migration of Java applications.
+Migration Toolkit for Applications (MTA) is an extensible and customizable rule-based tool that helps simplify migration of Java applications.
 
 It is used by organizations for:
 
@@ -35,17 +35,17 @@ It is used by organizations for:
 * Rule extension and customizability
 * Ability to analyze source code or application archives
 
-RHMTA examines application artifacts, including project source directories and application archives, then produces an HTML report that highlights areas needing changes. RHMTA can be used to migrate Java applications from previous versions of Red Hat JBoss Enterprise Application Platform or from other containers, such as Oracle® WebLogic Server or IBM® WebSphere® Application Server.
+MTA examines application artifacts, including project source directories and application archives, then produces an HTML report that highlights areas needing changes. MTA can be used to migrate Java applications from previous versions of Red Hat JBoss Enterprise Application Platform or from other containers, such as Oracle® WebLogic Server or IBM® WebSphere® Application Server.
 
-## How Does RHMTA Simplify Migration?
+## How Does MTA Simplify Migration?
 
-RHMTA looks for common resources and highlights technologies and known trouble spots when migrating applications. The goal is to provide a high-level view into the technologies used by the application and provide a detailed report organizations can use to estimate, document, and migrate enterprise applications to Java EE and Red Hat JBoss Enterprise Application Platform.
+MTA looks for common resources and highlights technologies and known trouble spots when migrating applications. The goal is to provide a high-level view into the technologies used by the application and provide a detailed report organizations can use to estimate, document, and migrate enterprise applications to Java EE and Red Hat JBoss Enterprise Application Platform.
 
-> RHMTA is usually part of a much larger application migration and modernization program that involves well defined and repeatable phases over weeks or months and involves many people from a given business. Do not be fooled into thinking that every single
+> MTA is usually part of a much larger application migration and modernization program that involves well defined and repeatable phases over weeks or months and involves many people from a given business. Do not be fooled into thinking that every single
 migration is a simple affair and takes an hour or less! To learn more about Red Hat's philosophy and proven methodology, check out
-the [RHMTA documentation](https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications) and contact your local Red Hat representative when embarking on a real world migration and modernization strategy.
+the [MTA documentation](https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications) and contact your local Red Hat representative when embarking on a real world migration and modernization strategy.
 
-## More RHMTA Resources
+## More MTA Resources
 
 * [Documentation](https://access.redhat.com/documentation/en-us/migration_toolkit_for_applications)
 * [Developer Homepage](https://developers.redhat.com/products/mta/overview)

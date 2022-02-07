@@ -319,7 +319,7 @@ To see the raw JSON output using `curl`, open a new terminal and run the test:
 You would see a JSON response like this:
 
 ~~~json
-{"itemId":"329299","location":"Raleigh","quantity":736,"link":"http://maps.google.com/?q=Raleigh"}
+[{"id":1,"itemId":"329299","link":"http://maps.google.com/?q=Raleigh","location":"Raleigh","quantity":736}]
 ~~~
 
 The REST API returned a JSON object representing the inventory count for this product. Congratulations!
@@ -379,16 +379,16 @@ you will see:
 ✅ Extension io.quarkus:quarkus-openshift has been installed
 ~~~
 
-Next, add the following lines to your _modernize-apps/inventory/src/main/resources/application.properties_:
+Next, add the following lines to your _modernize-apps/inventory/src/main/resources/application.properties_. Make sure to replace `ocpuser0XX` with your own username:
 
 ~~~properties
-%prod.quarkus.s2i.base-jvm-image=registry.access.redhat.com/ubi8/openjdk-11
+%prod.quarkus.container-image.group=ocpuser0XX
 %prod.quarkus.kubernetes-client.trust-certs=true
 %prod.quarkus.container-image.build=true
 %prod.quarkus.kubernetes.deploy=true
 %prod.quarkus.kubernetes.deployment-target=openshift
-%prod.quarkus.openshift.route.expose=true
-%prod.quarkus.openshift.labels.app.openshift.io/runtime=quarkus
+%prod.quarkus.openshift.build-strategy=docker
+%prod.quarkus.openshift.expose=true
 ~~~
 
 This configures the Kubernetes and Quarkus extensions on how to build and deploy the application after it is built. Quarkus will create the necessary resource objects (typically written in yaml), and automatically add them to our namespace to cause the app to be built and deployed.
@@ -415,7 +415,7 @@ Back in the OpenShift Dev Perspective, you should see your new Quarkus applicati
 
 To make sure the app is working, click the route link in the upper-right of the circle to see inventory webpage:
 
-<kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
+<kbd>![](images/moving-existing-apps/inventory-openshift.png)</kbd>
 
 > **NOTE**: If you get a '404 Not Found' error, just reload the page a few times until the Inventory UI appears. This
 is due to a lack of health check which you are about to fix!
@@ -525,18 +525,17 @@ You should see a JSON response like:
 
 ~~~json
 {
-  "status": "UP",
-  "checks": [
-    {
-      "name": "Success of Inventory Health Check!!!",
-      "status": "UP"
-    },
-    {
-      "name": "Database connections health check",
-      "status": "UP"
-    }
-  ]
-}
+    "status": "UP",
+    "checks": [
+        {
+            "name": "Database connections health check",
+            "status": "UP"
+        },
+        {
+            "name": "Success of Inventory Health Check!!!",
+            "status": "UP"
+        }
+    ]
 ~~~
 
 > You can define separate readiness and liveness probes using `@Liveness` and `@Readiness` annotations and access them separately at `/q/health/live` and `/q/health/ready`.
@@ -579,7 +578,7 @@ Open the sample Inventory application UI by clicking on the route link (upper ri
 
 This will again open up the sample application UI in a new browser tab:
 
-<kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
+<kbd>![](images/moving-existing-apps/inventory-openshift.png)</kbd>
 
 The app will begin polling the inventory as before and report success:
 
@@ -609,7 +608,7 @@ After too many liveness probe failures, OpenShift will forcibly kill the pod and
 
 Return to the same sample app UI (without reloading the page) and notice that the UI has automatically re-connected to the new service and successfully accessed the inventory once again:
 
-<kbd>![](images/AROLatestImages/inventory.jpg)</kbd>
+<kbd>![](images/moving-existing-apps/inventory-openshift.png)</kbd>
 
 
 ## Summary
