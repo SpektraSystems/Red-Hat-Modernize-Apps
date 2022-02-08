@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
 ##
-## Reset to beginning of Developer Intro
+## Reset to beginning of Mono2Micro part 1
 ## Desired State: monolith solution deployed in "coolstore-dev" project
 ##
 OCP_USERNAME=${1}
+
+if [ -z "$OCP_USERNAME" ] ; then
+	echo "Usage: $0 <username> where <username> is something like ocpuserXXX"
+	exit 1
+fi
+
 # delete all projects
 oc delete project $OCP_USERNAME-coolstore-dev
 
@@ -23,10 +29,6 @@ git pull
 git checkout solution
 git pull
 cd monolith
-
-# undo code changes from this scenario
-git checkout master -- src/main/java/com/redhat/coolstore/utils/Transformers.java
-git checkout master -- src/main/webapp/app/css/coolstore.css
 
 oc new-project $OCP_USERNAME-coolstore-dev --display-name="Coolstore Monolith - Dev" || { echo "cant create project; ensure all projects gone with 'oc get projects' and try again"; exit 1; }
 
